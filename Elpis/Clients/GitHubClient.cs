@@ -4,6 +4,7 @@ using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using Elpis.Models.GitHub;
 using Elpis.Models.GitHub.Commit;
 using Microsoft.IdentityModel.Tokens;
 
@@ -55,7 +56,6 @@ public class GitHubClient
     private static readonly HttpClient HttpClient =
         new()
         {
-            BaseAddress = new Uri("https://api.github.com/"),
             DefaultRequestHeaders =
             {
                 { "User-Agent", "Amaurot/0.0.1" },
@@ -64,6 +64,8 @@ public class GitHubClient
             },
         };
 
+    private const string GitHubApiUri = "https://api.github.com/";
+
     private async Task<string> GenerateGitHubInstallationAccessToken(string installationId)
     {
         var responseMessage = await HttpClient.SendAsync(
@@ -71,11 +73,16 @@ public class GitHubClient
             {
                 Method = HttpMethod.Post,
                 Headers = { { "Authorization", $"Bearer {GenerateJwtSecurityToken()}" } },
-                RequestUri = new Uri($"app/installations/{installationId}/access_tokens"),
+                RequestUri = new Uri(
+                    $"{GitHubApiUri}app/installations/{installationId}/access_tokens"
+                ),
             }
         );
 
-        return await responseMessage.Content.ReadAsStringAsync();
+        var installationAccessToken =
+            await responseMessage.Content.ReadFromJsonAsync<InstallationAccessToken>();
+
+        return installationAccessToken!.Token;
     }
 
     public async Task CreateCommitStatus(string repo, string sha, long installationId)
@@ -91,7 +98,7 @@ public class GitHubClient
                         $"Bearer {await GenerateGitHubInstallationAccessToken(installationId.ToString())}"
                     },
                 },
-                RequestUri = new Uri($"repos/{repo}/statuses/{sha}"),
+                RequestUri = new Uri($"{GitHubApiUri}repos/{repo}/statuses/{sha}"),
                 Content = JsonContent.Create(
                     inputValue: new CreateCommitStatusRequest
                     {
@@ -128,7 +135,7 @@ public class GitHubClient
                         $"Bearer {await GenerateGitHubInstallationAccessToken(installationId.ToString())}"
                     },
                 },
-                RequestUri = new Uri($"/repos/{repo}/zipball/{sha}"),
+                RequestUri = new Uri($"{GitHubApiUri}repos/{repo}/zipball/{sha}"),
             }
         );
 
