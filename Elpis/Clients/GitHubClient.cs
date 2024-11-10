@@ -110,4 +110,28 @@ public class GitHubClient
             }
         );
     }
+
+    public async Task<Stream> DownloadRepositoryArchiveZip(
+        string repo,
+        string sha,
+        long installationId
+    )
+    {
+        var responseMessage = await HttpClient.SendAsync(
+            new HttpRequestMessage
+            {
+                Method = HttpMethod.Get,
+                Headers =
+                {
+                    {
+                        "Authorization",
+                        $"Bearer {await GenerateGitHubInstallationAccessToken(installationId.ToString())}"
+                    },
+                },
+                RequestUri = new Uri($"/repos/{repo}/zipball/{sha}"),
+            }
+        );
+
+        return await responseMessage.Content.ReadAsStreamAsync();
+    }
 }
