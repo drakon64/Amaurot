@@ -1,0 +1,6 @@
+version: 2
+updates:
+  - directory: "/Elpis"
+    package-ecosystem: "nuget"
+    schedule:
+      interval: "daily"
