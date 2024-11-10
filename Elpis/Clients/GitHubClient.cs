@@ -77,7 +77,7 @@ public class GitHubClient
         return await responseMessage.Content.ReadAsStringAsync();
     }
 
-    public async Task CreateCommitStatus(string repo, string sha, string installationId)
+    public async Task CreateCommitStatus(string repo, string sha, long installationId)
     {
         await HttpClient.SendAsync(
             new HttpRequestMessage
@@ -87,7 +87,7 @@ public class GitHubClient
                 {
                     {
                         "Authorization",
-                        $"Bearer {await GenerateGitHubInstallationAccessToken(installationId)}"
+                        $"Bearer {await GenerateGitHubInstallationAccessToken(installationId.ToString())}"
                     },
                 },
                 RequestUri = new Uri($"repos/{repo}/statuses/{sha}"),
