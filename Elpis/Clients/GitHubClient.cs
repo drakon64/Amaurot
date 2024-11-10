@@ -58,6 +58,7 @@ public class GitHubClient
             BaseAddress = new Uri("https://api.github.com/"),
             DefaultRequestHeaders =
             {
+                { "User-Agent", "Amaurot/0.0.1" },
                 { "Accept", "application/vnd.github+json" },
                 { "X-GitHub-Api-Version", "2022-11-28" },
             },
