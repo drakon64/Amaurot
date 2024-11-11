@@ -6,6 +6,7 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using Elpis.Models.GitHub;
 using Elpis.Models.GitHub.Commit;
+using Elpis.Models.GitHub.PullRequest;
 using Microsoft.IdentityModel.Tokens;
 
 namespace Elpis.Clients;
@@ -83,6 +84,30 @@ public class GitHubClient
             await responseMessage.Content.ReadFromJsonAsync<InstallationAccessToken>();
 
         return installationAccessToken!.Token;
+    }
+
+    public async Task<PullRequestsFile[]> ListPullRequestFiles(
+        string repo,
+        long pullRequest,
+        long installationId
+    )
+    {
+        var responseMessage = await HttpClient.SendAsync(
+            new HttpRequestMessage
+            {
+                Method = HttpMethod.Post,
+                Headers =
+                {
+                    {
+                        "Authorization",
+                        $"Bearer {await GenerateGitHubInstallationAccessToken(installationId.ToString())}"
+                    },
+                },
+                RequestUri = new Uri($"{GitHubApiUri}repos/{repo}/pulls/{pullRequest}/files"),
+            }
+        );
+
+        return await responseMessage.Content.ReadFromJsonAsync<PullRequestsFile[]>();
     }
 
     public async Task<PullRequest?> GetPullRequest(

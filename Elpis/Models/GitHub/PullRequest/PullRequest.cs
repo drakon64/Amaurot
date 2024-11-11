@@ -1,4 +1,4 @@
-namespace Elpis.Models.GitHub;
+namespace Elpis.Models.GitHub.PullRequest;
 
 public class PullRequest
 {
