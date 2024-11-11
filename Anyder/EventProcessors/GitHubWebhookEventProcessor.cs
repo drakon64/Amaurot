@@ -19,11 +19,34 @@ public sealed class GitHubWebhookEventProcessor : WebhookEventProcessor
             ) && !pullRequestEvent.PullRequest.Draft
         )
         {
-            await Program.GitHubClient.CreateCommitStatus(
-                pullRequestEvent.Repository!.FullName,
-                pullRequestEvent.PullRequest.Head.Sha,
-                pullRequestEvent.Installation!.Id
-            );
+            bool mergeable;
+
+            while (true)
+            {
+                var pullRequest = await Program.GitHubClient.GetPullRequest(
+                    pullRequestEvent.Repository!.FullName,
+                    pullRequestEvent.Number,
+                    pullRequestEvent.Installation!.Id
+                );
+
+                if (!pullRequest!.Mergeable.HasValue)
+                {
+                    await Task.Delay(3000);
+                    continue;
+                }
+
+                mergeable = pullRequest.Mergeable.Value;
+                break;
+            }
+
+            if (mergeable)
+            {
+                await Program.GitHubClient.CreateCommitStatus(
+                    pullRequestEvent.Repository.FullName,
+                    pullRequestEvent.PullRequest.Head.Sha,
+                    pullRequestEvent.Installation.Id
+                );
+            }
         }
     }
 }

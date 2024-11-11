@@ -85,6 +85,30 @@ public class GitHubClient
         return installationAccessToken!.Token;
     }
 
+    public async Task<PullRequest?> GetPullRequest(
+        string repo,
+        long pullRequest,
+        long installationId
+    )
+    {
+        var responseMessage = await HttpClient.SendAsync(
+            new HttpRequestMessage
+            {
+                Method = HttpMethod.Get,
+                Headers =
+                {
+                    {
+                        "Authorization",
+                        $"Bearer {await GenerateGitHubInstallationAccessToken(installationId.ToString())}"
+                    },
+                },
+                RequestUri = new Uri($"{GitHubApiUri}repos/{repo}/pulls/{pullRequest}"),
+            }
+        );
+
+        return await responseMessage.Content.ReadFromJsonAsync<PullRequest>();
+    }
+
     public async Task CreateCommitStatus(string repo, string sha, long installationId)
     {
         await HttpClient.SendAsync(
