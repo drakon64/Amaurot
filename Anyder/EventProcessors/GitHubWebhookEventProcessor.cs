@@ -13,8 +13,10 @@ public sealed class GitHubWebhookEventProcessor : WebhookEventProcessor
     )
     {
         if (
-            pullRequestAction == PullRequestAction.Opened
-            || pullRequestAction == PullRequestAction.Synchronize
+            (
+                pullRequestAction == PullRequestAction.Opened
+                || pullRequestAction == PullRequestAction.Synchronize
+            ) && !pullRequestEvent.PullRequest.Draft
         )
         {
             await Program.GitHubClient.CreateCommitStatus(
