@@ -23,5 +23,5 @@ jobs:
           name: drakon64-amaurot
           authToken: ${{ secrets.CACHIX_AUTH_TOKEN }}
 
-      - run: nix-build anyder.nix ktisis.nix
-        working-directory: nix
+      - run: nix-build Anyder Ktisis
+        working-directory: Nix

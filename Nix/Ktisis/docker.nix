@@ -1,13 +1,15 @@
 {
   pkgs ?
     let
-      npins = import ./npins;
+      npins = import ../npins;
     in
     (import npins.nixpkgs { }).pkgsMusl,
   compressor ? "none",
 }:
 let
-  amaurot = pkgs.callPackage ./. { };
+  lib = pkgs.lib;
+
+  ktisis = pkgs.callPackage ./. { };
 in
 pkgs.dockerTools.buildLayeredImage {
   name = "ktisis";
@@ -16,10 +18,11 @@ pkgs.dockerTools.buildLayeredImage {
 
   config = {
     command = [
-      (pkgs.lib.getExe amaurot.dotnet-runtime)
+      (lib.getExe ktisis.dotnet-runtime)
+      "${anyder}/lib/ktisis/Ktisis.dll"
     ];
 
-    env = [ "TOFU_PATH=${pkgs.lib.getExe pkgs.opentofu}" ];
+    env = [ "TOFU_PATH=${lib.getExe pkgs.opentofu}" ];
   };
 
   tag = "latest";

@@ -1,13 +1,13 @@
 {
   pkgs ?
     let
-      npins = import ./npins;
+      npins = import ../npins;
     in
     (import npins.nixpkgs { }).pkgsMusl,
   compressor ? "none",
 }:
 let
-  amaurot = pkgs.callPackage ./. { };
+  anyder = pkgs.callPackage ./. { };
 in
 pkgs.dockerTools.buildLayeredImage {
   name = "anyder";
@@ -15,7 +15,8 @@ pkgs.dockerTools.buildLayeredImage {
   inherit compressor;
 
   config.command = [
-    (pkgs.lib.getExe amaurot.dotnet-runtime)
+    (pkgs.lib.getExe anyder.dotnet-runtime)
+    "${anyder}/lib/anyder/Anyder.dll"
   ];
 
   tag = "latest";
