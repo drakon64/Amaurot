@@ -1,4 +1,3 @@
-using Anyder.Components;
 using Anyder.EventProcessors;
 using Elpis.Clients;
 using Octokit.Webhooks;
@@ -25,25 +24,10 @@ public class Program
     public static void Main(string[] args)
     {
         var builder = WebApplication.CreateBuilder(args);
-
-        // Add services to the container.
         builder.Services.AddSingleton<WebhookEventProcessor, GitHubWebhookEventProcessor>();
-        builder.Services.AddRazorComponents().AddInteractiveServerComponents();
 
         var app = builder.Build();
-
-        // Configure the HTTP request pipeline.
-        if (!app.Environment.IsDevelopment())
-        {
-            app.UseExceptionHandler("/Error");
-        }
-
-        app.UseStaticFiles();
-        app.UseAntiforgery();
-
         app.MapGitHubWebhooks(secret: GitHubWebhookSecret);
-        app.MapRazorComponents<App>().AddInteractiveServerRenderMode();
-
         app.Run();
     }
 }
