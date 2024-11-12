@@ -3,7 +3,7 @@
     let
       npins = import ../npins;
     in
-    (import npins.nixpkgs { }).pkgsMusl,
+    import npins.nixpkgs { },
 }:
 let
   fs = pkgs.lib.fileset;
