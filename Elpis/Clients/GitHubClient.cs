@@ -134,7 +134,12 @@ public class GitHubClient
         return await responseMessage.Content.ReadFromJsonAsync<PullRequest>();
     }
 
-    public async Task CreateCommitStatus(string repo, string sha, long installationId)
+    public async Task CreateCommitStatus(
+        string repo,
+        string sha,
+        string context,
+        long installationId
+    )
     {
         await HttpClient.SendAsync(
             new HttpRequestMessage
@@ -152,7 +157,7 @@ public class GitHubClient
                     inputValue: new CreateCommitStatusRequest
                     {
                         State = CreateCommitStatusState.Pending,
-                        Context = "amaurot",
+                        Context = context,
                     },
                     options: new JsonSerializerOptions
                     {

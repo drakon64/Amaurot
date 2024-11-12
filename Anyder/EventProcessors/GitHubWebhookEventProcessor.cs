@@ -22,28 +22,26 @@ public sealed class GitHubWebhookEventProcessor : WebhookEventProcessor
             return;
         }
 
-        {
-            var tfFiles = (
-                from file in await Program.GitHubClient.ListPullRequestFiles(
-                    pullRequestEvent.Repository!.FullName,
-                    pullRequestEvent.Number,
-                    pullRequestEvent.Installation!.Id
-                )
-                where
-                    file.FileName.EndsWith(".tf")
-                    || file.FileName.EndsWith(".tf.json")
-                    || file.FileName.EndsWith(".tfvars")
-                    || file.FileName.EndsWith(".tfvars.json")
-                let lastIndex = file.FileName.LastIndexOf('/')
-                select lastIndex != -1 ? file.FileName.Remove(lastIndex) : ""
+        var tfDirectories = (
+            from file in await Program.GitHubClient.ListPullRequestFiles(
+                pullRequestEvent.Repository!.FullName,
+                pullRequestEvent.Number,
+                pullRequestEvent.Installation!.Id
             )
-                .Distinct()
-                .ToArray();
+            where
+                file.FileName.EndsWith(".tf")
+                || file.FileName.EndsWith(".tf.json")
+                || file.FileName.EndsWith(".tfvars")
+                || file.FileName.EndsWith(".tfvars.json")
+            let lastIndex = file.FileName.LastIndexOf('/')
+            select lastIndex != -1 ? file.FileName.Remove(lastIndex) : ""
+        )
+            .Distinct()
+            .ToArray();
 
-            if (tfFiles.Length == 0)
-            {
-                return;
-            }
+        if (tfDirectories.Length == 0)
+        {
+            return;
         }
 
         bool mergeable;
@@ -66,13 +64,29 @@ public sealed class GitHubWebhookEventProcessor : WebhookEventProcessor
             break;
         }
 
-        if (mergeable)
+        if (!mergeable)
         {
-            await Program.GitHubClient.CreateCommitStatus(
-                pullRequestEvent.Repository.FullName,
-                pullRequestEvent.PullRequest.Head.Sha,
-                pullRequestEvent.Installation.Id
-            );
+            return;
         }
+
+        await Task.WhenAll(
+            tfDirectories
+                .Select(directory =>
+                    Program.GitHubClient.CreateCommitStatus(
+                        pullRequestEvent.Repository.FullName,
+                        pullRequestEvent.PullRequest.Head.Sha,
+                        $"Amaurot ({directory})",
+                        pullRequestEvent.Installation.Id
+                    )
+                )
+                .Append(
+                    Program.GitHubClient.CreateCommitStatus(
+                        pullRequestEvent.Repository.FullName,
+                        pullRequestEvent.PullRequest.Head.Sha,
+                        $"Amaurot",
+                        pullRequestEvent.Installation.Id
+                    )
+                )
+        );
     }
 }
