@@ -107,7 +107,7 @@ public class GitHubClient
             }
         );
 
-        return await responseMessage.Content.ReadFromJsonAsync<PullRequestsFile[]>();
+        return (await responseMessage.Content.ReadFromJsonAsync<PullRequestsFile[]>())!;
     }
 
     public async Task<PullRequest?> GetPullRequest(
