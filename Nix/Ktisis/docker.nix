@@ -19,7 +19,7 @@ pkgs.dockerTools.buildLayeredImage {
   config = {
     command = [
       (lib.getExe ktisis.dotnet-runtime)
-      "${anyder}/lib/ktisis/Ktisis.dll"
+      "${ktisis}/lib/ktisis/Ktisis.dll"
     ];
 
     env = [ "TOFU_PATH=${lib.getExe pkgs.opentofu}" ];
