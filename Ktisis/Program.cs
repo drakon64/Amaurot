@@ -5,7 +5,7 @@ namespace Ktisis;
 
 class Program
 {
-    static async Task Main()
+    static async Task Main(string[] args)
     {
         var githubPrivateKeyPath =
             Environment.GetEnvironmentVariable("GITHUB_PRIVATE_KEY_PATH")
@@ -38,5 +38,19 @@ class Program
         var tempDirectory = Directory.CreateTempSubdirectory();
 
         ZipFile.ExtractToDirectory(zipball, tempDirectory.FullName);
+
+        foreach (var directory in args)
+        {
+            var files =
+                from file in new DirectoryInfo(
+                    $"{tempDirectory.FullName}/{directory}"
+                ).EnumerateFiles()
+                select file.Name;
+
+            foreach (var file in files)
+            {
+                await Console.Out.WriteLineAsync(file);
+            }
+        }
     }
 }
