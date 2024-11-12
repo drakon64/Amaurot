@@ -2,5 +2,5 @@ namespace Elpis.Models.GitHub.PullRequest;
 
 public class PullRequestsFile
 {
-    public string FileName { get; init; }
+    public required string FileName { get; init; }
 }
