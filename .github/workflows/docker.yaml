@@ -1,0 +1,27 @@
+name: Docker
+on:
+  push:
+    branches:
+     - main
+  pull_request:
+    branches:
+     - main
+
+jobs:
+  Build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        
+      - uses: DeterminateSystems/nix-installer-action@v15
+        with:
+          source-url: https://install.lix.systems/lix/lix-installer-x86_64-linux
+          diagnostic-endpoint: ""
+
+      - uses: cachix/cachix-action@v15
+        with:
+          name: drakon64-amaurot
+          authToken: ${{ secrets.CACHIX_AUTH_TOKEN }}
+
+      - run: nix-build anyder.nix ktisis.nix
+        working-directory: nix
