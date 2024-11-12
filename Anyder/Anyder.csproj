@@ -14,8 +14,4 @@
     <ProjectReference Include="..\Elpis\Elpis.csproj" />
   </ItemGroup>
 
-  <PropertyGroup>
-    <ContainerFamily>alpine</ContainerFamily>
-  </PropertyGroup>
-
 </Project>
