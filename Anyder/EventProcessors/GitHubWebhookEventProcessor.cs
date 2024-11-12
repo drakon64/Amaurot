@@ -22,8 +22,8 @@ public sealed class GitHubWebhookEventProcessor : WebhookEventProcessor
             return;
         }
 
-        if (
-            (
+        {
+            var tfFiles = (
                 from file in await Program.GitHubClient.ListPullRequestFiles(
                     pullRequestEvent.Repository!.FullName,
                     pullRequestEvent.Number,
@@ -38,11 +38,12 @@ public sealed class GitHubWebhookEventProcessor : WebhookEventProcessor
                 select lastIndex != -1 ? file.FileName.Remove(lastIndex) : ""
             )
                 .Distinct()
-                .ToArray()
-                .Length == 0
-        )
-        {
-            return;
+                .ToArray();
+
+            if (tfFiles.Length == 0)
+            {
+                return;
+            }
         }
 
         bool mergeable;
