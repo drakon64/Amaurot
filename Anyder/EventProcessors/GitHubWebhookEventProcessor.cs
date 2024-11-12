@@ -69,24 +69,11 @@ public sealed class GitHubWebhookEventProcessor : WebhookEventProcessor
             return;
         }
 
-        await Task.WhenAll(
-            tfDirectories
-                .Select(directory =>
-                    Program.GitHubClient.CreateCommitStatus(
-                        pullRequestEvent.Repository.FullName,
-                        pullRequestEvent.PullRequest.Head.Sha,
-                        $"Amaurot ({directory})",
-                        pullRequestEvent.Installation.Id
-                    )
-                )
-                .Append(
-                    Program.GitHubClient.CreateCommitStatus(
-                        pullRequestEvent.Repository.FullName,
-                        pullRequestEvent.PullRequest.Head.Sha,
-                        $"Amaurot",
-                        pullRequestEvent.Installation.Id
-                    )
-                )
+        await Program.GitHubClient.CreateCommitStatus(
+            pullRequestEvent.Repository.FullName,
+            pullRequestEvent.PullRequest.Head.Sha,
+            "Amaurot",
+            pullRequestEvent.Installation.Id
         );
     }
 }
