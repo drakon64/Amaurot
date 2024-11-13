@@ -29,7 +29,7 @@ public class Program
             (_, serverOptions) =>
                 serverOptions.Listen(
                     IPAddress.Loopback,
-                    int.Parse(Environment.GetEnvironmentVariable("PORT")!)
+                    int.Parse(Environment.GetEnvironmentVariable("PORT") ?? "5000")
                 )
         );
         builder.Services.AddSingleton<WebhookEventProcessor, GitHubWebhookEventProcessor>();
