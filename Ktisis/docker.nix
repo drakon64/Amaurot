@@ -25,5 +25,7 @@ pkgs.dockerTools.buildLayeredImage {
     env = [ "TOFU_PATH=${lib.getExe pkgs.opentofu}" ];
   };
 
+  contents = with pkgs; [ cacert ];
+
   tag = "latest";
 }

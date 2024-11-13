@@ -19,5 +19,7 @@ pkgs.dockerTools.buildLayeredImage {
     "${anyder}/lib/anyder/Anyder.dll"
   ];
 
+  contents = with pkgs; [ cacert ];
+
   tag = "latest";
 }
