@@ -14,7 +14,7 @@ pkgs.dockerTools.buildLayeredImage {
 
   inherit compressor;
 
-  config.Cmd = [
+  config.Entrypoint = [
     (pkgs.lib.getExe anyder.dotnet-runtime)
     "${anyder}/lib/anyder/Anyder.dll"
   ];

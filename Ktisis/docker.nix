@@ -17,7 +17,7 @@ pkgs.dockerTools.buildLayeredImage {
   inherit compressor;
 
   config = {
-    Cmd = [
+    Entrypoint = [
       (lib.getExe ktisis.dotnet-runtime)
       "${ktisis}/lib/ktisis/Ktisis.dll"
     ];
