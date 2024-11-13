@@ -7,9 +7,9 @@ class Program
 {
     static async Task Main(string[] args)
     {
-        var githubPrivateKeyPath =
-            Environment.GetEnvironmentVariable("GITHUB_PRIVATE_KEY_PATH")
-            ?? throw new InvalidOperationException("GITHUB_PRIVATE_KEY_PATH is null");
+        var githubPrivateKey =
+            Environment.GetEnvironmentVariable("GITHUB_PRIVATE_KEY")
+            ?? throw new InvalidOperationException("GITHUB_PRIVATE_KEY is null");
 
         var githubClientId =
             Environment.GetEnvironmentVariable("GITHUB_CLIENT_ID")
@@ -27,7 +27,7 @@ class Program
             Environment.GetEnvironmentVariable("GITHUB_INSTALLATION_ID")!
         );
 
-        var githubClient = new GitHubClient(githubPrivateKeyPath, githubClientId);
+        var githubClient = new GitHubClient(githubPrivateKey, githubClientId);
 
         var zipball = await githubClient.DownloadRepositoryArchiveZip(
             repo,

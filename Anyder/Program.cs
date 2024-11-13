@@ -11,15 +11,15 @@ public class Program
         "GITHUB_WEBHOOK_SECRET"
     );
 
-    private static readonly string GitHubPrivateKeyPath =
-        Environment.GetEnvironmentVariable("GITHUB_PRIVATE_KEY_PATH")
-        ?? throw new InvalidOperationException("GITHUB_PRIVATE_KEY_PATH is null");
+    private static readonly string GitHubPrivateKey =
+        Environment.GetEnvironmentVariable("GITHUB_PRIVATE_KEY")
+        ?? throw new InvalidOperationException("GITHUB_PRIVATE_KEY is null");
 
     private static readonly string GitHubClientId =
         Environment.GetEnvironmentVariable("GITHUB_CLIENT_ID")
         ?? throw new InvalidOperationException("GITHUB_CLIENT_ID is null");
 
-    public static readonly GitHubClient GitHubClient = new(GitHubPrivateKeyPath, GitHubClientId);
+    public static readonly GitHubClient GitHubClient = new(GitHubPrivateKey, GitHubClientId);
 
     public static void Main(string[] args)
     {

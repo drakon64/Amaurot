@@ -16,10 +16,10 @@ public class GitHubClient
     private readonly SigningCredentials _githubSigningCredentials;
     private readonly string _githubClientId;
 
-    public GitHubClient(string githubPrivateKeyPath, string githubClientId)
+    public GitHubClient(string githubPrivateKey, string githubClientId)
     {
         var rsa = RSA.Create();
-        rsa.ImportFromPem(File.ReadAllText(githubPrivateKeyPath));
+        rsa.ImportFromPem(githubPrivateKey);
 
         _githubSigningCredentials = new SigningCredentials(
             new RsaSecurityKey(rsa),
