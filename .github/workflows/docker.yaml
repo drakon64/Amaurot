@@ -24,3 +24,24 @@ jobs:
           authToken: ${{ secrets.CACHIX_AUTH_TOKEN }}
 
       - run: nix-build Anyder/docker.nix Ktisis/docker.nix
+        
+      - run: |
+          docker load < result
+          docker load < result-2
+          
+      - run: |
+          docker tag anyder:latest europe-west2-docker.pkg.dev/drakon64-akadaemia-anyder/amaurot/anyder:latest
+          docker tag ktisis:latest europe-west2-docker.pkg.dev/drakon64-akadaemia-anyder/amaurot/ktisis:latest
+
+      - uses: google-github-actions/auth@v2
+        with:
+          project_id: ${{ secrets.GOOGLE_PROJECT_ID }}
+          workload_identity_provider: ${{ secrets.GOOGLE_WORKLOAD_IDENTITY_PROVIDER }}
+          
+      - uses: google-github-actions/setup-gcloud@v2
+
+      - run: gcloud auth configure-docker europe-west2-docker.pkg.dev
+        
+      - run: |
+          docker push europe-west2-docker.pkg.dev/drakon64-akadaemia-anyder/amaurot/anyder:latest
+          docker push europe-west2-docker.pkg.dev/drakon64-akadaemia-anyder/amaurot/ktisis:latest
