@@ -4,11 +4,6 @@
 { fetchNuGet }:
 [
   (fetchNuGet {
-    pname = "CSharpier";
-    version = "0.29.2";
-    hash = "sha256-+Mrb7VGeKuMS4hEmejthFWuX5Ga299pbPScmFtSg644=";
-  })
-  (fetchNuGet {
     pname = "Macross.Json.Extensions";
     version = "3.0.0";
     hash = "sha256-nBoB4vY+R19jGPdnlN6hNmZjOeAEkOA1CS+DHLjZUJA=";

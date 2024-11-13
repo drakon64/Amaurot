@@ -4,11 +4,6 @@
 { fetchNuGet }:
 [
   (fetchNuGet {
-    pname = "CSharpier";
-    version = "0.29.2";
-    hash = "sha256-+Mrb7VGeKuMS4hEmejthFWuX5Ga299pbPScmFtSg644=";
-  })
-  (fetchNuGet {
     pname = "Microsoft.Bcl.TimeProvider";
     version = "8.0.1";
     hash = "sha256-TQRaWjk1aZu+jn/rR8oOv8BJEG31i6mPkf3BkIR7C+c=";
