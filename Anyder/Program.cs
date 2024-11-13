@@ -1,3 +1,4 @@
+using System.Net;
 using Anyder.EventProcessors;
 using Elpis.Clients;
 using Octokit.Webhooks;
@@ -24,6 +25,13 @@ public class Program
     public static void Main(string[] args)
     {
         var builder = WebApplication.CreateBuilder(args);
+        builder.WebHost.ConfigureKestrel(
+            (_, serverOptions) =>
+                serverOptions.Listen(
+                    IPAddress.Loopback,
+                    int.Parse(Environment.GetEnvironmentVariable("PORT")!)
+                )
+        );
         builder.Services.AddSingleton<WebhookEventProcessor, GitHubWebhookEventProcessor>();
 
         var app = builder.Build();
