@@ -7,10 +7,10 @@
 }:
 let
   fs = pkgs.lib.fileset;
-  sourceFiles = fs.intersection (fs.gitTracked ../../.) (
+  sourceFiles = fs.intersection (fs.gitTracked ../.) (
     fs.unions [
-      ../../Anyder/.
-      ../../Elpis/.
+      (fs.difference ../Anyder/. (fs.unions [ (fs.fileFilter (file: file.hasExt "nix") ../Anyder/.) ]))
+      ../Elpis/.
     ]
   );
 
@@ -23,7 +23,7 @@ pkgs.buildDotnetModule {
   src = fs.toSource {
     fileset = sourceFiles;
 
-    root = ../../.;
+    root = ../.;
   };
 
   projectFile = "Anyder/Anyder.csproj";

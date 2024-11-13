@@ -1,3 +1,3 @@
-Nix/Anyder/deps.nix linguist-generated=true
-Nix/Ktisis/deps.nix linguist-generated=true
-Nix/npins/* linguist-generated=true
+Anyder/deps.nix linguist-generated=true
+Ktisis/deps.nix linguist-generated=true
+npins/* linguist-generated=true

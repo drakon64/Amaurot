@@ -24,4 +24,3 @@ jobs:
           authToken: ${{ secrets.CACHIX_AUTH_TOKEN }}
 
       - run: nix-build Anyder/docker.nix Ktisis/docker.nix
-        working-directory: Nix
