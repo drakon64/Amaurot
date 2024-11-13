@@ -45,7 +45,7 @@ public sealed class GitHubWebhookEventProcessor : WebhookEventProcessor
             return;
         }
 
-        bool mergeable;
+        string? mergeCommitSha;
 
         while (true)
         {
@@ -61,11 +61,11 @@ public sealed class GitHubWebhookEventProcessor : WebhookEventProcessor
                 continue;
             }
 
-            mergeable = pullRequest.Mergeable.Value;
+            mergeCommitSha = pullRequest.MergeCommitSha;
             break;
         }
 
-        if (!mergeable)
+        if (mergeCommitSha is null)
         {
             return;
         }
