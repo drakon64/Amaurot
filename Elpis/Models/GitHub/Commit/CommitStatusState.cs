@@ -1,6 +1,6 @@
 namespace Elpis.Models.GitHub.Commit;
 
-public enum CreateCommitStatusState
+public enum CommitStatusState
 {
     Error,
     Failure,

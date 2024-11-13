@@ -1,3 +1,4 @@
+using Elpis.Models.GitHub.Commit;
 using Octokit.Webhooks;
 using Octokit.Webhooks.Events;
 using Octokit.Webhooks.Events.PullRequest;
@@ -72,6 +73,7 @@ public sealed class GitHubWebhookEventProcessor : WebhookEventProcessor
         await Program.GitHubClient.CreateCommitStatus(
             pullRequestEvent.Repository.FullName,
             pullRequestEvent.PullRequest.Head.Sha,
+            CommitStatusState.Pending,
             "Amaurot",
             pullRequestEvent.Installation.Id
         );

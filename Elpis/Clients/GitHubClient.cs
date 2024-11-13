@@ -137,6 +137,7 @@ public class GitHubClient
     public async Task CreateCommitStatus(
         string repo,
         string sha,
+        CommitStatusState state,
         string context,
         long installationId
     )
@@ -154,11 +155,7 @@ public class GitHubClient
                 },
                 RequestUri = new Uri($"{GitHubApiUri}repos/{repo}/statuses/{sha}"),
                 Content = JsonContent.Create(
-                    inputValue: new CreateCommitStatusRequest
-                    {
-                        State = CreateCommitStatusState.Pending,
-                        Context = context,
-                    },
+                    inputValue: new CreateCommitStatusRequest { State = state, Context = context },
                     options: new JsonSerializerOptions
                     {
                         Converters =
