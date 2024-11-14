@@ -70,13 +70,11 @@ public class GitHubClient
     private InstallationAccessToken _githubInstallationAccessToken =
         new() { Token = "", ExpiresAt = DateTime.Now };
 
-    private async Task<InstallationAccessToken> GetGitHubInstallationAccessToken(
-        string installationId
-    )
+    private async Task<string> GetGitHubInstallationAccessToken(string installationId)
     {
         // If the current installation access token expires in less than a minute, generate a new one
         if (_githubInstallationAccessToken.ExpiresAt.Subtract(DateTime.Now).Minutes >= 1)
-            return _githubInstallationAccessToken;
+            return _githubInstallationAccessToken.Token;
 
         await Console.Out.WriteLineAsync("Generating new GitHub installation access token");
 
@@ -95,7 +93,7 @@ public class GitHubClient
             await responseMessage.Content.ReadFromJsonAsync<InstallationAccessToken>()
         )!;
 
-        return _githubInstallationAccessToken;
+        return _githubInstallationAccessToken.Token;
     }
 
     public async Task<PullRequestsFile[]> ListPullRequestFiles(
@@ -107,7 +105,7 @@ public class GitHubClient
         var responseMessage = await HttpClient.SendAsync(
             new HttpRequestMessage
             {
-                Method = HttpMethod.Post,
+                Method = HttpMethod.Get,
                 Headers =
                 {
                     {
