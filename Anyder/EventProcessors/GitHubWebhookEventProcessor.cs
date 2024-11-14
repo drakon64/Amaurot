@@ -42,8 +42,16 @@ public sealed class GitHubWebhookEventProcessor : WebhookEventProcessor
 
         if (tfDirectories.Length == 0)
         {
+            await Console.Out.WriteLineAsync(
+                $"Pull request {pullRequestEvent.Repository.FullName}#{pullRequestEvent.Number} contains no OpenTofu configuration files"
+            );
+
             return;
         }
+
+        await Console.Out.WriteLineAsync(
+            $"Getting mergeability of pull request {pullRequestEvent.Repository.FullName}#{pullRequestEvent.Number}"
+        );
 
         string? mergeCommitSha;
 
@@ -67,8 +75,16 @@ public sealed class GitHubWebhookEventProcessor : WebhookEventProcessor
 
         if (mergeCommitSha is null)
         {
+            await Console.Out.WriteLineAsync(
+                $"Pull request {pullRequestEvent.Repository.FullName}#{pullRequestEvent.Number} is not mergeable"
+            );
+
             return;
         }
+
+        await Console.Out.WriteLineAsync(
+            $"Creating commit status for pull request {pullRequestEvent.Repository.FullName}#{pullRequestEvent.Number} commit {pullRequestEvent.PullRequest.Head.Sha}"
+        );
 
         await Program.GitHubClient.CreateCommitStatus(
             pullRequestEvent.Repository.FullName,
