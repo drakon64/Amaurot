@@ -67,8 +67,19 @@ public class GitHubClient
 
     private const string GitHubApiUri = "https://api.github.com/";
 
-    private async Task<string> GenerateGitHubInstallationAccessToken(string installationId)
+    private InstallationAccessToken _githubInstallationAccessToken =
+        new() { Token = "", ExpiresAt = DateTime.Now };
+
+    private async Task<InstallationAccessToken> GetGitHubInstallationAccessToken(
+        string installationId
+    )
     {
+        // If the current installation access token expires in less than a minute, generate a new one
+        if (_githubInstallationAccessToken.ExpiresAt.Subtract(DateTime.Now).Minutes >= 1)
+            return _githubInstallationAccessToken;
+
+        await Console.Out.WriteLineAsync("Generating new GitHub installation access token");
+
         var responseMessage = await HttpClient.SendAsync(
             new HttpRequestMessage
             {
@@ -80,10 +91,11 @@ public class GitHubClient
             }
         );
 
-        var installationAccessToken =
-            await responseMessage.Content.ReadFromJsonAsync<InstallationAccessToken>();
+        _githubInstallationAccessToken = (
+            await responseMessage.Content.ReadFromJsonAsync<InstallationAccessToken>()
+        )!;
 
-        return installationAccessToken!.Token;
+        return _githubInstallationAccessToken;
     }
 
     public async Task<PullRequestsFile[]> ListPullRequestFiles(
@@ -100,7 +112,7 @@ public class GitHubClient
                 {
                     {
                         "Authorization",
-                        $"Bearer {await GenerateGitHubInstallationAccessToken(installationId.ToString())}"
+                        $"Bearer {await GetGitHubInstallationAccessToken(installationId.ToString())}"
                     },
                 },
                 RequestUri = new Uri($"{GitHubApiUri}repos/{repo}/pulls/{pullRequest}/files"),
@@ -124,7 +136,7 @@ public class GitHubClient
                 {
                     {
                         "Authorization",
-                        $"Bearer {await GenerateGitHubInstallationAccessToken(installationId.ToString())}"
+                        $"Bearer {await GetGitHubInstallationAccessToken(installationId.ToString())}"
                     },
                 },
                 RequestUri = new Uri($"{GitHubApiUri}repos/{repo}/pulls/{pullRequest}"),
@@ -150,7 +162,7 @@ public class GitHubClient
                 {
                     {
                         "Authorization",
-                        $"Bearer {await GenerateGitHubInstallationAccessToken(installationId.ToString())}"
+                        $"Bearer {await GetGitHubInstallationAccessToken(installationId.ToString())}"
                     },
                 },
                 RequestUri = new Uri($"{GitHubApiUri}repos/{repo}/statuses/{sha}"),
@@ -183,7 +195,7 @@ public class GitHubClient
                 {
                     {
                         "Authorization",
-                        $"Bearer {await GenerateGitHubInstallationAccessToken(installationId.ToString())}"
+                        $"Bearer {await GetGitHubInstallationAccessToken(installationId.ToString())}"
                     },
                 },
                 RequestUri = new Uri($"{GitHubApiUri}repos/{repo}/zipball/{sha}"),
