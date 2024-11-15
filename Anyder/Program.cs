@@ -35,7 +35,10 @@ public class Program
         builder.Services.AddSingleton<WebhookEventProcessor, GitHubWebhookEventProcessor>();
 
         var app = builder.Build();
+
         app.MapGitHubWebhooks(secret: GitHubWebhookSecret);
+        app.MapGet("/healthcheck", () => Results.Ok());
+
         app.Run();
     }
 }
