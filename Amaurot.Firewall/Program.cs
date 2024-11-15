@@ -1,7 +1,15 @@
 using System.Net.Http.Json;
 using Amaurot.Firewall.Models;
+using Google.Cloud.Compute.V1;
 
-var ips = await new HttpClient
+var firewall =
+    Environment.GetEnvironmentVariable("FIREWALL")
+    ?? throw new InvalidOperationException("FIREWALL is null");
+var project =
+    Environment.GetEnvironmentVariable("PROJECT")
+    ?? throw new InvalidOperationException("PROJECT is null");
+
+var gitHubMetaInformation = await new HttpClient
 {
     DefaultRequestHeaders =
     {
@@ -11,7 +19,35 @@ var ips = await new HttpClient
     },
 }.GetFromJsonAsync<GitHubMetaInformation>("https://api.github.com/meta");
 
-foreach (var ip in ips!.Hooks)
-{
-    await Console.Out.WriteLineAsync(ip);
-}
+// Remove IPv6 addresses
+var ips = gitHubMetaInformation!.Hooks.Where(ip => !ip.Contains(':')).ToArray();
+
+var firewallsClient = await FirewallsClient.CreateAsync();
+
+var oldIps = await firewallsClient.GetAsync(
+    new GetFirewallRequest { Firewall = firewall, Project = project }
+);
+
+await firewallsClient.PatchAsync(
+    new PatchFirewallRequest
+    {
+        Firewall = firewall,
+        FirewallResource = new Firewall
+        {
+            Allowed =
+            {
+                new Allowed { IPProtocol = "tcp", Ports = { "443" } },
+            },
+            Direction = "INGRESS",
+            SourceRanges = { ips },
+        },
+        Project = project,
+    }
+);
+
+await Console.Out.WriteLineAsync(
+    $"""
+    Old IP ranges: {string.Join(", ", oldIps.SourceRanges)}
+    New IP ranges: {string.Join(", ", ips)}
+    """
+);
