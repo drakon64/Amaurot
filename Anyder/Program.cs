@@ -1,4 +1,3 @@
-using System.Net;
 using Anyder.EventProcessors;
 using Elpis.Clients;
 using Octokit.Webhooks;
@@ -25,13 +24,6 @@ public class Program
     public static void Main(string[] args)
     {
         var builder = WebApplication.CreateBuilder(args);
-        builder.WebHost.ConfigureKestrel(
-            (_, serverOptions) =>
-                serverOptions.Listen(
-                    IPAddress.Loopback,
-                    int.Parse(Environment.GetEnvironmentVariable("PORT") ?? "5000")
-                )
-        );
         builder.Services.AddSingleton<WebhookEventProcessor, GitHubWebhookEventProcessor>();
 
         var app = builder.Build();
@@ -39,6 +31,6 @@ public class Program
         app.MapGitHubWebhooks(secret: GitHubWebhookSecret);
         app.MapGet("/healthcheck", () => Results.Ok());
 
-        app.Run();
+        app.Run($"http://*:{Environment.GetEnvironmentVariable("PORT") ?? "5000"}");
     }
 }
