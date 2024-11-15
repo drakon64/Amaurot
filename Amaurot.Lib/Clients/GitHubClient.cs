@@ -35,7 +35,7 @@ public class GitHubClient
     private string GenerateJwtSecurityToken()
     {
         var now = DateTime.UtcNow;
-        var expires = now.AddMinutes(1);
+        var expires = now.AddSeconds(100);
 
         var jwt = new JwtSecurityToken(
             issuer: _githubClientId,
