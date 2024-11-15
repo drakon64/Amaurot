@@ -9,15 +9,15 @@ let
   fs = pkgs.lib.fileset;
   sourceFiles = fs.intersection (fs.gitTracked ../.) (
     fs.unions [
-      (fs.difference ../Anyder/. (fs.unions [ (fs.fileFilter (file: file.hasExt "nix") ../Anyder/.) ]))
-      ../Elpis/.
+      (fs.difference ../Amaurot.Receiver/. (fs.unions [ (fs.fileFilter (file: file.hasExt "nix") ../Amaurot.Receiver/.) ]))
+      ../Amaurot.Lib/.
     ]
   );
 
   dotnetCorePackages = pkgs.dotnetCorePackages;
 in
 pkgs.buildDotnetModule {
-  pname = "anyder";
+  pname = "amaurot-receiver";
   version = "0.0.1";
 
   src = fs.toSource {
@@ -26,7 +26,7 @@ pkgs.buildDotnetModule {
     root = ../.;
   };
 
-  projectFile = "Anyder/Anyder.csproj";
+  projectFile = "Amaurot.Receiver/Amaurot.Receiver.csproj";
   nugetDeps = ./deps.nix;
 
   dotnet-sdk = dotnetCorePackages.sdk_9_0;

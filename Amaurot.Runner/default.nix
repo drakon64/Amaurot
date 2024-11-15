@@ -9,15 +9,15 @@ let
   fs = pkgs.lib.fileset;
   sourceFiles = fs.intersection (fs.gitTracked ../.) (
     fs.unions [
-      (fs.difference ../Ktisis/. (fs.unions [ (fs.fileFilter (file: file.hasExt "nix") ../Ktisis/.) ]))
-      ../Elpis/.
+      (fs.difference ../Amaurot.Runner/. (fs.unions [ (fs.fileFilter (file: file.hasExt "nix") ../Amaurot.Runner/.) ]))
+      ../Amaurot.Lib/.
     ]
   );
 
   dotnetCorePackages = pkgs.dotnetCorePackages;
 in
 pkgs.buildDotnetModule {
-  pname = "ktisis";
+  pname = "amaurot-runner";
   version = "0.0.1";
 
   src = fs.toSource {
@@ -26,7 +26,7 @@ pkgs.buildDotnetModule {
     root = ../.;
   };
 
-  projectFile = "Ktisis/Ktisis.csproj";
+  projectFile = "Amaurot.Runner/Amaurot.Runner.csproj";
   nugetDeps = ./deps.nix;
 
   dotnet-sdk = dotnetCorePackages.sdk_9_0;

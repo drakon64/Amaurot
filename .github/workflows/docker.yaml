@@ -30,15 +30,15 @@ jobs:
           name: drakon64-amaurot
           authToken: ${{ secrets.CACHIX_AUTH_TOKEN }}
 
-      - run: nix-build Anyder/docker.nix Ktisis/docker.nix
+      - run: nix-build Amaurot.Receiver/docker.nix Amaurot.Runner/docker.nix
         
       - run: |
           docker load < result
           docker load < result-2
           
       - run: |
-          docker tag anyder:latest europe-west2-docker.pkg.dev/drakon64-akadaemia-anyder/amaurot/anyder:latest
-          docker tag ktisis:latest europe-west2-docker.pkg.dev/drakon64-akadaemia-anyder/amaurot/ktisis:latest
+          docker tag amaurot-receiver:latest europe-west2-docker.pkg.dev/drakon64-akadaemia-anyder/amaurot/amaurot-receiver:latest
+          docker tag amaurot-runner:latest europe-west2-docker.pkg.dev/drakon64-akadaemia-anyder/amaurot/amaurot-runner:latest
 
       - uses: google-github-actions/auth@v2
         with:
@@ -50,5 +50,5 @@ jobs:
       - run: gcloud auth configure-docker europe-west2-docker.pkg.dev
         
       - run: |
-          docker push europe-west2-docker.pkg.dev/drakon64-akadaemia-anyder/amaurot/anyder:latest
-          docker push europe-west2-docker.pkg.dev/drakon64-akadaemia-anyder/amaurot/ktisis:latest
+          docker push europe-west2-docker.pkg.dev/drakon64-akadaemia-anyder/amaurot/amaurot-receiver:latest
+          docker push europe-west2-docker.pkg.dev/drakon64-akadaemia-anyder/amaurot/amaurot-runner:latest

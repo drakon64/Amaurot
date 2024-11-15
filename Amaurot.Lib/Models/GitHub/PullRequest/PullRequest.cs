@@ -1,6 +1,6 @@
 using System.Text.Json.Serialization;
 
-namespace Elpis.Models.GitHub.PullRequest;
+namespace Amaurot.Lib.Models.GitHub.PullRequest;
 
 public class PullRequest
 {

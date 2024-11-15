@@ -4,12 +4,12 @@ using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using Elpis.Models.GitHub;
-using Elpis.Models.GitHub.Commit;
-using Elpis.Models.GitHub.PullRequest;
+using Amaurot.Lib.Models.GitHub;
+using Amaurot.Lib.Models.GitHub.Commit;
+using Amaurot.Lib.Models.GitHub.PullRequest;
 using Microsoft.IdentityModel.Tokens;
 
-namespace Elpis.Clients;
+namespace Amaurot.Lib.Clients;
 
 public class GitHubClient
 {

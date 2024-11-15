@@ -1,9 +1,9 @@
-using Anyder.EventProcessors;
-using Elpis.Clients;
+using Amaurot.Receiver.EventProcessors;
+using Amaurot.Lib.Clients;
 using Octokit.Webhooks;
 using Octokit.Webhooks.AspNetCore;
 
-namespace Anyder;
+namespace Amaurot.Receiver;
 
 public class Program
 {

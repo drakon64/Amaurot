@@ -1,5 +1,5 @@
 using System.IO.Compression;
-using Elpis.Clients;
+using Amaurot.Lib.Clients;
 
 var githubPrivateKey =
     Environment.GetEnvironmentVariable("GITHUB_PRIVATE_KEY")

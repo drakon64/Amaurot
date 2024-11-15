@@ -1,4 +1,4 @@
-namespace Elpis.Models.GitHub.Commit;
+namespace Amaurot.Lib.Models.GitHub.Commit;
 
 public class CreateCommitStatusRequest
 {

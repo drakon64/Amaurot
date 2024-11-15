@@ -2,11 +2,11 @@
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Anyder", "Anyder\Anyder.csproj", "{9A9F0772-03EF-4153-A8C6-0AAFFE244782}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Amaurot.Receiver", "Amaurot.Receiver\Amaurot.Receiver.csproj", "{9A9F0772-03EF-4153-A8C6-0AAFFE244782}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Elpis", "Elpis\Elpis.csproj", "{97264829-EBD0-42FF-AC34-EFB284D39E2D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Amaurot.Lib", "Amaurot.Lib\Amaurot.Lib.csproj", "{97264829-EBD0-42FF-AC34-EFB284D39E2D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ktisis", "Ktisis\Ktisis.csproj", "{11832294-5389-494F-8C5B-FD53ECEA46AA}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Amaurot.Runner", "Amaurot.Runner\Amaurot.Runner.csproj", "{11832294-5389-494F-8C5B-FD53ECEA46AA}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

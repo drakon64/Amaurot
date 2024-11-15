@@ -1,9 +1,9 @@
-using Elpis.Models.GitHub.Commit;
+using Amaurot.Lib.Models.GitHub.Commit;
 using Octokit.Webhooks;
 using Octokit.Webhooks.Events;
 using Octokit.Webhooks.Events.PullRequest;
 
-namespace Anyder.EventProcessors;
+namespace Amaurot.Receiver.EventProcessors;
 
 public sealed class GitHubWebhookEventProcessor : WebhookEventProcessor
 {

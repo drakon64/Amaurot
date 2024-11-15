@@ -1,6 +1,6 @@
 using System.Text.Json.Serialization;
 
-namespace Elpis.Models.GitHub;
+namespace Amaurot.Lib.Models.GitHub;
 
 public class InstallationAccessToken
 {

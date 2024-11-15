@@ -9,17 +9,17 @@
 let
   lib = pkgs.lib;
 
-  ktisis = pkgs.callPackage ./. { };
+  runner = pkgs.callPackage ./. { };
 in
 pkgs.dockerTools.buildLayeredImage {
-  name = "ktisis";
+  name = "amaurot-runner";
 
   inherit compressor;
 
   config = {
     Entrypoint = [
-      (lib.getExe ktisis.dotnet-runtime)
-      "${ktisis}/lib/ktisis/Ktisis.dll"
+      (lib.getExe runner.dotnet-runtime)
+      "${runner}/lib/runner/Runner.dll"
     ];
 
     env = [ "TOFU_PATH=${lib.getExe pkgs.opentofu}" ];

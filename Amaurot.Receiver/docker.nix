@@ -7,16 +7,16 @@
   compressor ? "none",
 }:
 let
-  anyder = pkgs.callPackage ./. { };
+  receiver = pkgs.callPackage ./. { };
 in
 pkgs.dockerTools.buildLayeredImage {
-  name = "anyder";
+  name = "amaurot-receiver";
 
   inherit compressor;
 
   config.Entrypoint = [
-    (pkgs.lib.getExe anyder.dotnet-runtime)
-    "${anyder}/lib/anyder/Anyder.dll"
+    (pkgs.lib.getExe receiver.dotnet-runtime)
+    "${receiver}/lib/receiver/Receiver.dll"
   ];
 
   contents = with pkgs; [ cacert ];
