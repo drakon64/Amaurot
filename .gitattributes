@@ -1,3 +1,4 @@
+Amaurot.Firewall/deps.nix linguist-generated=true
 Amaurot.Receiver/deps.nix linguist-generated=true
 Amaurot.Runner/deps.nix linguist-generated=true
 npins/* linguist-generated=true
