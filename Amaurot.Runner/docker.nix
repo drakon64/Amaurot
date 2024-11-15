@@ -19,7 +19,7 @@ pkgs.dockerTools.buildLayeredImage {
   config = {
     Entrypoint = [
       (lib.getExe runner.dotnet-runtime)
-      "${runner}/lib/runner/Runner.dll"
+      "${runner}/lib/amaurot-runner/Amaurot.Runner.dll"
     ];
 
     env = [ "TOFU_PATH=${lib.getExe pkgs.opentofu}" ];

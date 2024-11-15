@@ -16,7 +16,7 @@ pkgs.dockerTools.buildLayeredImage {
 
   config.Entrypoint = [
     (pkgs.lib.getExe receiver.dotnet-runtime)
-    "${receiver}/lib/receiver/Receiver.dll"
+    "${receiver}/lib/amaurot-receiver/Amaurot.Receiver.dll"
   ];
 
   contents = with pkgs; [ cacert ];
