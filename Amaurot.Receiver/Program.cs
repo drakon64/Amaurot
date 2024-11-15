@@ -1,5 +1,5 @@
-using Amaurot.Receiver.EventProcessors;
 using Amaurot.Lib.Clients;
+using Amaurot.Receiver.EventProcessors;
 using Octokit.Webhooks;
 using Octokit.Webhooks.AspNetCore;
 
