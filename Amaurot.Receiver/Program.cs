@@ -7,10 +7,6 @@ namespace Amaurot.Receiver;
 
 public class Program
 {
-    private static readonly string? GitHubWebhookSecret = Environment.GetEnvironmentVariable(
-        "GITHUB_WEBHOOK_SECRET"
-    );
-
     private static readonly string GitHubPrivateKey =
         Environment.GetEnvironmentVariable("GITHUB_PRIVATE_KEY")
         ?? throw new InvalidOperationException("GITHUB_PRIVATE_KEY is null");
@@ -28,7 +24,7 @@ public class Program
 
         var app = builder.Build();
 
-        app.MapGitHubWebhooks(secret: GitHubWebhookSecret);
+        app.MapGitHubWebhooks(secret: Environment.GetEnvironmentVariable("GITHUB_WEBHOOK_SECRET"));
         app.MapGet("/healthcheck", () => Results.Ok());
 
         app.Run($"http://*:{Environment.GetEnvironmentVariable("PORT") ?? "5000"}");
