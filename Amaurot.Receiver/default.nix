@@ -9,9 +9,7 @@ let
   fs = pkgs.lib.fileset;
   sourceFiles = fs.intersection (fs.gitTracked ../.) (
     fs.unions [
-      (fs.difference ../Amaurot.Receiver/. (
-        fs.unions [ (fs.fileFilter (file: file.hasExt "nix") ../Amaurot.Receiver/.) ]
-      ))
+      (fs.difference ./. (fs.unions [ (fs.fileFilter (file: file.hasExt "nix") ./.) ]))
       ../Amaurot.Lib/.
     ]
   );
