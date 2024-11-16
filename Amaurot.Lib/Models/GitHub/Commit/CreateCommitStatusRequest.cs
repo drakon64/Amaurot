@@ -1,5 +1,3 @@
-using System.Text.Json.Serialization;
-
 namespace Amaurot.Lib.Models.GitHub.Commit;
 
 public class CreateCommitStatusRequest
@@ -9,6 +7,3 @@ public class CreateCommitStatusRequest
     public string? Description { get; init; }
     public required string Context { get; init; }
 }
-
-[JsonSerializable(typeof(CreateCommitStatusRequest))]
-internal partial class CreateCommitStatusRequestContext : JsonSerializerContext;

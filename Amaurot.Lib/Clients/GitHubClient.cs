@@ -2,8 +2,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Net.Http.Json;
 using System.Security.Claims;
 using System.Security.Cryptography;
-using System.Text.Json;
-using System.Text.Json.Serialization;
+using Amaurot.Lib.Models;
 using Amaurot.Lib.Models.GitHub;
 using Amaurot.Lib.Models.GitHub.Commit;
 using Amaurot.Lib.Models.GitHub.PullRequest;
@@ -91,7 +90,7 @@ public class GitHubClient
 
         _githubInstallationAccessToken = (
             await responseMessage.Content.ReadFromJsonAsync<InstallationAccessToken>(
-                InstallationAccessTokenContext.Default.InstallationAccessToken
+                AmaurotSerializerContext.Default.InstallationAccessToken
             )
         )!;
 
@@ -144,7 +143,7 @@ public class GitHubClient
         );
 
         return await responseMessage.Content.ReadFromJsonAsync<PullRequest>(
-            PullRequestContext.Default.PullRequest
+            AmaurotSerializerContext.Default.PullRequest
         );
     }
 
@@ -170,15 +169,7 @@ public class GitHubClient
                 RequestUri = new Uri($"{GitHubApiUri}repos/{repo}/statuses/{sha}"),
                 Content = JsonContent.Create(
                     inputValue: new CreateCommitStatusRequest { State = state, Context = context },
-                    options: new JsonSerializerOptions
-                    {
-                        Converters =
-                        {
-                            new JsonStringEnumConverter(JsonNamingPolicy.SnakeCaseLower),
-                        },
-                        PropertyNamingPolicy = JsonNamingPolicy.SnakeCaseLower,
-                        TypeInfoResolver = CreateCommitStatusRequestContext.Default,
-                    }
+                    jsonTypeInfo: AmaurotSerializerContext.Default.CreateCommitStatusRequest
                 ),
             }
         );

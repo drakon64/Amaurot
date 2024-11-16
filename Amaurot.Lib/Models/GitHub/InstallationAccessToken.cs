@@ -1,14 +1,7 @@
-using System.Text.Json.Serialization;
-
 namespace Amaurot.Lib.Models.GitHub;
 
 public class InstallationAccessToken
 {
     public required string Token { get; init; }
-
-    [JsonPropertyName("expires_at")]
     public required DateTime ExpiresAt { get; init; }
 }
-
-[JsonSerializable(typeof(InstallationAccessToken))]
-internal partial class InstallationAccessTokenContext : JsonSerializerContext;
