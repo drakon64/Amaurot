@@ -7,7 +7,7 @@ namespace Amaurot.Lib.Models;
 
 [JsonSerializable(typeof(CreateCommitStatusRequest))]
 [JsonSerializable(typeof(PullRequest))]
-[JsonSerializable(typeof(PullRequestsFile))]
+[JsonSerializable(typeof(PullRequestFile[]))]
 [JsonSerializable(typeof(InstallationAccessToken))]
 [JsonSourceGenerationOptions(
     PropertyNamingPolicy = JsonKnownNamingPolicy.SnakeCaseLower,

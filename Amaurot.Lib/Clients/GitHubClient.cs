@@ -97,7 +97,7 @@ public class GitHubClient
         return _githubInstallationAccessToken.Token;
     }
 
-    public async Task<PullRequestsFile[]> ListPullRequestFiles(
+    public async Task<PullRequestFile[]> ListPullRequestFiles(
         string repo,
         long pullRequest,
         long installationId
@@ -118,7 +118,11 @@ public class GitHubClient
             }
         );
 
-        return (await responseMessage.Content.ReadFromJsonAsync<PullRequestsFile[]>())!;
+        return (
+            await responseMessage.Content.ReadFromJsonAsync<PullRequestFile[]>(
+                AmaurotSerializerContext.Default.PullRequestFileArray
+            )
+        )!;
     }
 
     public async Task<PullRequest?> GetPullRequest(
