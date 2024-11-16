@@ -90,7 +90,9 @@ public class GitHubClient
         );
 
         _githubInstallationAccessToken = (
-            await responseMessage.Content.ReadFromJsonAsync<InstallationAccessToken>()
+            await responseMessage.Content.ReadFromJsonAsync<InstallationAccessToken>(
+                InstallationAccessTokenContext.Default.InstallationAccessToken
+            )
         )!;
 
         return _githubInstallationAccessToken.Token;
@@ -141,7 +143,9 @@ public class GitHubClient
             }
         );
 
-        return await responseMessage.Content.ReadFromJsonAsync<PullRequest>();
+        return await responseMessage.Content.ReadFromJsonAsync<PullRequest>(
+            PullRequestContext.Default.PullRequest
+        );
     }
 
     public async Task CreateCommitStatus(
@@ -173,6 +177,7 @@ public class GitHubClient
                             new JsonStringEnumConverter(JsonNamingPolicy.SnakeCaseLower),
                         },
                         PropertyNamingPolicy = JsonNamingPolicy.SnakeCaseLower,
+                        TypeInfoResolver = CreateCommitStatusRequestContext.Default,
                     }
                 ),
             }

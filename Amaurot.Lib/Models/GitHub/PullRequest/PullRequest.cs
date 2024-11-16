@@ -9,3 +9,6 @@ public class PullRequest
     [JsonPropertyName("merge_commit_sha")]
     public string? MergeCommitSha { get; init; }
 }
+
+[JsonSerializable(typeof(PullRequest))]
+internal partial class PullRequestContext : JsonSerializerContext;
