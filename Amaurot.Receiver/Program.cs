@@ -1,5 +1,6 @@
 using Amaurot.Lib.Clients;
 using Amaurot.Receiver.EventProcessors;
+using Google.Cloud.Run.V2;
 using Octokit.Webhooks;
 using Octokit.Webhooks.AspNetCore;
 
@@ -16,6 +17,8 @@ public class Program
         ?? throw new InvalidOperationException("GITHUB_CLIENT_ID is null");
 
     public static readonly GitHubClient GitHubClient = new(GitHubPrivateKey, GitHubClientId);
+
+    public static readonly JobsClient CloudRunClient = JobsClient.Create();
 
     public static void Main(string[] args)
     {
