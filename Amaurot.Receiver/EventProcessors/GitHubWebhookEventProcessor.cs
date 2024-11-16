@@ -1,7 +1,9 @@
 using Amaurot.Lib.Models.GitHub.Commit;
+using Google.Cloud.Run.V2;
 using Octokit.Webhooks;
 using Octokit.Webhooks.Events;
 using Octokit.Webhooks.Events.PullRequest;
+using Task = System.Threading.Tasks.Task;
 
 namespace Amaurot.Receiver.EventProcessors;
 
@@ -92,6 +94,40 @@ public sealed class GitHubWebhookEventProcessor : WebhookEventProcessor
             CommitStatusState.Pending,
             "Amaurot",
             pullRequestEvent.Installation.Id
+        );
+
+        await Console.Out.WriteLineAsync(
+            $"Running OpenTofu plan for pull request {pullRequestEvent.Repository.FullName}#{pullRequestEvent.Number} commit {pullRequestEvent.PullRequest.Head.Sha}"
+        );
+
+        await Program.CloudRunClient.RunJobAsync(
+            new RunJobRequest
+            {
+                Name = "projects/drakon64-akadaemia-anyder/locations/europe-west2/jobs/ktisis",
+                Overrides = new RunJobRequest.Types.Overrides
+                {
+                    ContainerOverrides =
+                    {
+                        new RunJobRequest.Types.Overrides.Types.ContainerOverride
+                        {
+                            Env =
+                            {
+                                new EnvVar
+                                {
+                                    Name = "GITHUB_REPOSITORY",
+                                    Value = pullRequestEvent.Repository.FullName,
+                                },
+                                new EnvVar { Name = "GITHUB_REF", Value = mergeCommitSha },
+                                new EnvVar
+                                {
+                                    Name = "GITHUB_INSTALLATION_ID",
+                                    Value = pullRequestEvent.Installation!.Id.ToString(),
+                                },
+                            },
+                        },
+                    },
+                },
+            }
         );
     }
 }
