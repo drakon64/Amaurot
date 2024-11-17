@@ -12,14 +12,14 @@ let
   runner = pkgs.callPackage ./. { };
 in
 pkgs.dockerTools.buildLayeredImage {
-  name = "amaurot-runner";
+  name = "amaurot-processor";
 
   inherit compressor;
 
   config = {
     Entrypoint = [
       (lib.getExe runner.dotnet-runtime)
-      "${runner}/lib/amaurot-runner/Amaurot.Runner.dll"
+      "${runner}/lib/amaurot-processor/Amaurot.Processor.dll"
     ];
 
     env = [ "TOFU_PATH=${lib.getExe pkgs.opentofu}" ];

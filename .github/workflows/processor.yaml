@@ -1,17 +1,17 @@
-name: Runner
+name: Processor
 on:
   push:
     branches:
       - main
     paths:
-      - Amaurot.Runner/**
+      - Amaurot.Processor/**
       - Amaurot.Lib/**
 
   pull_request:
     branches:
       - main
     paths:
-      - Amaurot.Runner/**
+      - Amaurot.Processor/**
       - Amaurot.Lib/**
 
   workflow_dispatch:
@@ -36,11 +36,11 @@ jobs:
           name: drakon64-amaurot
           authToken: ${{ secrets.CACHIX_AUTH_TOKEN }}
 
-      - run: nix-build Amaurot.Runner/docker.nix
+      - run: nix-build Amaurot.Processor/docker.nix
 
       - run: docker load < result
 
-      - run: docker tag amaurot-runner:latest europe-west2-docker.pkg.dev/drakon64-akadaemia-anyder/amaurot/amaurot-runner:latest
+      - run: docker tag amaurot-processor:latest europe-west2-docker.pkg.dev/drakon64-akadaemia-anyder/amaurot/amaurot-processor:latest
 
       - uses: google-github-actions/auth@v2
         with:
@@ -51,4 +51,4 @@ jobs:
 
       - run: gcloud auth configure-docker europe-west2-docker.pkg.dev
 
-      - run: docker push europe-west2-docker.pkg.dev/drakon64-akadaemia-anyder/amaurot/amaurot-runner:latest
+      - run: docker push europe-west2-docker.pkg.dev/drakon64-akadaemia-anyder/amaurot/amaurot-processor:latest

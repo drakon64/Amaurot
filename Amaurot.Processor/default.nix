@@ -17,7 +17,7 @@ let
   dotnetCorePackages = pkgs.dotnetCorePackages;
 in
 pkgs.buildDotnetModule {
-  pname = "amaurot-runner";
+  pname = "amaurot-processor";
   version = "0.0.1";
 
   src = fs.toSource {
@@ -26,7 +26,7 @@ pkgs.buildDotnetModule {
     root = ../.;
   };
 
-  projectFile = "Amaurot.Runner/Amaurot.Runner.csproj";
+  projectFile = "Amaurot.Processor/Amaurot.Processor.csproj";
   nugetDeps = ./deps.nix;
 
   dotnet-sdk = dotnetCorePackages.sdk_9_0;
