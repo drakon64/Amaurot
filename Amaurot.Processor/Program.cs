@@ -154,7 +154,8 @@ app.MapPost(
             foreach (var executionOutput in directory.Value)
             {
                 comment += $"""
-                <details><summary>`{executionOutput.ExecutionType.ToString()}`:</summary>
+                <details><summary>{executionOutput.ExecutionType.ToString()}:</summary>
+
                 ```
                 {executionOutput.ExecutionStdout}
                 ```
