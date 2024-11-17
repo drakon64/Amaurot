@@ -133,13 +133,14 @@ public class Program
                     }
 
                     var tofu = Environment.GetEnvironmentVariable("TOFU_PATH");
+                    const string tofuArguments = "-input=false -no-color";
                     string? state = null; // TODO: https://github.com/dotnet/runtime/issues/92828
 
                     var init = Process.Start(
                         new ProcessStartInfo
                         {
                             FileName = tofu,
-                            Arguments = "init -input=false",
+                            Arguments = $"init {tofuArguments}",
                             WorkingDirectory = directory,
                             RedirectStandardOutput = true,
                         }
@@ -153,10 +154,29 @@ public class Program
                     {
                         state = "failure"; // TODO: https://github.com/dotnet/runtime/issues/92828
                     }
-                    
+
+                    var plan = Process.Start(
+                        new ProcessStartInfo
+                        {
+                            FileName = tofu,
+                            Arguments = $"plan {tofuArguments}",
+                            WorkingDirectory = directory,
+                            RedirectStandardOutput = true,
+                        }
+                    );
+
+                    await plan!.WaitForExitAsync();
+
+                    var planStdout = await plan.StandardOutput.ReadToEndAsync();
+
+                    if (plan.ExitCode != 0)
+                    {
+                        state = "failure"; // TODO: https://github.com/dotnet/runtime/issues/92828
+                    }
+
                     await TofuClient.CreateTofuStatusComment(
                         initStdout,
-                        null,
+                        planStdout,
                         null,
                         state,
                         repositoryFullName,
