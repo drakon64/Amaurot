@@ -1,18 +1,18 @@
-name: Receiver
+name: Amaurot
 on:
   push:
     branches:
      - main
     paths:
+      - Amaurot.Processor/**
       - Amaurot.Receiver/**
-      - Amaurot.Lib/**
 
   pull_request:
     branches:
      - main
     paths:
+      - Amaurot.Processor/**
       - Amaurot.Receiver/**
-      - Amaurot.Lib/**
 
   workflow_dispatch:
 
@@ -36,11 +36,15 @@ jobs:
           name: drakon64-amaurot
           authToken: ${{ secrets.CACHIX_AUTH_TOKEN }}
 
-      - run: nix-build Amaurot.Receiver/docker.nix
+      - run: nix-build Amaurot.Processor/docker.nix Amaurot.Receiver/docker.nix
         
-      - run: docker load < result
+      - run: |
+          docker load < result
+          docker load < result-2
           
-      - run: docker tag amaurot-receiver:latest europe-west2-docker.pkg.dev/drakon64-akadaemia-anyder/amaurot/amaurot-receiver:latest
+      - run: |
+          docker tag amaurot-processor:latest europe-west2-docker.pkg.dev/drakon64-akadaemia-anyder/amaurot/amaurot-processor:latest
+          docker tag amaurot-receiver:latest europe-west2-docker.pkg.dev/drakon64-akadaemia-anyder/amaurot/amaurot-receiver:latest
 
       - uses: google-github-actions/auth@v2
         with:
@@ -51,4 +55,6 @@ jobs:
 
       - run: gcloud auth configure-docker europe-west2-docker.pkg.dev
         
-      - run: docker push europe-west2-docker.pkg.dev/drakon64-akadaemia-anyder/amaurot/amaurot-receiver:latest
+      - run: |
+          docker push europe-west2-docker.pkg.dev/drakon64-akadaemia-anyder/amaurot/amaurot-processor:latest
+          docker push europe-west2-docker.pkg.dev/drakon64-akadaemia-anyder/amaurot/amaurot-receiver:latest
