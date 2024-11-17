@@ -123,15 +123,6 @@ public class Program
                     var directory =
                         $"{tempDirectory.FullName}/{taskRequestBody.RepositoryOwner}-{taskRequestBody.RepositoryName}-{taskRequestBody.Sha}/{tfDirectory}";
 
-                    var files =
-                        from file in new DirectoryInfo(directory).EnumerateFiles()
-                        select file.Name;
-
-                    foreach (var file in files)
-                    {
-                        await Console.Out.WriteLineAsync($"{directory}/{file}");
-                    }
-
                     var tofu = Environment.GetEnvironmentVariable("TOFU_PATH");
                     const string tofuArguments = "-input=false -no-color";
                     string? state = null; // TODO: https://github.com/dotnet/runtime/issues/92828
