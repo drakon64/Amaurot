@@ -150,7 +150,7 @@ public class GitHubClient
     public async Task CreateCommitStatus(
         string repo,
         string sha,
-        CommitStatusState state,
+        string state, // https://github.com/dotnet/runtime/issues/92828
         string context,
         long installationId
     )
@@ -178,14 +178,6 @@ public class GitHubClient
         {
             return;
         }
-
-        await Console.Out.WriteLineAsync(
-            JsonSerializer.Serialize(
-                new CreateCommitStatusRequest { State = state, Context = context },
-                AmaurotSerializerContext.Default.CreateCommitStatusRequest
-            )
-        );
-        await Console.Out.WriteLineAsync(await responseMessage.Content.ReadAsStringAsync());
 
         var error = await responseMessage.Content.ReadFromJsonAsync<GitHubError>(
             AmaurotSerializerContext.Default.GitHubError

@@ -96,7 +96,8 @@ app.MapPost(
         await githubClient.CreateCommitStatus(
             repositoryFullName,
             taskRequestBody.Sha,
-            CommitStatusState.Pending,
+            // CommitStatusState.Pending,
+            "pending",
             "Amaurot",
             taskRequestBody.InstallationId
         );
