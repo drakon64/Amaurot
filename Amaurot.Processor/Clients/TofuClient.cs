@@ -6,9 +6,7 @@ namespace Amaurot.Processor.Clients;
 
 internal static class TofuClient
 {
-    private static readonly string TofuPath =
-        Environment.GetEnvironmentVariable("TOFU_PATH")
-        ?? throw new InvalidOperationException("TOFU_PATH is null");
+    private static readonly string TofuPath = Environment.GetEnvironmentVariable("TOFU_PATH")!;
 
     private const string TofuArguments = "-input=false -no-color";
 
