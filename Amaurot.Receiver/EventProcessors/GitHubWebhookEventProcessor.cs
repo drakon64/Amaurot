@@ -45,7 +45,8 @@ public sealed class GitHubWebhookEventProcessor : WebhookEventProcessor
                                     RepositoryName = pullRequestEvent.Repository.Name,
                                     PullRequest = pullRequestEvent.Number,
                                     InstallationId = pullRequestEvent.Installation!.Id,
-                                }
+                                },
+                                AmaurotJsonSerializerContext.Default.TaskRequestBody
                             )
                         ),
                         HttpMethod = HttpMethod.Post,
