@@ -121,7 +121,7 @@ app.MapPost(
 
             var init = await TofuClient.TofuExecution(ExecutionType.Init, directory);
 
-            executionOutputs[directory].Add(init);
+            executionOutputs.Add(directory, [init]);
 
             if (init.ExecutionState != CommitStatusState.Success)
             {
