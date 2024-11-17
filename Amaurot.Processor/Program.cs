@@ -160,10 +160,7 @@ public class Program
 
                     var planStdout = await plan.StandardOutput.ReadToEndAsync();
 
-                    if (plan.ExitCode != 0)
-                    {
-                        state = "failure"; // TODO: https://github.com/dotnet/runtime/issues/92828
-                    }
+                    state = plan.ExitCode == 0 ? "success" : "failure"; // TODO: https://github.com/dotnet/runtime/issues/92828
 
                     await TofuClient.CreateTofuStatusComment(
                         initStdout,
