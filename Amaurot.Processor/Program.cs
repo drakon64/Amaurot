@@ -139,17 +139,11 @@ app.MapPost(
             }
         }
 
-        var comment = $"""
-        OpenTofu plan output for commit {taskRequestBody.Sha}:
-        
-        """;
+        var comment = $"OpenTofu plan output for commit {taskRequestBody.Sha}:\n\n";
 
         foreach (var directory in executionOutputs)
         {
-            comment += $"""
-            `{directory.Key}`:
-            
-            """;
+            comment += $"`{directory.Key}`:\n";
 
             foreach (var executionOutput in directory.Value)
             {
