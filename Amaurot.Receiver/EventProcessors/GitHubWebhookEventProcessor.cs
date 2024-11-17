@@ -44,6 +44,7 @@ public sealed class GitHubWebhookEventProcessor : WebhookEventProcessor
                                     RepositoryOwner = pullRequestEvent.Repository!.Owner.Login,
                                     RepositoryName = pullRequestEvent.Repository.Name,
                                     PullRequest = pullRequestEvent.Number,
+                                    Sha = pullRequestEvent.PullRequest.Head.Sha,
                                     InstallationId = pullRequestEvent.Installation!.Id,
                                 },
                                 TaskRequestBodyJsonSerializerContext.Default.TaskRequestBody
