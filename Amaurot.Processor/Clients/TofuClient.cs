@@ -31,7 +31,7 @@ internal static class TofuClient
 
         return new PlanOutput
         {
-            ExecutionType = ExecutionType.Init,
+            ExecutionType = executionType,
             ExecutionState =
                 init.ExitCode == 0 ? CommitStatusState.Success : CommitStatusState.Failure,
             ExecutionStdout = stdout.TrimStart('\n').TrimEnd('\n'),
