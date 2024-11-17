@@ -1,6 +1,11 @@
 version: 2
 updates:
-  - directory: "/Elpis"
+  - directory: "/Amaurot.Processor"
+    package-ecosystem: "nuget"
+    schedule:
+      interval: "daily"
+
+  - directory: "/Amaurot.Receiver"
     package-ecosystem: "nuget"
     schedule:
       interval: "daily"
