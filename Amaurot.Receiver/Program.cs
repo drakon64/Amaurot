@@ -31,6 +31,6 @@ public class Program
         app.MapGitHubWebhooks(secret: Environment.GetEnvironmentVariable("GITHUB_WEBHOOK_SECRET"));
         app.MapGet("/healthcheck", () => Results.Ok());
 
-        app.Run($"http://*:{Environment.GetEnvironmentVariable("PORT") ?? "5000"}");
+        app.Run($"http://*:{Environment.GetEnvironmentVariable("PORT")}");
     }
 }
