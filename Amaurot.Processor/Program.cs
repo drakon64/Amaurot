@@ -119,7 +119,7 @@ app.MapPost(
             var directory =
                 $"{tempDirectory.FullName}/{taskRequestBody.RepositoryOwner}-{taskRequestBody.RepositoryName}-{taskRequestBody.Sha}/{tfDirectory}";
 
-            var init = await TofuClient.TofuInit(directory);
+            var init = await TofuClient.TofuExecution(ExecutionType.Init, directory);
 
             executionOutputs[directory].Add(init);
 
@@ -129,7 +129,7 @@ app.MapPost(
                 continue;
             }
 
-            var plan = await TofuClient.TofuPlan(directory);
+            var plan = await TofuClient.TofuExecution(ExecutionType.Plan, directory);
 
             executionOutputs[directory].Add(plan);
 
