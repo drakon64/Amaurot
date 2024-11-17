@@ -97,9 +97,7 @@ app.MapPost(
         await gitHubClient.CreateCommitStatus(
             repositoryFullName,
             taskRequestBody.Sha,
-            // CommitStatusState.Pending,
-            "pending",
-            "Amaurot",
+            "pending", // TODO: https://github.com/dotnet/runtime/issues/92828
             taskRequestBody.InstallationId
         );
 
@@ -179,7 +177,6 @@ app.MapPost(
             repositoryFullName,
             taskRequestBody.Sha,
             executionState.ToString().ToLower(), // TODO: https://github.com/dotnet/runtime/issues/92828
-            "Amaurot",
             taskRequestBody.InstallationId
         );
 

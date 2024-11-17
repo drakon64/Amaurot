@@ -151,7 +151,6 @@ public class GitHubClient
         string repo,
         string sha,
         string state, // TODO: https://github.com/dotnet/runtime/issues/92828
-        string context,
         long installationId
     )
     {
@@ -168,7 +167,11 @@ public class GitHubClient
                 },
                 RequestUri = new Uri($"{GitHubApiUri}repos/{repo}/statuses/{sha}"),
                 Content = JsonContent.Create(
-                    inputValue: new CreateCommitStatusRequest { State = state, Context = context },
+                    inputValue: new CreateCommitStatusRequest
+                    {
+                        State = state,
+                        Context = "Amaurot",
+                    },
                     jsonTypeInfo: AmaurotSerializerContext.Default.CreateCommitStatusRequest
                 ),
             }
