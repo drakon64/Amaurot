@@ -118,12 +118,13 @@ public class Program
 
                 ZipFile.ExtractToDirectory(zipball, tempDirectory.FullName);
 
+                var tofu = Environment.GetEnvironmentVariable("TOFU_PATH");
+
                 foreach (var tfDirectory in tfDirectories)
                 {
                     var directory =
                         $"{tempDirectory.FullName}/{taskRequestBody.RepositoryOwner}-{taskRequestBody.RepositoryName}-{taskRequestBody.Sha}/{tfDirectory}";
 
-                    var tofu = Environment.GetEnvironmentVariable("TOFU_PATH");
                     const string tofuArguments = "-input=false -no-color";
                     string? state = null; // TODO: https://github.com/dotnet/runtime/issues/92828
 
