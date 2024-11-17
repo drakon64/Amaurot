@@ -8,10 +8,7 @@
 let
   fs = pkgs.lib.fileset;
   sourceFiles = fs.intersection (fs.gitTracked ../.) (
-    fs.unions [
-      (fs.difference ./. (fs.unions [ (fs.fileFilter (file: file.hasExt "nix") ./.) ]))
-      ../Amaurot.Lib/.
-    ]
+    (fs.difference ./. (fs.unions [ (fs.fileFilter (file: file.hasExt "nix") ./.) ]))
   );
 
   dotnetCorePackages = pkgs.dotnetCorePackages;
