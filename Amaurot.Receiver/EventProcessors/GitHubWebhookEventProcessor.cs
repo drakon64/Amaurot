@@ -1,3 +1,5 @@
+using System.Text.Json;
+using Amaurot.Receiver.Models;
 using Google.Cloud.Tasks.V2;
 using Google.Protobuf;
 using Octokit.Webhooks;
@@ -35,7 +37,17 @@ public sealed class GitHubWebhookEventProcessor : WebhookEventProcessor
                 {
                     HttpRequest = new HttpRequest
                     {
-                        Body = ByteString.Empty,
+                        Body = ByteString.CopyFromUtf8(
+                            JsonSerializer.Serialize(
+                                new TaskRequestBody
+                                {
+                                    RepositoryOwner = pullRequestEvent.Repository!.Owner.Login,
+                                    RepositoryName = pullRequestEvent.Repository.Name,
+                                    PullRequest = pullRequestEvent.Number,
+                                    InstallationId = pullRequestEvent.Installation!.Id,
+                                }
+                            )
+                        ),
                         HttpMethod = HttpMethod.Post,
                         OidcToken = new OidcToken
                         {
