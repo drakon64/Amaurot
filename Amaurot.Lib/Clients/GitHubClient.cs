@@ -118,11 +118,7 @@ public class GitHubClient
             }
         );
 
-        return (
-            await responseMessage.Content.ReadFromJsonAsync<PullRequestFile[]>(
-                AmaurotSerializerContext.Default.PullRequestFileArray
-            )
-        )!;
+        return (await responseMessage.Content.ReadFromJsonAsync<PullRequestFile[]>())!;
     }
 
     public async Task<PullRequest?> GetPullRequest(
