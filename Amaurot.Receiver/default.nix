@@ -5,13 +5,26 @@
     in
     import npins.nixpkgs { },
 }:
+let
+  fs = pkgs.lib.fileset;
+  sourceFiles = fs.intersection (fs.gitTracked ../.) (
+    fs.unions [
+      (fs.difference ./. (fs.unions [ (fs.fileFilter (file: file.hasExt "nix") ./.) ]))
+      ../Amaurot.Common/.
+    ]
+  );
+in
 pkgs.buildDotnetModule {
   pname = "amaurot-receiver";
   version = "0.0.1";
 
-  src = ./.;
+  src = fs.toSource {
+    fileset = sourceFiles;
 
-  projectFile = "Amaurot.Receiver.csproj";
+    root = ../.;
+  };
+
+  projectFile = "Amaurot.Receiver/Amaurot.Receiver.csproj";
   nugetDeps = ./deps.nix;
 
   dotnet-sdk = pkgs.dotnetCorePackages.sdk_9_0;

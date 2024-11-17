@@ -1,5 +1,5 @@
 using System.Text.Json;
-using Amaurot.Receiver.Models;
+using Amaurot.Common.Models;
 using Google.Cloud.Tasks.V2;
 using Google.Protobuf;
 using Octokit.Webhooks;
@@ -46,7 +46,7 @@ public sealed class GitHubWebhookEventProcessor : WebhookEventProcessor
                                     PullRequest = pullRequestEvent.Number,
                                     InstallationId = pullRequestEvent.Installation!.Id,
                                 },
-                                AmaurotJsonSerializerContext.Default.TaskRequestBody
+                                TaskRequestBodyJsonSerializerContext.Default.TaskRequestBody
                             )
                         ),
                         HttpMethod = HttpMethod.Post,
