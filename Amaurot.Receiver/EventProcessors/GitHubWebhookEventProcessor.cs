@@ -21,7 +21,7 @@ public sealed class GitHubWebhookEventProcessor : WebhookEventProcessor
             !(
                 pullRequestAction == PullRequestAction.Opened
                 || pullRequestAction == PullRequestAction.Synchronize
-            ) && !pullRequestEvent.PullRequest.Draft
+            ) || pullRequestEvent.PullRequest.Draft
         )
         {
             return;
