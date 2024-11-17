@@ -1,6 +1,7 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;
+using System.Text.Json;
 using Amaurot.Processor.Models;
 using Amaurot.Processor.Models.GitHub;
 using Amaurot.Processor.Models.GitHub.Commit;
@@ -154,7 +155,7 @@ public class GitHubClient
         long installationId
     )
     {
-        await HttpClient.SendAsync(
+        var responseMessage = await HttpClient.SendAsync(
             new HttpRequestMessage
             {
                 Method = HttpMethod.Post,
@@ -172,6 +173,25 @@ public class GitHubClient
                 ),
             }
         );
+
+        if (responseMessage.IsSuccessStatusCode)
+        {
+            return;
+        }
+
+        await Console.Out.WriteLineAsync(
+            JsonSerializer.Serialize(
+                new CreateCommitStatusRequest { State = state, Context = context },
+                AmaurotSerializerContext.Default.CreateCommitStatusRequest
+            )
+        );
+        await Console.Out.WriteLineAsync(await responseMessage.Content.ReadAsStringAsync());
+
+        var error = await responseMessage.Content.ReadFromJsonAsync<GitHubError>(
+            AmaurotSerializerContext.Default.GitHubError
+        );
+
+        throw new Exception(error!.ToString());
     }
 
     public async Task<Stream> DownloadRepositoryArchiveZip(
