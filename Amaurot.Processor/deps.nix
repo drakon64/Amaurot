@@ -4,33 +4,28 @@
 { fetchNuGet }:
 [
   (fetchNuGet {
-    pname = "Microsoft.Bcl.TimeProvider";
-    version = "8.0.1";
-    hash = "sha256-TQRaWjk1aZu+jn/rR8oOv8BJEG31i6mPkf3BkIR7C+c=";
-  })
-  (fetchNuGet {
     pname = "Microsoft.IdentityModel.Abstractions";
-    version = "8.2.0";
-    hash = "sha256-e+BmN/Et9mTqWt4M38udL47M4wHHs25Ob299gJSBZIM=";
+    version = "8.2.1";
+    hash = "sha256-+9aIQ5tVPM915SEaquiiVUYaW2wk2MvkYWEMTzGYEl4=";
   })
   (fetchNuGet {
     pname = "Microsoft.IdentityModel.JsonWebTokens";
-    version = "8.2.0";
-    hash = "sha256-tOzI2GmMISuWO/vDtJIeKmYAaFPYjrB5NhpzCWWcIw4=";
+    version = "8.2.1";
+    hash = "sha256-0tL7K87O8w2IOje7+WFZQiPiYFWLMqMRsVoHKVose+0=";
   })
   (fetchNuGet {
     pname = "Microsoft.IdentityModel.Logging";
-    version = "8.2.0";
-    hash = "sha256-JdrIo2Dg9UPu/eK5TIPKLWfRmvPGhKZrBCQL+MIv72I=";
+    version = "8.2.1";
+    hash = "sha256-0FHmPBoogYIEAa7hxVvxIYy1jCCB3NmnVS5eoVWsjrU=";
   })
   (fetchNuGet {
     pname = "Microsoft.IdentityModel.Tokens";
-    version = "8.2.0";
-    hash = "sha256-QxhnZVUrKKUZEKZgok2+4HjawuXZtVhXCJ2+BDomja8=";
+    version = "8.2.1";
+    hash = "sha256-kO/Xrv/XbJ0hKqA0PFWMKJA8EBCuAjBO7D6XoPH0l8k=";
   })
   (fetchNuGet {
     pname = "System.IdentityModel.Tokens.Jwt";
-    version = "8.2.0";
-    hash = "sha256-Htz1I19N0/IWHF8tbyZC90wCqI5xLh42jMXI3GXkCP4=";
+    version = "8.2.1";
+    hash = "sha256-osV3VbG9k5Jb4XSlUsDxqbMEASNR3c7DA6+AKVXVhHQ=";
   })
 ]
