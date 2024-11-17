@@ -1,6 +1,10 @@
+using Google.Cloud.Tasks.V2;
+using Google.Protobuf;
 using Octokit.Webhooks;
 using Octokit.Webhooks.Events;
 using Octokit.Webhooks.Events.PullRequest;
+using HttpMethod = Google.Cloud.Tasks.V2.HttpMethod;
+using HttpRequest = Google.Cloud.Tasks.V2.HttpRequest;
 using Task = System.Threading.Tasks.Task;
 
 namespace Amaurot.Receiver.EventProcessors;
@@ -22,5 +26,25 @@ public sealed class GitHubWebhookEventProcessor : WebhookEventProcessor
         {
             return;
         }
+
+        await Program.CloudTasksClient.CreateTaskAsync(
+            new CreateTaskRequest
+            {
+                Parent = Program.QueueName,
+                Task = new Google.Cloud.Tasks.V2.Task
+                {
+                    HttpRequest = new HttpRequest
+                    {
+                        Body = ByteString.Empty,
+                        HttpMethod = HttpMethod.Post,
+                        OidcToken = new OidcToken
+                        {
+                            ServiceAccountEmail = Program.ServiceAccountEmail,
+                        },
+                        Url = Program.ProcessorUrl,
+                    },
+                },
+            }
+        );
     }
 }
