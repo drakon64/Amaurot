@@ -1,10 +1,10 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;
-using System.Text.Json;
 using Amaurot.Processor.Models;
 using Amaurot.Processor.Models.GitHub;
 using Amaurot.Processor.Models.GitHub.Commit;
+using Amaurot.Processor.Models.GitHub.Issues;
 using Amaurot.Processor.Models.GitHub.PullRequest;
 using Microsoft.IdentityModel.Tokens;
 
@@ -150,7 +150,7 @@ public class GitHubClient
     public async Task CreateCommitStatus(
         string repo,
         string sha,
-        string state, // https://github.com/dotnet/runtime/issues/92828
+        string state, // TODO: https://github.com/dotnet/runtime/issues/92828
         string context,
         long installationId
     )
@@ -208,5 +208,43 @@ public class GitHubClient
         );
 
         return await responseMessage.Content.ReadAsStreamAsync();
+    }
+
+    public async Task CreateIssueComment(
+        string body,
+        string repo,
+        long pullRequest,
+        long installationId
+    )
+    {
+        var responseMessage = await HttpClient.SendAsync(
+            new HttpRequestMessage
+            {
+                Method = HttpMethod.Post,
+                Headers =
+                {
+                    {
+                        "Authorization",
+                        $"Bearer {await GetGitHubInstallationAccessToken(installationId.ToString())}"
+                    },
+                },
+                RequestUri = new Uri($"{GitHubApiUri}repos/{repo}/issues/{pullRequest}/comments"),
+                Content = JsonContent.Create(
+                    inputValue: new CreateIssueCommentRequest { Body = body },
+                    jsonTypeInfo: AmaurotSerializerContext.Default.CreateIssueCommentRequest
+                ),
+            }
+        );
+
+        if (responseMessage.IsSuccessStatusCode)
+        {
+            return;
+        }
+
+        var error = await responseMessage.Content.ReadFromJsonAsync<GitHubError>(
+            AmaurotSerializerContext.Default.GitHubError
+        );
+
+        throw new Exception(error!.ToString());
     }
 }
