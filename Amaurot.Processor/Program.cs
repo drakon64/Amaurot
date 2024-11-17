@@ -121,7 +121,7 @@ app.MapPost(
 
             var init = await TofuClient.TofuExecution(ExecutionType.Init, directory);
 
-            executionOutputs.Add(directory, [init]);
+            executionOutputs.Add(tfDirectory, [init]);
 
             if (init.ExecutionState != CommitStatusState.Success)
             {
@@ -131,7 +131,7 @@ app.MapPost(
 
             var plan = await TofuClient.TofuExecution(ExecutionType.Plan, directory);
 
-            executionOutputs[directory].Add(plan);
+            executionOutputs[tfDirectory].Add(plan);
 
             if (plan.ExecutionState != CommitStatusState.Success)
             {
@@ -140,7 +140,7 @@ app.MapPost(
         }
 
         var comment = $"""
-        OpenTofu plan output for commit {taskRequestBody.Sha}:";
+        OpenTofu plan output for commit {taskRequestBody.Sha}:
         
         """;
 
