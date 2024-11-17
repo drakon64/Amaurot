@@ -1,4 +1,4 @@
-namespace Amaurot.Lib.Models.GitHub.Commit;
+namespace Amaurot.Processor.Models.GitHub.Commit;
 
 public enum CommitStatusState
 {

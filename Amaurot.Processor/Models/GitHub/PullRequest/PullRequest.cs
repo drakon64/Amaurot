@@ -1,4 +1,4 @@
-namespace Amaurot.Lib.Models.GitHub.PullRequest;
+namespace Amaurot.Processor.Models.GitHub.PullRequest;
 
 public class PullRequest
 {

@@ -1,5 +1,5 @@
 using System.IO.Compression;
-using Amaurot.Lib.Clients;
+using Amaurot.Processor.Clients;
 
 var githubPrivateKey =
     Environment.GetEnvironmentVariable("GITHUB_PRIVATE_KEY")

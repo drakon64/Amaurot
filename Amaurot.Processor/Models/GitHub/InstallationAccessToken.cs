@@ -1,4 +1,4 @@
-namespace Amaurot.Lib.Models.GitHub;
+namespace Amaurot.Processor.Models.GitHub;
 
 public class InstallationAccessToken
 {

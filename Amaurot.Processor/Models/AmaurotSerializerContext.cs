@@ -1,9 +1,9 @@
 using System.Text.Json.Serialization;
-using Amaurot.Lib.Models.GitHub;
-using Amaurot.Lib.Models.GitHub.Commit;
-using Amaurot.Lib.Models.GitHub.PullRequest;
+using Amaurot.Processor.Models.GitHub;
+using Amaurot.Processor.Models.GitHub.Commit;
+using Amaurot.Processor.Models.GitHub.PullRequest;
 
-namespace Amaurot.Lib.Models;
+namespace Amaurot.Processor.Models;
 
 [JsonSerializable(typeof(CreateCommitStatusRequest))]
 [JsonSerializable(typeof(PullRequest))]

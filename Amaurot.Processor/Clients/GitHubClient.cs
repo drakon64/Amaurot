@@ -2,13 +2,13 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Net.Http.Json;
 using System.Security.Claims;
 using System.Security.Cryptography;
-using Amaurot.Lib.Models;
-using Amaurot.Lib.Models.GitHub;
-using Amaurot.Lib.Models.GitHub.Commit;
-using Amaurot.Lib.Models.GitHub.PullRequest;
+using Amaurot.Processor.Models;
+using Amaurot.Processor.Models.GitHub;
+using Amaurot.Processor.Models.GitHub.Commit;
+using Amaurot.Processor.Models.GitHub.PullRequest;
 using Microsoft.IdentityModel.Tokens;
 
-namespace Amaurot.Lib.Clients;
+namespace Amaurot.Processor.Clients;
 
 public class GitHubClient
 {
