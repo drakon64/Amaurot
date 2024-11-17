@@ -1,8 +1,9 @@
-using System.Diagnostics;
 using System.IO.Compression;
 using Amaurot.Common.Models;
 using Amaurot.Processor.Clients;
+using Amaurot.Processor.Models.GitHub.Commit;
 using Amaurot.Processor.Models.GitHub.PullRequest;
+using Amaurot.Processor.Models.OpenTofu;
 
 namespace Amaurot.Processor;
 
@@ -16,7 +17,7 @@ public class Program
         Environment.GetEnvironmentVariable("GITHUB_CLIENT_ID")
         ?? throw new InvalidOperationException("GITHUB_CLIENT_ID is null");
 
-    internal static readonly GitHubClient GitHubClient = new(GithubPrivateKey, GithubClientId);
+    private static readonly GitHubClient GitHubClient = new(GithubPrivateKey, GithubClientId);
 
     public static void Main()
     {
@@ -44,7 +45,7 @@ public class Program
                         || file.FileName.EndsWith(".tfvars")
                         || file.FileName.EndsWith(".tfvars.json")
                     let lastIndex = file.FileName.LastIndexOf('/')
-                    select lastIndex != -1 ? file.FileName.Remove(lastIndex) : ""
+                    select lastIndex != -1 ? $"/{file.FileName.Remove(lastIndex)}" : "/"
                 )
                     .Distinct()
                     .ToArray();
@@ -118,62 +119,75 @@ public class Program
 
                 ZipFile.ExtractToDirectory(zipball, tempDirectory.FullName);
 
-                var tofu = Environment.GetEnvironmentVariable("TOFU_PATH");
+                var executionOutputs = new Dictionary<string, List<PlanOutput>>();
+                var executionState = CommitStatusState.Success;
 
                 foreach (var tfDirectory in tfDirectories)
                 {
                     var directory =
                         $"{tempDirectory.FullName}/{taskRequestBody.RepositoryOwner}-{taskRequestBody.RepositoryName}-{taskRequestBody.Sha}/{tfDirectory}";
 
-                    const string tofuArguments = "-input=false -no-color";
-                    string? state = null; // TODO: https://github.com/dotnet/runtime/issues/92828
+                    var init = await TofuClient.TofuInit(directory);
 
-                    var init = Process.Start(
-                        new ProcessStartInfo
-                        {
-                            FileName = tofu,
-                            Arguments = $"init {tofuArguments}",
-                            WorkingDirectory = directory,
-                            RedirectStandardOutput = true,
-                        }
-                    );
+                    executionOutputs[directory].Add(init);
 
-                    await init!.WaitForExitAsync();
-
-                    var initStdout = await init.StandardOutput.ReadToEndAsync();
-
-                    if (init.ExitCode != 0)
+                    if (init.ExecutionState != CommitStatusState.Success)
                     {
-                        state = "failure"; // TODO: https://github.com/dotnet/runtime/issues/92828
+                        executionState = CommitStatusState.Failure;
+                        continue;
                     }
 
-                    var plan = Process.Start(
-                        new ProcessStartInfo
-                        {
-                            FileName = tofu,
-                            Arguments = $"plan {tofuArguments}",
-                            WorkingDirectory = directory,
-                            RedirectStandardOutput = true,
-                        }
-                    );
+                    var plan = await TofuClient.TofuPlan(directory);
 
-                    await plan!.WaitForExitAsync();
+                    executionOutputs[directory].Add(plan);
 
-                    var planStdout = await plan.StandardOutput.ReadToEndAsync();
-
-                    state = plan.ExitCode == 0 ? "success" : "failure"; // TODO: https://github.com/dotnet/runtime/issues/92828
-
-                    await TofuClient.CreateTofuStatusComment(
-                        initStdout,
-                        planStdout,
-                        null,
-                        state,
-                        repositoryFullName,
-                        taskRequestBody.PullRequest,
-                        taskRequestBody.Sha,
-                        taskRequestBody.InstallationId
-                    );
+                    if (plan.ExecutionState != CommitStatusState.Success)
+                    {
+                        executionState = CommitStatusState.Failure;
+                    }
                 }
+
+                var comment = $"""
+                OpenTofu plan output for commit {taskRequestBody.Sha}:";
+                
+                """;
+
+                foreach (var directory in executionOutputs)
+                {
+                    comment += $"""
+                    `{directory.Key}`:
+                    
+                    """;
+
+                    foreach (var executionOutput in directory.Value)
+                    {
+                        comment += $"""
+                        <details><summary>`{executionOutput.ExecutionType}`:</summary>
+                        ```
+                        {executionOutput.ExecutionStdout}
+                        ```
+                        </details>
+                        
+                        """;
+                    }
+
+                    comment = comment.TrimEnd('\n');
+                }
+
+                await GitHubClient.CreateIssueComment(
+                    comment,
+                    repositoryFullName,
+                    taskRequestBody.PullRequest,
+                    taskRequestBody.InstallationId
+                );
+
+                await GitHubClient.CreateCommitStatus(
+                    repositoryFullName,
+                    taskRequestBody.Sha,
+                    executionState.ToString().ToLower(), // TODO: https://github.com/dotnet/runtime/issues/92828
+                    "Amaurot",
+                    taskRequestBody.InstallationId
+                );
 
                 return Results.Ok();
             }

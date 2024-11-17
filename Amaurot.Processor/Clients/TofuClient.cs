@@ -1,63 +1,60 @@
+using System.Diagnostics;
+using Amaurot.Processor.Models.GitHub.Commit;
+using Amaurot.Processor.Models.OpenTofu;
+
 namespace Amaurot.Processor.Clients;
 
 internal static class TofuClient
 {
-    internal static async Task CreateTofuStatusComment(
-        string init,
-        string? plan,
-        string? apply,
-        string? state, // TODO: https://github.com/dotnet/runtime/issues/92828
-        string repositoryFullName,
-        long pullRequest,
-        string sha,
-        long installationId
-    )
+    private static readonly string TofuPath =
+        Environment.GetEnvironmentVariable("TOFU_PATH")
+        ?? throw new InvalidOperationException("TOFU_PATH is null");
+
+    private const string TofuArguments = "-input=false -no-color";
+
+    public static async Task<PlanOutput> TofuInit(string directory)
     {
-        var comment = $"""
-            `tofu init`:
-            ```
-            {init}
-            ```
-            """;
-
-        if (plan != null)
-        {
-            comment += $"""
-
-                `tofu plan`:
-                ```
-                {plan}
-                ```
-                """;
-
-            if (apply != null)
+        var init = Process.Start(
+            new ProcessStartInfo
             {
-                comment += $"""
-
-                    `tofu apply`:
-                    ```
-                    {apply}
-                    ```
-                    """;
+                FileName = TofuPath,
+                Arguments = $"init {TofuArguments}",
+                WorkingDirectory = directory,
+                RedirectStandardOutput = true,
             }
-        }
-
-        await Program.GitHubClient.CreateIssueComment(
-            comment,
-            repositoryFullName,
-            pullRequest,
-            installationId
         );
 
-        if (state != null)
+        await init!.WaitForExitAsync();
+
+        return new PlanOutput
         {
-            await Program.GitHubClient.CreateCommitStatus(
-                repositoryFullName,
-                sha,
-                state,
-                "Amaurot",
-                installationId
-            );
-        }
+            ExecutionType = ExecutionType.Init,
+            ExecutionState =
+                init.ExitCode == 0 ? CommitStatusState.Success : CommitStatusState.Failure,
+            ExecutionStdout = await init.StandardOutput.ReadToEndAsync(),
+        };
+    }
+
+    public static async Task<PlanOutput> TofuPlan(string directory)
+    {
+        var plan = Process.Start(
+            new ProcessStartInfo
+            {
+                FileName = TofuPath,
+                Arguments = $"plan {TofuArguments}",
+                WorkingDirectory = directory,
+                RedirectStandardOutput = true,
+            }
+        );
+
+        await plan!.WaitForExitAsync();
+
+        return new PlanOutput
+        {
+            ExecutionType = ExecutionType.Plan,
+            ExecutionState =
+                plan.ExitCode == 0 ? CommitStatusState.Success : CommitStatusState.Failure,
+            ExecutionStdout = await plan.StandardOutput.ReadToEndAsync(),
+        };
     }
 }
