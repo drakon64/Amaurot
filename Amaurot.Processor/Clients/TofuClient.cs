@@ -27,12 +27,14 @@ internal static class TofuClient
 
         await init!.WaitForExitAsync();
 
+        var stdout = await init.StandardOutput.ReadToEndAsync();
+
         return new PlanOutput
         {
             ExecutionType = ExecutionType.Init,
             ExecutionState =
                 init.ExitCode == 0 ? CommitStatusState.Success : CommitStatusState.Failure,
-            ExecutionStdout = await init.StandardOutput.ReadToEndAsync(),
+            ExecutionStdout = stdout.TrimStart('\n').TrimEnd('\n'),
         };
     }
 }
