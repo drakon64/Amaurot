@@ -1,7 +1,6 @@
 using System.IO.Compression;
 using Amaurot.Common.Models;
 using Amaurot.Processor.Clients;
-using Amaurot.Processor.Models.GitHub.Commit;
 using Amaurot.Processor.Models.GitHub.PullRequest;
 
 var githubPrivateKey =
@@ -69,7 +68,7 @@ app.MapPost(
                 )
             )!;
 
-            if (!pullRequest!.Mergeable.HasValue)
+            if (!pullRequest.Mergeable.HasValue)
             {
                 await Task.Delay(3000);
                 continue;
