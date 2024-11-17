@@ -49,12 +49,13 @@ public sealed class GitHubWebhookEventProcessor : WebhookEventProcessor
                                 TaskRequestBodyJsonSerializerContext.Default.TaskRequestBody
                             )
                         ),
+                        Headers = { { "Content-Type", "application/json" } },
                         HttpMethod = HttpMethod.Post,
                         OidcToken = new OidcToken
                         {
                             ServiceAccountEmail = Program.ServiceAccountEmail,
                         },
-                        Url = Program.ProcessorUrl,
+                        Url = $"{Program.ProcessorUrl}/plan",
                     },
                 },
             }
