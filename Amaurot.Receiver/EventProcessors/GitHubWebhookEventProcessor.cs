@@ -110,12 +110,18 @@ public sealed class GitHubWebhookEventProcessor : WebhookEventProcessor
                     {
                         new RunJobRequest.Types.Overrides.Types.ContainerOverride
                         {
+                            Args = { tfDirectories },
                             Env =
                             {
                                 new EnvVar
                                 {
-                                    Name = "GITHUB_REPOSITORY",
-                                    Value = pullRequestEvent.Repository.FullName,
+                                    Name = "GITHUB_REPOSITORY_OWNER",
+                                    Value = pullRequestEvent.Repository.Owner.Login,
+                                },
+                                new EnvVar
+                                {
+                                    Name = "GITHUB_REPOSITORY_NAME",
+                                    Value = pullRequestEvent.Repository.Name,
                                 },
                                 new EnvVar { Name = "GITHUB_REF", Value = mergeCommitSha },
                                 new EnvVar

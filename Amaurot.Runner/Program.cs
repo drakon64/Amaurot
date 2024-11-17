@@ -9,9 +9,13 @@ var githubClientId =
     Environment.GetEnvironmentVariable("GITHUB_CLIENT_ID")
     ?? throw new InvalidOperationException("GITHUB_CLIENT_ID is null");
 
-var repo =
-    Environment.GetEnvironmentVariable("GITHUB_REPOSITORY")
-    ?? throw new InvalidOperationException("GITHUB_REPOSITORY is null");
+var repoOwner =
+    Environment.GetEnvironmentVariable("GITHUB_REPOSITORY_OWNER")
+    ?? throw new InvalidOperationException("GITHUB_REPOSITORY_OWNER is null");
+
+var repoName =
+    Environment.GetEnvironmentVariable("GITHUB_REPOSITORY_NAME")
+    ?? throw new InvalidOperationException("GITHUB_REPOSITORY_NAME is null");
 
 var githubSha =
     Environment.GetEnvironmentVariable("GITHUB_REF")
@@ -24,7 +28,7 @@ var githubInstallationId = long.Parse(
 var githubClient = new GitHubClient(githubPrivateKey, githubClientId);
 
 var zipball = await githubClient.DownloadRepositoryArchiveZip(
-    repo,
+    $"{repoOwner}/{repoName}",
     githubSha,
     githubInstallationId
 );
@@ -36,11 +40,13 @@ ZipFile.ExtractToDirectory(zipball, tempDirectory.FullName);
 foreach (var directory in args)
 {
     var files =
-        from file in new DirectoryInfo($"{tempDirectory.FullName}/{directory}").EnumerateFiles()
+        from file in new DirectoryInfo(
+            $"{tempDirectory.FullName}/{repoOwner}-{repoName}-{githubSha}/{directory}"
+        ).EnumerateFiles()
         select file.Name;
 
     foreach (var file in files)
     {
-        await Console.Out.WriteLineAsync(file);
+        await Console.Out.WriteLineAsync($"{directory}/{file}");
     }
 }
