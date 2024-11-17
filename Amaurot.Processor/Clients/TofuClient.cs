@@ -23,6 +23,7 @@ internal static class TofuClient
         if (plan != null)
         {
             comment += $"""
+
                 `tofu plan`:
                 ```
                 {plan}
@@ -32,6 +33,7 @@ internal static class TofuClient
             if (apply != null)
             {
                 comment += $"""
+
                     `tofu apply`:
                     ```
                     {apply}
