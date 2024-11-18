@@ -171,7 +171,8 @@ app.MapPost(
             repositoryFullName,
             taskRequestBody.Sha,
             executionState.ToString().ToLower(), // TODO: https://github.com/dotnet/runtime/issues/92828
-            taskRequestBody.InstallationId
+            taskRequestBody.InstallationId,
+            "All OpenTofu plans passing"
         );
 
         return Results.Ok();

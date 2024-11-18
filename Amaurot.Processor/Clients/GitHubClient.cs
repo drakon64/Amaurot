@@ -151,7 +151,8 @@ public class GitHubClient
         string repo,
         string sha,
         string state, // TODO: https://github.com/dotnet/runtime/issues/92828
-        long installationId
+        long installationId,
+        string? description = null
     )
     {
         var responseMessage = await HttpClient.SendAsync(
@@ -170,6 +171,7 @@ public class GitHubClient
                     inputValue: new CreateCommitStatusRequest
                     {
                         State = state,
+                        Description = description,
                         Context = "Amaurot",
                     },
                     jsonTypeInfo: AmaurotSerializerContext.Default.CreateCommitStatusRequest
