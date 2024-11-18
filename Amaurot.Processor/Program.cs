@@ -2,7 +2,6 @@ using System.IO.Compression;
 using Amaurot.Common.Models;
 using Amaurot.Processor.Clients;
 using Amaurot.Processor.Models.GitHub.Commit;
-using Amaurot.Processor.Models.GitHub.PullRequest;
 using Amaurot.Processor.Models.OpenTofu;
 
 var githubPrivateKey =
