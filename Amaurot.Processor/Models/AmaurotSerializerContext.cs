@@ -3,6 +3,7 @@ using Amaurot.Processor.Models.GitHub;
 using Amaurot.Processor.Models.GitHub.Commit;
 using Amaurot.Processor.Models.GitHub.Issues;
 using Amaurot.Processor.Models.GitHub.PullRequest;
+using Amaurot.Processor.Models.OpenTofu;
 
 namespace Amaurot.Processor.Models;
 
@@ -11,6 +12,7 @@ namespace Amaurot.Processor.Models;
 [JsonSerializable(typeof(PullRequest))]
 [JsonSerializable(typeof(GitHubError))]
 [JsonSerializable(typeof(InstallationAccessToken))]
+[JsonSerializable(typeof(AmaurotJson))]
 [JsonSourceGenerationOptions(
     PropertyNamingPolicy = JsonKnownNamingPolicy.SnakeCaseLower,
     UseStringEnumConverter = true

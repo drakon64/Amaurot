@@ -2,6 +2,7 @@ using System.IO.Compression;
 using System.Text.Json;
 using Amaurot.Common.Models;
 using Amaurot.Processor.Clients;
+using Amaurot.Processor.Models;
 using Amaurot.Processor.Models.GitHub.Commit;
 using Amaurot.Processor.Models.OpenTofu;
 
@@ -105,14 +106,19 @@ app.MapPost(
             var directory =
                 $"{tempDirectory.FullName}/{taskRequestBody.RepositoryOwner}-{taskRequestBody.RepositoryName}-{taskRequestBody.Sha}/{tfDirectory}";
 
-            Workspaces workspaces;
+            AmaurotJson workspaces;
 
             await using (var workspacesFile = File.OpenRead($"{directory}/amaurot.json"))
             {
-                workspaces = (await JsonSerializer.DeserializeAsync<Workspaces>(workspacesFile))!;
+                workspaces = (
+                    await JsonSerializer.DeserializeAsync<AmaurotJson>(
+                        workspacesFile,
+                        AmaurotSerializerContext.Default.AmaurotJson
+                    )
+                )!;
             }
 
-            foreach (var workspace in workspaces.Workspace)
+            foreach (var workspace in workspaces.Workspaces)
             {
                 var executionOutput = new Dictionary<string, List<ExecutionOutput>>();
 
