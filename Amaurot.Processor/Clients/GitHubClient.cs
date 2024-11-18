@@ -70,7 +70,7 @@ public class GitHubClient
     private InstallationAccessToken _githubInstallationAccessToken =
         new() { Token = "", ExpiresAt = DateTime.Now };
 
-    private async Task<string> GetGitHubInstallationAccessToken(string installationId)
+    private async Task<string> GetGitHubInstallationAccessToken(long installationId)
     {
         // If the current installation access token expires in less than a minute, generate a new one
         if (_githubInstallationAccessToken.ExpiresAt.Subtract(DateTime.Now).Minutes >= 1)
@@ -98,11 +98,7 @@ public class GitHubClient
         return _githubInstallationAccessToken.Token;
     }
 
-    public async Task<PullRequestFile[]> ListPullRequestFiles(
-        string repo,
-        long pullRequest,
-        long installationId
-    )
+    public async Task<PullRequestFile[]> ListPullRequestFiles(TaskRequestBody taskRequestBody)
     {
         var responseMessage = await HttpClient.SendAsync(
             new HttpRequestMessage
@@ -112,21 +108,19 @@ public class GitHubClient
                 {
                     {
                         "Authorization",
-                        $"Bearer {await GetGitHubInstallationAccessToken(installationId.ToString())}"
+                        $"Bearer {await GetGitHubInstallationAccessToken(taskRequestBody.InstallationId)}"
                     },
                 },
-                RequestUri = new Uri($"{GitHubApiUri}repos/{repo}/pulls/{pullRequest}/files"),
+                RequestUri = new Uri(
+                    $"{GitHubApiUri}repos/{taskRequestBody.RepositoryOwner}/{taskRequestBody.RepositoryName}/pulls/{taskRequestBody.PullRequest}/files"
+                ),
             }
         );
 
         return (await responseMessage.Content.ReadFromJsonAsync<PullRequestFile[]>())!;
     }
 
-    public async Task<PullRequest?> GetPullRequest(
-        string repo,
-        long pullRequest,
-        long installationId
-    )
+    public async Task<PullRequest?> GetPullRequest(TaskRequestBody taskRequestBody)
     {
         var responseMessage = await HttpClient.SendAsync(
             new HttpRequestMessage
@@ -136,10 +130,12 @@ public class GitHubClient
                 {
                     {
                         "Authorization",
-                        $"Bearer {await GetGitHubInstallationAccessToken(installationId.ToString())}"
+                        $"Bearer {await GetGitHubInstallationAccessToken(taskRequestBody.InstallationId)}"
                     },
                 },
-                RequestUri = new Uri($"{GitHubApiUri}repos/{repo}/pulls/{pullRequest}"),
+                RequestUri = new Uri(
+                    $"{GitHubApiUri}repos/{taskRequestBody.RepositoryOwner}/{taskRequestBody.RepositoryName}/pulls/{taskRequestBody.PullRequest}"
+                ),
             }
         );
 
@@ -161,7 +157,7 @@ public class GitHubClient
                 {
                     {
                         "Authorization",
-                        $"Bearer {await GetGitHubInstallationAccessToken(taskRequestBody.InstallationId.ToString())}"
+                        $"Bearer {await GetGitHubInstallationAccessToken(taskRequestBody.InstallationId)}"
                     },
                 },
                 RequestUri = new Uri(
@@ -186,11 +182,7 @@ public class GitHubClient
         throw new Exception(error!.ToString());
     }
 
-    public async Task<Stream> DownloadRepositoryArchiveZip(
-        string repo,
-        string sha,
-        long installationId
-    )
+    public async Task<Stream> DownloadRepositoryArchiveZip(TaskRequestBody taskRequestBody)
     {
         var responseMessage = await HttpClient.SendAsync(
             new HttpRequestMessage
@@ -200,22 +192,19 @@ public class GitHubClient
                 {
                     {
                         "Authorization",
-                        $"Bearer {await GetGitHubInstallationAccessToken(installationId.ToString())}"
+                        $"Bearer {await GetGitHubInstallationAccessToken(taskRequestBody.InstallationId)}"
                     },
                 },
-                RequestUri = new Uri($"{GitHubApiUri}repos/{repo}/zipball/{sha}"),
+                RequestUri = new Uri(
+                    $"{GitHubApiUri}repos/{taskRequestBody.RepositoryOwner}/{taskRequestBody.RepositoryName}/zipball/{taskRequestBody.Sha}"
+                ),
             }
         );
 
         return await responseMessage.Content.ReadAsStreamAsync();
     }
 
-    public async Task CreateIssueComment(
-        string body,
-        string repo,
-        long pullRequest,
-        long installationId
-    )
+    public async Task CreateIssueComment(string body, TaskRequestBody taskRequestBody)
     {
         var responseMessage = await HttpClient.SendAsync(
             new HttpRequestMessage
@@ -225,10 +214,12 @@ public class GitHubClient
                 {
                     {
                         "Authorization",
-                        $"Bearer {await GetGitHubInstallationAccessToken(installationId.ToString())}"
+                        $"Bearer {await GetGitHubInstallationAccessToken(taskRequestBody.InstallationId)}"
                     },
                 },
-                RequestUri = new Uri($"{GitHubApiUri}repos/{repo}/issues/{pullRequest}/comments"),
+                RequestUri = new Uri(
+                    $"{GitHubApiUri}repos/{taskRequestBody.RepositoryOwner}/{taskRequestBody.RepositoryName}/issues/{taskRequestBody.PullRequest}/comments"
+                ),
                 Content = JsonContent.Create(
                     inputValue: new CreateIssueCommentRequest { Body = body },
                     jsonTypeInfo: AmaurotSerializerContext.Default.CreateIssueCommentRequest

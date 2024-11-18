@@ -24,15 +24,8 @@ app.MapPost(
     "/plan",
     async (TaskRequestBody taskRequestBody) =>
     {
-        var repositoryFullName =
-            $"{taskRequestBody.RepositoryOwner}/{taskRequestBody.RepositoryName}";
-
         var tfDirectories = (
-            from file in await gitHubClient.ListPullRequestFiles(
-                repositoryFullName,
-                taskRequestBody.PullRequest,
-                taskRequestBody.InstallationId
-            )
+            from file in await gitHubClient.ListPullRequestFiles(taskRequestBody)
             where
                 file.FileName.EndsWith(".tf")
                 || file.FileName.EndsWith(".tf.json")
@@ -47,14 +40,14 @@ app.MapPost(
         if (tfDirectories.Length == 0)
         {
             var result =
-                $"Pull request {repositoryFullName}#{taskRequestBody.PullRequest} contains no OpenTofu configuration files";
+                $"Pull request {taskRequestBody.RepositoryOwner}/{taskRequestBody.RepositoryName}#{taskRequestBody.PullRequest} contains no OpenTofu configuration files";
 
             await Console.Out.WriteLineAsync(result);
             return Results.Ok(result);
         }
 
         await Console.Out.WriteLineAsync(
-            $"Getting mergeability of pull request {repositoryFullName}#{taskRequestBody.PullRequest}"
+            $"Getting mergeability of pull request {taskRequestBody.RepositoryOwner}/{taskRequestBody.RepositoryName}#{taskRequestBody.PullRequest}"
         );
 
         PullRequest pullRequest;
@@ -62,13 +55,7 @@ app.MapPost(
 
         while (true)
         {
-            pullRequest = (
-                await gitHubClient.GetPullRequest(
-                    repositoryFullName,
-                    taskRequestBody.PullRequest,
-                    taskRequestBody.InstallationId
-                )
-            )!;
+            pullRequest = (await gitHubClient.GetPullRequest(taskRequestBody))!;
 
             if (!pullRequest.Mergeable.HasValue)
             {
@@ -83,7 +70,7 @@ app.MapPost(
         if (mergeCommitSha is null)
         {
             var result =
-                $"Pull request {repositoryFullName}#{taskRequestBody.PullRequest} is not mergeable";
+                $"Pull request {taskRequestBody.RepositoryOwner}/{taskRequestBody.RepositoryName}#{taskRequestBody.PullRequest} is not mergeable";
 
             await Console.Out.WriteLineAsync(result);
 
@@ -91,7 +78,7 @@ app.MapPost(
         }
 
         await Console.Out.WriteLineAsync(
-            $"Creating commit status for pull request {repositoryFullName}#{taskRequestBody.PullRequest} commit {taskRequestBody.Sha}"
+            $"Creating commit status for pull request {taskRequestBody.RepositoryOwner}/{taskRequestBody.RepositoryName}#{taskRequestBody.PullRequest} commit {taskRequestBody.Sha}"
         );
 
         await gitHubClient.CreateCommitStatus(
@@ -103,11 +90,7 @@ app.MapPost(
             taskRequestBody
         );
 
-        var zipball = await gitHubClient.DownloadRepositoryArchiveZip(
-            repositoryFullName,
-            taskRequestBody.Sha,
-            taskRequestBody.InstallationId
-        );
+        var zipball = await gitHubClient.DownloadRepositoryArchiveZip(taskRequestBody);
 
         var tempDirectory = Directory.CreateTempSubdirectory();
 
@@ -160,14 +143,7 @@ app.MapPost(
             }
         }
 
-        comment = comment.TrimEnd('\n');
-
-        await gitHubClient.CreateIssueComment(
-            comment,
-            repositoryFullName,
-            taskRequestBody.PullRequest,
-            taskRequestBody.InstallationId
-        );
+        await gitHubClient.CreateIssueComment(comment.TrimEnd('\n'), taskRequestBody);
 
         await gitHubClient.CreateCommitStatus(
             new CreateCommitStatusRequest
