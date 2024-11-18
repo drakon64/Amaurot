@@ -84,7 +84,7 @@ app.MapPost(
         await gitHubClient.CreateCommitStatus(
             new CreateCommitStatusRequest
             {
-                State = CommitStatusState.Pending.ToString(), // TODO: https://github.com/dotnet/runtime/issues/92828
+                State = CommitStatusState.Pending.ToString().ToLower(), // TODO: https://github.com/dotnet/runtime/issues/92828
                 Context = "Amaurot",
             },
             taskRequestBody
