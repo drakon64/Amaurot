@@ -138,6 +138,8 @@ app.MapPost(
                 executionState = CommitStatusState.Failure;
             }
         }
+        
+        tempDirectory.Delete(true);
 
         var comment = $"OpenTofu plan output for commit {taskRequestBody.Sha}:\n\n";
 
