@@ -138,7 +138,7 @@ app.MapPost(
                 executionState = CommitStatusState.Failure;
             }
         }
-        
+
         tempDirectory.Delete(true);
 
         var comment = $"OpenTofu plan output for commit {taskRequestBody.Sha}:\n\n";
@@ -149,18 +149,15 @@ app.MapPost(
 
             foreach (var executionOutput in directory.Value)
             {
-                comment += $"""
-                <details><summary>{executionOutput.ExecutionType.ToString()}:</summary>
-
-                ```
-                {executionOutput.ExecutionStdout}
-                ```
-                </details>
-                
-                """;
+                comment +=
+                    $"<details><summary>{executionOutput.ExecutionType.ToString()}:</summary>\n\n"
+                    + "```\n"
+                    + $"{executionOutput.ExecutionStdout}\n"
+                    + "```\n"
+                    + "</details>\n\n";
             }
         }
-        
+
         comment = comment.TrimEnd('\n');
 
         await gitHubClient.CreateIssueComment(
