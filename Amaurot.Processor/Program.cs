@@ -157,9 +157,9 @@ app.MapPost(
                 
                 """;
             }
-
-            comment = comment.TrimEnd('\n');
         }
+        
+        comment = comment.TrimEnd('\n');
 
         await gitHubClient.CreateIssueComment(
             comment,
