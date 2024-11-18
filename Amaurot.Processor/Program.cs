@@ -1,4 +1,5 @@
 using System.IO.Compression;
+using System.Text.Json;
 using Amaurot.Common.Models;
 using Amaurot.Processor.Clients;
 using Amaurot.Processor.Models.GitHub.Commit;
@@ -96,7 +97,7 @@ app.MapPost(
 
         ZipFile.ExtractToDirectory(zipball, tempDirectory.FullName);
 
-        var executionOutputs = new Dictionary<string, List<PlanOutput>>();
+        var executionOutputs = new Dictionary<string, Dictionary<string, List<PlanOutput>>>();
         var executionState = CommitStatusState.Success;
 
         foreach (var tfDirectory in tfDirectories)
@@ -104,42 +105,75 @@ app.MapPost(
             var directory =
                 $"{tempDirectory.FullName}/{taskRequestBody.RepositoryOwner}-{taskRequestBody.RepositoryName}-{taskRequestBody.Sha}/{tfDirectory}";
 
-            var init = await TofuClient.TofuExecution(ExecutionType.Init, directory);
+            Workspaces workspaces;
 
-            executionOutputs.Add(tfDirectory, [init]);
-
-            if (init.ExecutionState != CommitStatusState.Success)
+            await using (var workspacesFile = File.OpenRead($"{directory}/amaurot.json"))
             {
-                executionState = CommitStatusState.Failure;
-                continue;
+                workspaces = (await JsonSerializer.DeserializeAsync<Workspaces>(workspacesFile))!;
             }
 
-            var plan = await TofuClient.TofuExecution(ExecutionType.Plan, directory);
-
-            executionOutputs[tfDirectory].Add(plan);
-
-            if (plan.ExecutionState != CommitStatusState.Success)
+            foreach (var workspace in workspaces.Workspace)
             {
-                executionState = CommitStatusState.Failure;
+                var executionOutput = new Dictionary<string, List<PlanOutput>>();
+
+                var init = await TofuClient.TofuExecution(
+                    new Execution
+                    {
+                        ExecutionType = ExecutionType.Init,
+                        Directory = directory,
+                        Workspace = workspace.Value,
+                    }
+                );
+
+                executionOutput.Add(workspace.Key, [init]);
+
+                if (init.ExecutionState != CommitStatusState.Success)
+                {
+                    executionState = CommitStatusState.Failure;
+                    continue;
+                }
+
+                var plan = await TofuClient.TofuExecution(
+                    new Execution
+                    {
+                        ExecutionType = ExecutionType.Plan,
+                        Directory = directory,
+                        Workspace = workspace.Value,
+                    }
+                );
+
+                executionOutput[workspace.Key].Add(plan);
+
+                if (plan.ExecutionState != CommitStatusState.Success)
+                {
+                    executionState = CommitStatusState.Failure;
+                }
+
+                executionOutputs.Add(tfDirectory, executionOutput);
             }
         }
 
         tempDirectory.Delete(true);
 
-        var comment = $"OpenTofu plan output for commit {taskRequestBody.Sha}:\n\n";
+        var comment = $"Amaurot plan output for commit {taskRequestBody.Sha}:\n\n" + "---\n";
 
         foreach (var directory in executionOutputs)
         {
-            comment += $"`{directory.Key}`:\n";
+            comment += $"* `{directory.Key}`\n";
 
-            foreach (var executionOutput in directory.Value)
+            foreach (var workspace in directory.Value)
             {
-                comment +=
-                    $"<details><summary>{executionOutput.ExecutionType.ToString()}:</summary>\n\n"
-                    + "```\n"
-                    + $"{executionOutput.ExecutionStdout}\n"
-                    + "```\n"
-                    + "</details>\n\n";
+                comment += $"  * {workspace.Key}\n";
+
+                foreach (var executionOutput in workspace.Value)
+                {
+                    comment +=
+                        $"    <details><summary>{executionOutput.ExecutionType.ToString()}</summary>\n\n"
+                        + "    ```\n"
+                        + $"    {executionOutput.ExecutionStdout}\n"
+                        + "    ```\n"
+                        + "    </details>\n";
+                }
             }
         }
 

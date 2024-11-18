@@ -8,22 +8,30 @@ internal static class TofuClient
 {
     private static readonly string TofuPath = Environment.GetEnvironmentVariable("TOFU_PATH")!;
 
-    private const string TofuArguments = "-input=false -no-color";
-
-    public static async Task<PlanOutput> TofuExecution(
-        ExecutionType executionType,
-        string directory
-    )
+    public static async Task<PlanOutput> TofuExecution(Execution execution)
     {
-        var tofu = Process.Start(
-            new ProcessStartInfo
+        var processStartInfo = new ProcessStartInfo
+        {
+            FileName = TofuPath,
+            WorkingDirectory = execution.Directory,
+            RedirectStandardOutput = true,
+        };
+
+        processStartInfo.ArgumentList.Add(execution.ExecutionType.ToString().ToLower());
+        processStartInfo.ArgumentList.Add("-input=false");
+        processStartInfo.ArgumentList.Add("-no-color");
+
+        var varFiles = execution.Workspace.VarFiles;
+
+        if (varFiles is not null)
+        {
+            foreach (var varFile in varFiles)
             {
-                FileName = TofuPath,
-                Arguments = $"{executionType.ToString().ToLower()} {TofuArguments}",
-                WorkingDirectory = directory,
-                RedirectStandardOutput = true,
+                processStartInfo.ArgumentList.Add($"-var-file={varFile}");
             }
-        );
+        }
+
+        var tofu = Process.Start(processStartInfo);
 
         await tofu!.WaitForExitAsync();
 
@@ -31,7 +39,7 @@ internal static class TofuClient
 
         return new PlanOutput
         {
-            ExecutionType = executionType,
+            ExecutionType = execution.ExecutionType,
             ExecutionState = tofu.ExitCode is 0 or 2
                 ? CommitStatusState.Success
                 : CommitStatusState.Failure,
