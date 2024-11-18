@@ -11,7 +11,7 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace Amaurot.Processor.Clients;
 
-public class GitHubClient
+internal class GitHubClient
 {
     private readonly SigningCredentials _githubSigningCredentials;
     private readonly string _githubClientId;
