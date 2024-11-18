@@ -148,11 +148,10 @@ public class GitHubClient
     }
 
     public async Task CreateCommitStatus(
+        CreateCommitStatusRequest commitStatusRequest,
         string repo,
         string sha,
-        string state, // TODO: https://github.com/dotnet/runtime/issues/92828
-        long installationId,
-        string? description = null
+        long installationId
     )
     {
         var responseMessage = await HttpClient.SendAsync(
@@ -168,12 +167,7 @@ public class GitHubClient
                 },
                 RequestUri = new Uri($"{GitHubApiUri}repos/{repo}/statuses/{sha}"),
                 Content = JsonContent.Create(
-                    inputValue: new CreateCommitStatusRequest
-                    {
-                        State = state,
-                        Description = description,
-                        Context = "Amaurot",
-                    },
+                    inputValue: commitStatusRequest,
                     jsonTypeInfo: AmaurotSerializerContext.Default.CreateCommitStatusRequest
                 ),
             }

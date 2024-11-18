@@ -95,9 +95,13 @@ app.MapPost(
         );
 
         await gitHubClient.CreateCommitStatus(
+            new CreateCommitStatusRequest
+            {
+                State = CommitStatusState.Pending.ToString(), // TODO: https://github.com/dotnet/runtime/issues/92828
+                Context = "Amaurot",
+            },
             repositoryFullName,
             taskRequestBody.Sha,
-            "pending", // TODO: https://github.com/dotnet/runtime/issues/92828
             taskRequestBody.InstallationId
         );
 
@@ -167,17 +171,19 @@ app.MapPost(
             taskRequestBody.InstallationId
         );
 
-        var commitStatus =
-            executionState == CommitStatusState.Success
-                ? "All OpenTofu plans passing"
-                : "Some OpenTofu plans failed";
-
         await gitHubClient.CreateCommitStatus(
+            new CreateCommitStatusRequest
+            {
+                State = executionState.ToString().ToLower(), // TODO: https://github.com/dotnet/runtime/issues/92828
+                Description =
+                    executionState == CommitStatusState.Success
+                        ? "All OpenTofu plans passing"
+                        : "Some OpenTofu plans failed",
+                Context = "Amaurot",
+            },
             repositoryFullName,
             taskRequestBody.Sha,
-            executionState.ToString().ToLower(), // TODO: https://github.com/dotnet/runtime/issues/92828
-            taskRequestBody.InstallationId,
-            commitStatus
+            taskRequestBody.InstallationId
         );
 
         return Results.Ok();
