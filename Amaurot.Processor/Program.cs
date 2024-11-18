@@ -53,12 +53,11 @@ app.MapPost(
             $"Getting mergeability of pull request {pullRequestNumber}"
         );
 
-        PullRequest pullRequest;
         string? mergeCommitSha;
 
         while (true)
         {
-            pullRequest = (await gitHubClient.GetPullRequest(taskRequestBody))!;
+            var pullRequest = (await gitHubClient.GetPullRequest(taskRequestBody))!;
 
             if (!pullRequest.Mergeable.HasValue)
             {
