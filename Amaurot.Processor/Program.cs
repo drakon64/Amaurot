@@ -97,7 +97,7 @@ app.MapPost(
 
         ZipFile.ExtractToDirectory(zipball, tempDirectory.FullName);
 
-        var executionOutputs = new Dictionary<string, Dictionary<string, List<PlanOutput>>>();
+        var executionOutputs = new Dictionary<string, Dictionary<string, List<ExecutionOutput>>>();
         var executionState = CommitStatusState.Success;
 
         foreach (var tfDirectory in tfDirectories)
@@ -114,7 +114,7 @@ app.MapPost(
 
             foreach (var workspace in workspaces.Workspace)
             {
-                var executionOutput = new Dictionary<string, List<PlanOutput>>();
+                var executionOutput = new Dictionary<string, List<ExecutionOutput>>();
 
                 var init = await TofuClient.TofuExecution(
                     new Execution

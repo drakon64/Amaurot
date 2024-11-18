@@ -8,7 +8,7 @@ internal static class TofuClient
 {
     private static readonly string TofuPath = Environment.GetEnvironmentVariable("TOFU_PATH")!;
 
-    public static async Task<PlanOutput> TofuExecution(Execution execution)
+    public static async Task<ExecutionOutput> TofuExecution(Execution execution)
     {
         var processStartInfo = new ProcessStartInfo
         {
@@ -37,7 +37,7 @@ internal static class TofuClient
 
         var stdout = await tofu.StandardOutput.ReadToEndAsync();
 
-        return new PlanOutput
+        return new ExecutionOutput
         {
             ExecutionType = execution.ExecutionType,
             ExecutionState = tofu.ExitCode is 0 or 2
