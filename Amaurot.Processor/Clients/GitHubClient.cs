@@ -1,6 +1,7 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;
+using Amaurot.Common.Models;
 using Amaurot.Processor.Models;
 using Amaurot.Processor.Models.GitHub;
 using Amaurot.Processor.Models.GitHub.Commit;
@@ -149,9 +150,7 @@ public class GitHubClient
 
     public async Task CreateCommitStatus(
         CreateCommitStatusRequest commitStatusRequest,
-        string repo,
-        string sha,
-        long installationId
+        TaskRequestBody taskRequestBody
     )
     {
         var responseMessage = await HttpClient.SendAsync(
@@ -162,10 +161,12 @@ public class GitHubClient
                 {
                     {
                         "Authorization",
-                        $"Bearer {await GetGitHubInstallationAccessToken(installationId.ToString())}"
+                        $"Bearer {await GetGitHubInstallationAccessToken(taskRequestBody.InstallationId.ToString())}"
                     },
                 },
-                RequestUri = new Uri($"{GitHubApiUri}repos/{repo}/statuses/{sha}"),
+                RequestUri = new Uri(
+                    $"{GitHubApiUri}repos/{taskRequestBody.RepositoryOwner}/{taskRequestBody.RepositoryName}/statuses/{taskRequestBody.Sha}"
+                ),
                 Content = JsonContent.Create(
                     inputValue: commitStatusRequest,
                     jsonTypeInfo: AmaurotSerializerContext.Default.CreateCommitStatusRequest

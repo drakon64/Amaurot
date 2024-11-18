@@ -100,9 +100,7 @@ app.MapPost(
                 State = CommitStatusState.Pending.ToString(), // TODO: https://github.com/dotnet/runtime/issues/92828
                 Context = "Amaurot",
             },
-            repositoryFullName,
-            taskRequestBody.Sha,
-            taskRequestBody.InstallationId
+            taskRequestBody
         );
 
         var zipball = await gitHubClient.DownloadRepositoryArchiveZip(
@@ -181,9 +179,7 @@ app.MapPost(
                         : "Some OpenTofu plans failed",
                 Context = "Amaurot",
             },
-            repositoryFullName,
-            taskRequestBody.Sha,
-            taskRequestBody.InstallationId
+            taskRequestBody
         );
 
         return Results.Ok();
