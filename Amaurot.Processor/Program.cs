@@ -167,12 +167,17 @@ app.MapPost(
             taskRequestBody.InstallationId
         );
 
+        var commitStatus =
+            executionState == CommitStatusState.Success
+                ? "All OpenTofu plans passing"
+                : "Some OpenTofu plans failed";
+
         await gitHubClient.CreateCommitStatus(
             repositoryFullName,
             taskRequestBody.Sha,
             executionState.ToString().ToLower(), // TODO: https://github.com/dotnet/runtime/issues/92828
             taskRequestBody.InstallationId,
-            "All OpenTofu plans passing"
+            commitStatus
         );
 
         return Results.Ok();
