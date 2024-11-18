@@ -176,7 +176,7 @@ app.MapPost(
                     comment +=
                         $"    <details><summary>{executionOutput.ExecutionType.ToString()}</summary>\n\n"
                         + "    ```\n"
-                        + $"    {executionOutput.ExecutionStdout}\n"
+                        + $"    {executionOutput.ExecutionStdout.Replace("\n", "\n    ")}\n"
                         + "    ```\n"
                         + "    </details>\n";
                 }
