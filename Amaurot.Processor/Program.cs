@@ -159,7 +159,7 @@ app.MapPost(
                 State = executionState.ToString().ToLower(), // TODO: https://github.com/dotnet/runtime/issues/92828
                 Description =
                     executionState == CommitStatusState.Success
-                        ? "All OpenTofu plans passing"
+                        ? "All OpenTofu plans passed"
                         : "Some OpenTofu plans failed",
                 Context = "Amaurot",
             },
