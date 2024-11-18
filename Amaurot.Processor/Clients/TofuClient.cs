@@ -15,7 +15,7 @@ internal static class TofuClient
         string directory
     )
     {
-        var init = Process.Start(
+        var tofu = Process.Start(
             new ProcessStartInfo
             {
                 FileName = TofuPath,
@@ -25,15 +25,16 @@ internal static class TofuClient
             }
         );
 
-        await init!.WaitForExitAsync();
+        await tofu!.WaitForExitAsync();
 
-        var stdout = await init.StandardOutput.ReadToEndAsync();
+        var stdout = await tofu.StandardOutput.ReadToEndAsync();
 
         return new PlanOutput
         {
             ExecutionType = executionType,
-            ExecutionState =
-                init.ExitCode == 0 ? CommitStatusState.Success : CommitStatusState.Failure,
+            ExecutionState = tofu.ExitCode is 0 or 2
+                ? CommitStatusState.Success
+                : CommitStatusState.Failure,
             ExecutionStdout = stdout.TrimStart('\n').TrimEnd('\n'),
         };
     }
