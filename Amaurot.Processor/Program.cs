@@ -37,17 +37,20 @@ app.MapPost(
             .Distinct()
             .ToArray();
 
+        var pullRequestNumber =
+            $"{taskRequestBody.RepositoryOwner}/{taskRequestBody.RepositoryName}#{taskRequestBody.PullRequest}";
+
         if (tfDirectories.Length == 0)
         {
             var result =
-                $"Pull request {taskRequestBody.RepositoryOwner}/{taskRequestBody.RepositoryName}#{taskRequestBody.PullRequest} contains no OpenTofu configuration files";
+                $"Pull request {pullRequestNumber} contains no OpenTofu configuration files";
 
             await Console.Out.WriteLineAsync(result);
             return Results.Ok(result);
         }
 
         await Console.Out.WriteLineAsync(
-            $"Getting mergeability of pull request {taskRequestBody.RepositoryOwner}/{taskRequestBody.RepositoryName}#{taskRequestBody.PullRequest}"
+            $"Getting mergeability of pull request {pullRequestNumber}"
         );
 
         PullRequest pullRequest;
@@ -69,8 +72,7 @@ app.MapPost(
 
         if (mergeCommitSha is null)
         {
-            var result =
-                $"Pull request {taskRequestBody.RepositoryOwner}/{taskRequestBody.RepositoryName}#{taskRequestBody.PullRequest} is not mergeable";
+            var result = $"Pull request {pullRequestNumber} is not mergeable";
 
             await Console.Out.WriteLineAsync(result);
 
@@ -78,7 +80,7 @@ app.MapPost(
         }
 
         await Console.Out.WriteLineAsync(
-            $"Creating commit status for pull request {taskRequestBody.RepositoryOwner}/{taskRequestBody.RepositoryName}#{taskRequestBody.PullRequest} commit {taskRequestBody.Sha}"
+            $"Creating commit status (pending) for pull request {pullRequestNumber} commit {taskRequestBody.Sha}"
         );
 
         await gitHubClient.CreateCommitStatus(
@@ -143,7 +145,15 @@ app.MapPost(
             }
         }
 
+        await Console.Out.WriteLineAsync(
+            $"Creating plan output comment for pull request {pullRequestNumber} commit {taskRequestBody.Sha}"
+        );
+
         await gitHubClient.CreateIssueComment(comment.TrimEnd('\n'), taskRequestBody);
+
+        await Console.Out.WriteLineAsync(
+            $"Creating commit status ({executionState.ToString().ToLower()}) for pull request {pullRequestNumber} commit {taskRequestBody.Sha}"
+        );
 
         await gitHubClient.CreateCommitStatus(
             new CreateCommitStatusRequest
