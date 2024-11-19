@@ -106,11 +106,11 @@ app.MapPost(
             var directory =
                 $"{tempDirectory.FullName}/{taskRequestBody.RepositoryOwner}-{taskRequestBody.RepositoryName}-{taskRequestBody.Sha}/{tfDirectory}";
 
-            AmaurotJson workspaces;
+            AmaurotJson amaurotJson;
 
             await using (var workspacesFile = File.OpenRead($"{directory}/amaurot.json"))
             {
-                workspaces = (
+                amaurotJson = (
                     await JsonSerializer.DeserializeAsync<AmaurotJson>(
                         workspacesFile,
                         AmaurotSerializerContext.Default.AmaurotJson
@@ -118,8 +118,10 @@ app.MapPost(
                 )!;
             }
 
-            foreach (var workspace in workspaces.Workspaces)
+            foreach (var workspace in amaurotJson.Workspaces)
             {
+                await Console.Out.WriteLineAsync($"Running OpenTofu for workspace {workspace.Key}");
+
                 var executionOutput = new Dictionary<string, ExecutionOutputs>();
 
                 var init = await TofuClient.TofuExecution(
@@ -155,7 +157,7 @@ app.MapPost(
                 {
                     executionState = CommitStatusState.Failure;
                 }
-                
+
                 if (!executionOutputs.TryAdd(tfDirectory, executionOutput))
                 {
                     executionOutputs[tfDirectory] = executionOutput;
