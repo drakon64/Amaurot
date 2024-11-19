@@ -38,11 +38,9 @@ internal static class AmaurotClient
                         + "    ```\n"
                         + "    </details>\n";
                 }
-
-                comment = comment.TrimEnd('\n');
             }
         }
 
-        return comment;
+        return comment.TrimEnd('\n');
     }
 }
