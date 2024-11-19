@@ -178,12 +178,17 @@ app.MapPost(
                     + "    ```\n"
                     + $"    {workspace.Value.Init.ExecutionStdout.Replace("\n", "\n    ")}\n"
                     + "    ```\n"
-                    + "    </details>\n"
-                    + $"    <details><summary>{workspace.Value.Execution!.ExecutionType.ToString()}</summary>\n\n"
-                    + "    ```\n"
-                    + $"    {workspace.Value.Execution.ExecutionStdout.Replace("\n", "\n    ")}\n"
-                    + "    ```\n"
                     + "    </details>\n";
+
+                if (workspace.Value.Execution is not null)
+                {
+                    comment +=
+                        $"    <details><summary>{workspace.Value.Execution.ExecutionType.ToString()}</summary>\n\n"
+                        + "    ```\n"
+                        + $"    {workspace.Value.Execution.ExecutionStdout.Replace("\n", "\n    ")}\n"
+                        + "    ```\n"
+                        + "    </details>\n";
+                }
             }
         }
 
