@@ -5,8 +5,7 @@ namespace Amaurot.Processor.Models.OpenTofu;
 internal class ExecutionOutputs
 {
     public required ExecutionOutput Init { get; init; }
-    public ExecutionOutput? Plan { get; init; }
-    public ExecutionOutput? Apply { get; init; }
+    public ExecutionOutput? Execution { get; init; }
 }
 
 internal class ExecutionOutput

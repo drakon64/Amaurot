@@ -157,7 +157,7 @@ app.MapPost(
                 }
 
                 directoryOutputs[tfDirectory]
-                    .Add(workspace.Key, new ExecutionOutputs { Init = init, Plan = plan });
+                    .Add(workspace.Key, new ExecutionOutputs { Init = init, Execution = plan });
             }
         }
 
@@ -179,9 +179,9 @@ app.MapPost(
                     + $"    {workspace.Value.Init.ExecutionStdout.Replace("\n", "\n    ")}\n"
                     + "    ```\n"
                     + "    </details>\n"
-                    + $"    <details><summary>{workspace.Value.Plan!.ExecutionType.ToString()}</summary>\n\n"
+                    + $"    <details><summary>{workspace.Value.Execution!.ExecutionType.ToString()}</summary>\n\n"
                     + "    ```\n"
-                    + $"    {workspace.Value.Plan.ExecutionStdout.Replace("\n", "\n    ")}\n"
+                    + $"    {workspace.Value.Execution.ExecutionStdout.Replace("\n", "\n    ")}\n"
                     + "    ```\n"
                     + "    </details>\n";
             }
