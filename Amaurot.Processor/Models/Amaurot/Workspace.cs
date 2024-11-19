@@ -1,4 +1,4 @@
-namespace Amaurot.Processor.Models.OpenTofu;
+namespace Amaurot.Processor.Models.Amaurot;
 
 internal class Workspace
 {

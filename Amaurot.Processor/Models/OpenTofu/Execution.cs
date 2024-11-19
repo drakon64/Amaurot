@@ -1,3 +1,5 @@
+using Amaurot.Processor.Models.Amaurot;
+
 namespace Amaurot.Processor.Models.OpenTofu;
 
 internal class Execution

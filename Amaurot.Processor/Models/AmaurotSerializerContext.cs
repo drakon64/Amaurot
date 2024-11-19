@@ -1,9 +1,9 @@
 using System.Text.Json.Serialization;
+using Amaurot.Processor.Models.Amaurot;
 using Amaurot.Processor.Models.GitHub;
 using Amaurot.Processor.Models.GitHub.Commit;
 using Amaurot.Processor.Models.GitHub.Issues;
 using Amaurot.Processor.Models.GitHub.PullRequest;
-using Amaurot.Processor.Models.OpenTofu;
 
 namespace Amaurot.Processor.Models;
 
