@@ -21,6 +21,14 @@ internal static class TofuClient
         processStartInfo.ArgumentList.Add("-input=false");
         processStartInfo.ArgumentList.Add("-no-color");
 
+        string? planOutPath = null;
+
+        if (execution.ExecutionType == ExecutionType.Plan)
+        {
+            planOutPath = Path.GetTempFileName();
+            processStartInfo.ArgumentList.Add($"-out={planOutPath}");
+        }
+
         var varFiles = execution.Workspace.VarFiles;
 
         if (varFiles is not null)
@@ -37,6 +45,14 @@ internal static class TofuClient
 
         var stdout = await tofu.StandardOutput.ReadToEndAsync();
 
+        byte[]? planOut = null;
+
+        if (execution.ExecutionType == ExecutionType.Plan)
+        {
+            planOut = await File.ReadAllBytesAsync(planOutPath!);
+            File.Delete(planOutPath!);
+        }
+
         return new ExecutionOutput
         {
             ExecutionType = execution.ExecutionType,
@@ -44,6 +60,7 @@ internal static class TofuClient
                 ? CommitStatusState.Success
                 : CommitStatusState.Failure,
             ExecutionStdout = stdout.TrimStart('\n').TrimEnd('\n'),
+            PlanOut = planOut,
         };
     }
 }
