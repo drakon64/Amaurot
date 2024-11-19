@@ -98,7 +98,7 @@ app.MapPost(
 
         ZipFile.ExtractToDirectory(zipball, tempDirectory.FullName);
 
-        var executionOutputs = new Dictionary<string, Dictionary<string, List<ExecutionOutput>>>();
+        var executionOutputs = new Dictionary<string, Dictionary<string, ExecutionOutputs>>();
         var executionState = CommitStatusState.Success;
 
         foreach (var tfDirectory in tfDirectories)
@@ -120,7 +120,7 @@ app.MapPost(
 
             foreach (var workspace in workspaces.Workspaces)
             {
-                var executionOutput = new Dictionary<string, List<ExecutionOutput>>();
+                var executionOutput = new Dictionary<string, ExecutionOutputs>();
 
                 var init = await TofuClient.TofuExecution(
                     new Execution
@@ -131,31 +131,35 @@ app.MapPost(
                     }
                 );
 
-                executionOutput.Add(workspace.Key, [init]);
+                executionOutput.Add(workspace.Key, new ExecutionOutputs { Init = init });
 
-                if (init.ExecutionState != CommitStatusState.Success)
+                if (init.ExecutionState == CommitStatusState.Success)
                 {
-                    executionState = CommitStatusState.Failure;
-                    continue;
-                }
+                    var plan = await TofuClient.TofuExecution(
+                        new Execution
+                        {
+                            ExecutionType = ExecutionType.Plan,
+                            Directory = directory,
+                            Workspace = workspace.Value,
+                        }
+                    );
 
-                var plan = await TofuClient.TofuExecution(
-                    new Execution
+                    executionOutput[workspace.Key].Plan = plan;
+
+                    if (plan.ExecutionState != CommitStatusState.Success)
                     {
-                        ExecutionType = ExecutionType.Plan,
-                        Directory = directory,
-                        Workspace = workspace.Value,
+                        executionState = CommitStatusState.Failure;
                     }
-                );
-
-                executionOutput[workspace.Key].Add(plan);
-
-                if (plan.ExecutionState != CommitStatusState.Success)
+                }
+                else
                 {
                     executionState = CommitStatusState.Failure;
                 }
-
-                executionOutputs.Add(tfDirectory, executionOutput);
+                
+                if (!executionOutputs.TryAdd(tfDirectory, executionOutput))
+                {
+                    executionOutputs[tfDirectory] = executionOutput;
+                }
             }
         }
 
@@ -171,15 +175,17 @@ app.MapPost(
             {
                 comment += $"  * {workspace.Key}\n";
 
-                foreach (var executionOutput in workspace.Value)
-                {
-                    comment +=
-                        $"    <details><summary>{executionOutput.ExecutionType.ToString()}</summary>\n\n"
-                        + "    ```\n"
-                        + $"    {executionOutput.ExecutionStdout.Replace("\n", "\n    ")}\n"
-                        + "    ```\n"
-                        + "    </details>\n";
-                }
+                comment +=
+                    $"    <details><summary>{workspace.Value.Init.ExecutionType.ToString()}</summary>\n\n"
+                    + "    ```\n"
+                    + $"    {workspace.Value.Init.ExecutionStdout.Replace("\n", "\n    ")}\n"
+                    + "    ```\n"
+                    + "    </details>\n"
+                    + $"    <details><summary>{workspace.Value.Plan!.ExecutionType.ToString()}</summary>\n\n"
+                    + "    ```\n"
+                    + $"    {workspace.Value.Plan.ExecutionStdout.Replace("\n", "\n    ")}\n"
+                    + "    ```\n"
+                    + "    </details>\n";
             }
         }
 
