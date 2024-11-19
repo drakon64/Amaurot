@@ -3,6 +3,7 @@ using System.Text.Json;
 using Amaurot.Common.Models;
 using Amaurot.Processor.Clients;
 using Amaurot.Processor.Models;
+using Amaurot.Processor.Models.Amaurot;
 using Amaurot.Processor.Models.GitHub.Commit;
 using Amaurot.Processor.Models.OpenTofu;
 
@@ -163,41 +164,16 @@ app.MapPost(
 
         tempDirectory.Delete(true);
 
-        // TODO: Use StringBuilder
-        var comment = $"Amaurot plan output for commit {taskRequestBody.Sha}:\n\n" + "---\n";
-
-        foreach (var directory in directoryOutputs)
-        {
-            comment += $"* `{directory.Key}`\n";
-
-            foreach (var workspace in directory.Value)
-            {
-                comment += $"  * {workspace.Key}\n";
-
-                comment +=
-                    $"    <details><summary>{workspace.Value.Init.ExecutionType.ToString()}</summary>\n\n"
-                    + "    ```\n"
-                    + $"    {workspace.Value.Init.ExecutionStdout.Replace("\n", "\n    ")}\n"
-                    + "    ```\n"
-                    + "    </details>\n";
-
-                if (workspace.Value.Execution is not null)
+        await gitHubClient.CreateIssueComment(
+            await AmaurotClient.Comment(
+                new AmaurotComment
                 {
-                    comment +=
-                        $"    <details><summary>{workspace.Value.Execution.ExecutionType.ToString()}</summary>\n\n"
-                        + "    ```\n"
-                        + $"    {workspace.Value.Execution.ExecutionStdout.Replace("\n", "\n    ")}\n"
-                        + "    ```\n"
-                        + "    </details>\n";
+                    TaskRequestBody = taskRequestBody,
+                    DirectoryOutputs = directoryOutputs,
                 }
-            }
-        }
-
-        await Console.Out.WriteLineAsync(
-            $"Creating plan output comment for pull request {pullRequestNumber} commit {taskRequestBody.Sha}"
+            ),
+            taskRequestBody
         );
-
-        await gitHubClient.CreateIssueComment(comment.TrimEnd('\n'), taskRequestBody);
 
         await Console.Out.WriteLineAsync(
             $"Creating commit status ({executionState.ToString().ToLower()}) for pull request {pullRequestNumber} commit {taskRequestBody.Sha}"
