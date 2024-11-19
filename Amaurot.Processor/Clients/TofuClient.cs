@@ -47,10 +47,10 @@ internal static class TofuClient
 
         byte[]? planOut = null;
 
-        if (execution.ExecutionType == ExecutionType.Plan)
+        if (planOutPath is not null)
         {
-            planOut = await File.ReadAllBytesAsync(planOutPath!);
-            File.Delete(planOutPath!);
+            planOut = await File.ReadAllBytesAsync(planOutPath);
+            File.Delete(planOutPath);
         }
 
         return new ExecutionOutput
