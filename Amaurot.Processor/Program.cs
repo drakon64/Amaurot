@@ -98,7 +98,7 @@ app.MapPost(
 
         ZipFile.ExtractToDirectory(zipball, tempDirectory.FullName);
 
-        var executionOutputs = new Dictionary<string, Dictionary<string, ExecutionOutputs>>();
+        var directoryOutputs = new Dictionary<string, Dictionary<string, ExecutionOutputs>>();
         var executionState = CommitStatusState.Success;
 
         foreach (var tfDirectory in tfDirectories)
@@ -118,11 +118,11 @@ app.MapPost(
                 )!;
             }
 
+            directoryOutputs.Add(tfDirectory, new Dictionary<string, ExecutionOutputs>());
+
             foreach (var workspace in amaurotJson.Workspaces)
             {
                 await Console.Out.WriteLineAsync($"Running OpenTofu for workspace {workspace.Key}");
-
-                var executionOutput = new Dictionary<string, ExecutionOutputs>();
 
                 var init = await TofuClient.TofuExecution(
                     new Execution
@@ -133,11 +133,11 @@ app.MapPost(
                     }
                 );
 
-                executionOutput.Add(workspace.Key, new ExecutionOutputs { Init = init });
+                ExecutionOutput? plan = null;
 
                 if (init.ExecutionState == CommitStatusState.Success)
                 {
-                    var plan = await TofuClient.TofuExecution(
+                    plan = await TofuClient.TofuExecution(
                         new Execution
                         {
                             ExecutionType = ExecutionType.Plan,
@@ -145,8 +145,6 @@ app.MapPost(
                             Workspace = workspace.Value,
                         }
                     );
-
-                    executionOutput[workspace.Key].Plan = plan;
 
                     if (plan.ExecutionState != CommitStatusState.Success)
                     {
@@ -158,10 +156,8 @@ app.MapPost(
                     executionState = CommitStatusState.Failure;
                 }
 
-                if (!executionOutputs.TryAdd(tfDirectory, executionOutput))
-                {
-                    executionOutputs[tfDirectory] = executionOutput;
-                }
+                directoryOutputs[tfDirectory]
+                    .Add(workspace.Key, new ExecutionOutputs { Init = init, Plan = plan });
             }
         }
 
@@ -169,7 +165,7 @@ app.MapPost(
 
         var comment = $"Amaurot plan output for commit {taskRequestBody.Sha}:\n\n" + "---\n";
 
-        foreach (var directory in executionOutputs)
+        foreach (var directory in directoryOutputs)
         {
             comment += $"* `{directory.Key}`\n";
 
