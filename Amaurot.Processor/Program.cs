@@ -163,6 +163,7 @@ app.MapPost(
 
         tempDirectory.Delete(true);
 
+        // TODO: Use StringBuilder
         var comment = $"Amaurot plan output for commit {taskRequestBody.Sha}:\n\n" + "---\n";
 
         foreach (var directory in directoryOutputs)
