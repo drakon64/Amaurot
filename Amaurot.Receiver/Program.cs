@@ -7,9 +7,9 @@ namespace Amaurot.Receiver;
 
 public class Program
 {
-    internal static readonly string QueueName =
-        Environment.GetEnvironmentVariable("QUEUE_NAME")
-        ?? throw new InvalidOperationException("QUEUE_NAME is null");
+    internal static readonly string QueueId =
+        Environment.GetEnvironmentVariable("QUEUE_ID")
+        ?? throw new InvalidOperationException("QUEUE_ID is null");
 
     internal static readonly string ServiceAccountEmail =
         Environment.GetEnvironmentVariable("SERVICE_ACCOUNT_EMAIL")

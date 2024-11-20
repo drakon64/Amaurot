@@ -32,7 +32,7 @@ public sealed class GitHubWebhookEventProcessor : WebhookEventProcessor
         await Program.CloudTasksClient.CreateTaskAsync(
             new CreateTaskRequest
             {
-                Parent = Program.QueueName,
+                Parent = Program.QueueId,
                 Task = new Google.Cloud.Tasks.V2.Task
                 {
                     HttpRequest = new HttpRequest
