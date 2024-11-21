@@ -1,10 +1,23 @@
 using System.Text;
 using Amaurot.Processor.Models.Amaurot;
+using Google.Api.Gax;
+using Google.Cloud.Firestore;
 
 namespace Amaurot.Processor.Clients;
 
 internal static class AmaurotClient
 {
+    private static readonly FirestoreDb FirestoreDb;
+
+    static AmaurotClient()
+    {
+        FirestoreDb = new FirestoreDbBuilder
+        {
+            DatabaseId = Environment.GetEnvironmentVariable("DATABASE_ID"),
+            EmulatorDetection = EmulatorDetection.EmulatorOrProduction,
+        }.Build();
+    }
+
     public static async Task<string> Comment(AmaurotComment amaurotComment)
     {
         await Console.Out.WriteLineAsync(
@@ -46,5 +59,10 @@ internal static class AmaurotClient
         }
 
         return comment.ToString().TrimEnd('\n');
+    }
+
+    public static async Task SavePlanOutput(SavedPlan savedPlan)
+    {
+        await FirestoreDb.Collection("plans").AddAsync(savedPlan);
     }
 }

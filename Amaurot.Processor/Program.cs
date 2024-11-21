@@ -151,6 +151,20 @@ app.MapPost(
                     {
                         executionState = CommitStatusState.Failure;
                     }
+
+                    if (plan.PlanOut is not null)
+                    {
+                        await AmaurotClient.SavePlanOutput(
+                            new SavedPlan
+                            {
+                                PullRequest = pullRequestNumber,
+                                Sha = taskRequestBody.Sha,
+                                Directory = tfDirectory,
+                                Workspace = workspace.Key,
+                                PlanOut = plan.PlanOut,
+                            }
+                        );
+                    }
                 }
                 else
                 {

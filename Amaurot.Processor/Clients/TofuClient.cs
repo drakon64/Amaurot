@@ -26,6 +26,7 @@ internal static class TofuClient
         if (execution.ExecutionType == ExecutionType.Plan)
         {
             planOutPath = Path.GetTempFileName();
+            processStartInfo.ArgumentList.Add("-detailed-exitcode");
             processStartInfo.ArgumentList.Add($"-out={planOutPath}");
         }
 
@@ -49,7 +50,9 @@ internal static class TofuClient
 
         if (planOutPath is not null)
         {
-            planOut = await File.ReadAllBytesAsync(planOutPath);
+            if (tofu.ExitCode == 2)
+                planOut = await File.ReadAllBytesAsync(planOutPath);
+
             File.Delete(planOutPath);
         }
 
