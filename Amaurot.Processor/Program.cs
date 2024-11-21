@@ -26,7 +26,7 @@ app.MapPost(
     "/plan",
     async (TaskRequestBody taskRequestBody) =>
     {
-        var tfDirectories = (
+        var changedDirectories = (
             from file in await gitHubClient.ListPullRequestFiles(taskRequestBody)
             where
                 file.FileName.EndsWith(".tf")
@@ -42,7 +42,7 @@ app.MapPost(
         var pullRequestNumber =
             $"{taskRequestBody.RepositoryOwner}/{taskRequestBody.RepositoryName}#{taskRequestBody.PullRequest}";
 
-        if (tfDirectories.Length == 0)
+        if (changedDirectories.Length == 0)
         {
             var result =
                 $"Pull request {pullRequestNumber} contains no OpenTofu configuration files";
@@ -102,16 +102,16 @@ app.MapPost(
         var directoryOutputs = new Dictionary<string, Dictionary<string, ExecutionOutputs>>();
         var executionState = CommitStatusState.Success;
 
-        foreach (var tfDirectory in tfDirectories)
+        foreach (var directory in changedDirectories)
         {
-            var directory =
-                $"{tempDirectory.FullName}/{taskRequestBody.RepositoryOwner}-{taskRequestBody.RepositoryName}-{taskRequestBody.Sha}/{tfDirectory}";
+            var repoDirectory =
+                $"{tempDirectory.FullName}/{taskRequestBody.RepositoryOwner}-{taskRequestBody.RepositoryName}-{taskRequestBody.Sha}/{directory}";
 
             AmaurotJson amaurotJson;
 
             try
             {
-                await using var workspacesFile = File.OpenRead($"{directory}/amaurot.json");
+                await using var workspacesFile = File.OpenRead($"{repoDirectory}/amaurot.json");
                 amaurotJson = (
                     await JsonSerializer.DeserializeAsync<AmaurotJson>(
                         workspacesFile,
@@ -128,7 +128,7 @@ app.MapPost(
                 continue;
             }
 
-            directoryOutputs.Add(tfDirectory, new Dictionary<string, ExecutionOutputs>());
+            directoryOutputs.Add(directory, new Dictionary<string, ExecutionOutputs>());
 
             foreach (var workspace in amaurotJson.Workspaces)
             {
@@ -138,7 +138,7 @@ app.MapPost(
                     new Execution
                     {
                         ExecutionType = ExecutionType.Init,
-                        Directory = directory,
+                        Directory = repoDirectory,
                         Workspace = workspace.Value,
                     }
                 );
@@ -151,7 +151,7 @@ app.MapPost(
                         new Execution
                         {
                             ExecutionType = ExecutionType.Plan,
-                            Directory = directory,
+                            Directory = repoDirectory,
                             Workspace = workspace.Value,
                         }
                     );
@@ -168,7 +168,7 @@ app.MapPost(
                             {
                                 PullRequest = pullRequestNumber,
                                 Sha = taskRequestBody.Sha,
-                                Directory = tfDirectory,
+                                Directory = directory,
                                 Workspace = workspace.Key,
                                 PlanOut = plan.PlanOut,
                             }
@@ -180,7 +180,7 @@ app.MapPost(
                     executionState = CommitStatusState.Failure;
                 }
 
-                directoryOutputs[tfDirectory]
+                directoryOutputs[directory]
                     .Add(workspace.Key, new ExecutionOutputs { Init = init, Execution = plan });
             }
         }
