@@ -7,16 +7,7 @@ namespace Amaurot.Processor.Clients;
 
 internal static class AmaurotClient
 {
-    private static readonly FirestoreDb FirestoreDb;
-
-    static AmaurotClient()
-    {
-        FirestoreDb = new FirestoreDbBuilder
-        {
-            DatabaseId = Environment.GetEnvironmentVariable("DATABASE_ID"),
-            EmulatorDetection = EmulatorDetection.EmulatorOrProduction,
-        }.Build();
-    }
+    private static readonly FirestoreDb FirestoreDb = FirestoreDb.Create();
 
     public static async Task<string> Comment(AmaurotComment amaurotComment)
     {
