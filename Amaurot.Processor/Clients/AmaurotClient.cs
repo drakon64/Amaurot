@@ -1,6 +1,5 @@
 using System.Text;
 using Amaurot.Processor.Models.Amaurot;
-using Google.Api.Gax;
 using Google.Cloud.Firestore;
 
 namespace Amaurot.Processor.Clients;
@@ -55,5 +54,16 @@ internal static class AmaurotClient
     public static async Task SavePlanOutput(SavedPlan savedPlan)
     {
         await FirestoreDb.Collection("plans").AddAsync(savedPlan);
+    }
+
+    public static async Task<SavedPlan[]> GetSavedPlanOutput(SavedPlanQuery savedPlanQuery)
+    {
+        var snapshot = await FirestoreDb
+            .Collection("plans")
+            .WhereEqualTo("PullRequest", $"{savedPlanQuery.PullRequest}")
+            .WhereEqualTo("Sha", savedPlanQuery.Sha)
+            .GetSnapshotAsync();
+
+        return snapshot.Select(document => document.ConvertTo<SavedPlan>()).ToArray();
     }
 }

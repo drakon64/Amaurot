@@ -219,4 +219,19 @@ app.MapPost(
     }
 );
 
+app.MapPost(
+    "/apply",
+    async (TaskRequestBody taskRequestBody) =>
+    {
+        var savedPlan = await AmaurotClient.GetSavedPlanOutput(
+            new SavedPlanQuery
+            {
+                PullRequest =
+                    $"{taskRequestBody.RepositoryOwner}/{taskRequestBody.RepositoryName}#{taskRequestBody.PullRequest}",
+                Sha = taskRequestBody.Sha,
+            }
+        );
+    }
+);
+
 app.Run($"http://*:{Environment.GetEnvironmentVariable("PORT")}");
