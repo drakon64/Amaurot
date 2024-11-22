@@ -19,6 +19,9 @@ public class Program
         Environment.GetEnvironmentVariable("GITHUB_CLIENT_ID")
         ?? throw new InvalidOperationException("GITHUB_CLIENT_ID is null");
 
+    public static readonly string GitHubContext =
+        Environment.GetEnvironmentVariable("GITHUB_CONTEXT") ?? "Amaurot";
+
     internal static readonly GitHubClient GitHubClient = new(GitHubPrivateKey, GitHubClientId);
 
     public static void Main()
@@ -86,17 +89,10 @@ public class Program
                     return Results.Ok(result);
                 }
 
-                await Console.Out.WriteLineAsync(
-                    $"Creating commit status (pending) for pull request {pullRequestNumber} commit {taskRequestBody.Sha}"
-                );
-
-                await GitHubClient.CreateCommitStatus(
-                    new CreateCommitStatusRequest
-                    {
-                        State = CommitStatusState.Pending.ToString().ToLower(), // TODO: https://github.com/dotnet/runtime/issues/92828
-                        Context = "Amaurot",
-                    },
-                    taskRequestBody
+                await AmaurotClient.CreateCommitStatus(
+                    taskRequestBody,
+                    pullRequestNumber,
+                    CommitStatusState.Pending
                 );
 
                 var zipball = await GitHubClient.DownloadRepositoryArchiveZip(taskRequestBody);

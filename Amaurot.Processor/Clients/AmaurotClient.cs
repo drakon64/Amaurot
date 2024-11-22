@@ -1,6 +1,7 @@
 using System.Text;
 using Amaurot.Common.Models;
 using Amaurot.Processor.Models.Amaurot;
+using Amaurot.Processor.Models.GitHub.Commit;
 using Google.Cloud.Firestore;
 
 namespace Amaurot.Processor.Clients;
@@ -75,6 +76,24 @@ internal static class AmaurotClient
         }
 
         return workspaces.ToArray();
+    }
+
+    public static async Task CreateCommitStatus(
+        TaskRequestBody taskRequestBody,
+        string pullRequestFull,
+        CommitStatusState state
+    )
+    {
+        var stateString = state.ToString().ToLower(); // TODO: https://github.com/dotnet/runtime/issues/92828
+
+        await Console.Out.WriteLineAsync(
+            $"Creating commit status ({stateString}) for pull request {pullRequestFull} commit {taskRequestBody.Sha}"
+        );
+
+        await Program.GitHubClient.CreateCommitStatus(
+            new CreateCommitStatusRequest { State = stateString, Context = Program.GitHubContext },
+            taskRequestBody
+        );
     }
 
     public static async Task<string> Comment(AmaurotComment amaurotComment)
