@@ -95,11 +95,10 @@ public class Program
                     CommitStatusState.Pending
                 );
 
-                var zipball = await GitHubClient.DownloadRepositoryArchiveZip(taskRequestBody);
-
-                var tempDirectory = Directory.CreateTempSubdirectory();
-
-                ZipFile.ExtractToDirectory(zipball, tempDirectory.FullName);
+                var tempDirectory = await AmaurotClient.ExtractPullRequestZipball(
+                    taskRequestBody,
+                    taskRequestBody.Sha
+                );
 
                 var directoryOutputs =
                     new Dictionary<string, Dictionary<string, ExecutionOutputs>>();

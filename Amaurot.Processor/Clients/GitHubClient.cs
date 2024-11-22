@@ -211,7 +211,10 @@ internal class GitHubClient
         throw new Exception(error!.ToString());
     }
 
-    public async Task<Stream> DownloadRepositoryArchiveZip(TaskRequestBody taskRequestBody)
+    public async Task<Stream> DownloadRepositoryArchiveZip(
+        TaskRequestBody taskRequestBody,
+        string commit
+    )
     {
         var responseMessage = await HttpClient.SendAsync(
             new HttpRequestMessage
@@ -225,7 +228,7 @@ internal class GitHubClient
                     },
                 },
                 RequestUri = new Uri(
-                    $"{GitHubApiUri}repos/{taskRequestBody.RepositoryOwner}/{taskRequestBody.RepositoryName}/zipball/{taskRequestBody.Sha}"
+                    $"{GitHubApiUri}repos/{taskRequestBody.RepositoryOwner}/{taskRequestBody.RepositoryName}/zipball/{commit}"
                 ),
             }
         );

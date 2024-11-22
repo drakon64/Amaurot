@@ -1,3 +1,4 @@
+using System.IO.Compression;
 using System.Text;
 using Amaurot.Common.Models;
 using Amaurot.Processor.Models.Amaurot;
@@ -10,7 +11,7 @@ internal static class AmaurotClient
 {
     private static readonly FirestoreDb FirestoreDb = FirestoreDb.Create();
 
-    public static async Task<AmaurotWorkspaceRedo[]> GetWorkspaces(
+    public static async Task<ChangedWorkspaces> GetWorkspaces(
         TaskRequestBody taskRequestBody,
         string pullRequestFull
     )
@@ -75,7 +76,11 @@ internal static class AmaurotClient
             throw new Exception($"Pull request {pullRequestFull} contains no modified workspaces");
         }
 
-        return workspaces.ToArray();
+        return new ChangedWorkspaces
+        {
+            Workspaces = workspaces.ToArray(),
+            MergeSha = mergeCommitSha,
+        };
     }
 
     public static async Task CreateCommitStatus(
@@ -94,6 +99,27 @@ internal static class AmaurotClient
             new CreateCommitStatusRequest { State = stateString, Context = Program.GitHubContext },
             taskRequestBody
         );
+    }
+
+    public static async Task<DirectoryInfo> ExtractPullRequestZipball(
+        TaskRequestBody taskRequestBody,
+        string commit
+    )
+    {
+        await Console.Out.WriteLineAsync(
+            $"Downloading repository {taskRequestBody.RepositoryOwner}/{taskRequestBody.RepositoryName} at commit {commit}"
+        );
+
+        await using var zipball = await Program.GitHubClient.DownloadRepositoryArchiveZip(
+            taskRequestBody,
+            commit
+        );
+
+        var tempDirectory = Directory.CreateTempSubdirectory();
+
+        ZipFile.ExtractToDirectory(zipball, tempDirectory.FullName);
+
+        return tempDirectory;
     }
 
     public static async Task<string> Comment(AmaurotComment amaurotComment)
