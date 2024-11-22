@@ -109,14 +109,23 @@ app.MapPost(
 
             AmaurotJson amaurotJson;
 
-            await using (var workspacesFile = File.OpenRead($"{directory}/amaurot.json"))
+            try
             {
+                await using var workspacesFile = File.OpenRead($"{directory}/amaurot.json");
                 amaurotJson = (
                     await JsonSerializer.DeserializeAsync<AmaurotJson>(
                         workspacesFile,
                         AmaurotSerializerContext.Default.AmaurotJson
                     )
                 )!;
+            }
+            catch (FileNotFoundException)
+            {
+                await Console.Out.WriteLineAsync(
+                    $"Directory {directory} doesn't contain an `amaurot.json` file"
+                );
+
+                continue;
             }
 
             directoryOutputs.Add(tfDirectory, new Dictionary<string, ExecutionOutputs>());
