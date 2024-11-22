@@ -1,8 +1,11 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;
+using System.Text;
+using System.Text.Json;
 using Amaurot.Common.Models;
 using Amaurot.Processor.Models;
+using Amaurot.Processor.Models.Amaurot;
 using Amaurot.Processor.Models.GitHub;
 using Amaurot.Processor.Models.GitHub.Commit;
 using Amaurot.Processor.Models.GitHub.Issues;
@@ -96,6 +99,32 @@ internal class GitHubClient
         )!;
 
         return _githubInstallationAccessToken.Token;
+    }
+
+    public async Task<AmaurotJsonRedo> GetRepositoryAmaurotJson(TaskRequestBody taskRequestBody)
+    {
+        var responseMessage = await HttpClient.SendAsync(
+            new HttpRequestMessage
+            {
+                Method = HttpMethod.Get,
+                Headers =
+                {
+                    {
+                        "Authorization",
+                        $"Bearer {await GetGitHubInstallationAccessToken(taskRequestBody.InstallationId)}"
+                    },
+                },
+                RequestUri = new Uri(
+                    $"{GitHubApiUri}repos/{taskRequestBody.RepositoryOwner}/{taskRequestBody.RepositoryName}/contents/amaurot.json"
+                ),
+            }
+        );
+
+        var amaurotJson = await responseMessage.Content.ReadFromJsonAsync<RepositoryAmaurotJson>();
+
+        return JsonSerializer.Deserialize<AmaurotJsonRedo>(
+            Encoding.UTF8.GetString(Convert.FromBase64String(amaurotJson!.Content))
+        );
     }
 
     public async Task<PullRequestFile[]> ListPullRequestFiles(TaskRequestBody taskRequestBody)

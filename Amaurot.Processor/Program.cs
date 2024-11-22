@@ -19,7 +19,7 @@ public class Program
         Environment.GetEnvironmentVariable("GITHUB_CLIENT_ID")
         ?? throw new InvalidOperationException("GITHUB_CLIENT_ID is null");
 
-    private static readonly GitHubClient GitHubClient = new(GitHubPrivateKey, GitHubClientId);
+    internal static readonly GitHubClient GitHubClient = new(GitHubPrivateKey, GitHubClientId);
 
     public static void Main()
     {

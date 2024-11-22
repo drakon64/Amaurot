@@ -1,4 +1,5 @@
 using System.Text;
+using Amaurot.Common.Models;
 using Amaurot.Processor.Models.Amaurot;
 using Google.Cloud.Firestore;
 
@@ -7,6 +8,74 @@ namespace Amaurot.Processor.Clients;
 internal static class AmaurotClient
 {
     private static readonly FirestoreDb FirestoreDb = FirestoreDb.Create();
+
+    public static async Task<AmaurotWorkspaceRedo[]> GetWorkspaces(
+        TaskRequestBody taskRequestBody,
+        string pullRequestFull
+    )
+    {
+        await Console.Out.WriteLineAsync($"Getting mergeability of pull request {pullRequestFull}");
+
+        string? mergeCommitSha;
+
+        while (true)
+        {
+            var pullRequest = (await Program.GitHubClient.GetPullRequest(taskRequestBody))!;
+
+            if (!pullRequest.Mergeable.HasValue)
+            {
+                await Task.Delay(3000);
+                continue;
+            }
+
+            mergeCommitSha = pullRequest.MergeCommitSha;
+            break;
+        }
+
+        if (mergeCommitSha is null)
+        {
+            throw new Exception($"Pull request {pullRequestFull} is not mergeable");
+        }
+
+        await Console.Out.WriteLineAsync(
+            $"Getting changed directories in pull request {pullRequestFull}"
+        );
+
+        var changedDirectories = (
+            from file in await Program.GitHubClient.ListPullRequestFiles(taskRequestBody)
+            let lastIndex = file.FileName.LastIndexOf('/')
+            select lastIndex != -1 ? file.FileName.Remove(lastIndex) : file.FileName
+        )
+            .Distinct()
+            .ToArray();
+
+        if (changedDirectories.Length == 0)
+        {
+            throw new Exception($"Pull request {pullRequestFull} is empty");
+        }
+
+        await Console.Out.WriteLineAsync(
+            $"Getting changed workspaces in pull request {pullRequestFull}"
+        );
+
+        var amaurotJson = await Program.GitHubClient.GetRepositoryAmaurotJson(taskRequestBody);
+        var workspaces = new List<AmaurotWorkspaceRedo>();
+
+        foreach (var changedDirectory in changedDirectories)
+        {
+            if (amaurotJson.Workspaces.TryGetValue(changedDirectory, out var workspace))
+            {
+                workspaces.Add(workspace);
+            }
+        }
+
+        if (workspaces.Count == 0)
+        {
+            throw new Exception($"Pull request {pullRequestFull} contains no modified workspaces");
+        }
+
+        return workspaces.ToArray();
+    }
 
     public static async Task<string> Comment(AmaurotComment amaurotComment)
     {
