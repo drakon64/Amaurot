@@ -210,7 +210,7 @@ app.MapPost(
                     executionState == CommitStatusState.Success
                         ? "All OpenTofu plans passed"
                         : "Some OpenTofu plans failed",
-                Context = "Amaurot",
+                Context = Environment.GetEnvironmentVariable("GITHUB_CONTEXT") ?? "Amaurot",
             },
             taskRequestBody
         );
