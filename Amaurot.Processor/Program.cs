@@ -52,6 +52,7 @@ public class Program
                 );
 
                 var planOutputs = new Dictionary<string, Dictionary<string, ExecutionOutputs>>();
+                var executionState = CommitStatusState.Success;
 
                 foreach (var workspace in workspaces.Workspaces)
                 {
@@ -63,7 +64,32 @@ public class Program
                         Init = init,
                         Execution = plan,
                     };
+
+                    if (
+                        init.ExecutionState == CommitStatusState.Error
+                        || plan.ExecutionState == CommitStatusState.Error
+                    )
+                    {
+                        executionState = CommitStatusState.Error;
+                    }
                 }
+
+                await GitHubClient.CreateIssueComment(
+                    await AmaurotClient.Comment(
+                        new AmaurotComment
+                        {
+                            DirectoryOutputs = planOutputs,
+                            TaskRequestBody = taskRequestBody,
+                        }
+                    ),
+                    taskRequestBody
+                );
+
+                await AmaurotClient.CreateCommitStatus(
+                    taskRequestBody,
+                    pullRequestFull,
+                    executionState
+                );
 
                 return Results.Ok();
             }
