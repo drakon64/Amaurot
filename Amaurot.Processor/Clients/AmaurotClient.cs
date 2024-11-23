@@ -76,7 +76,7 @@ internal static class AmaurotClient
             from workspace in amaurotJson.Workspaces
             where
                 workspace.Directory == changedDirectory
-                || workspace.VarsFiles.Contains(changedTfVar)
+                || workspace.VarFiles.Contains(changedTfVar)
             select workspace
         )
             .Distinct()

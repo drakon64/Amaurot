@@ -101,7 +101,7 @@ internal class GitHubClient
         return _githubInstallationAccessToken.Token;
     }
 
-    public async Task<AmaurotJsonRedo> GetRepositoryAmaurotJson(TaskRequestBody taskRequestBody)
+    public async Task<AmaurotJson> GetRepositoryAmaurotJson(TaskRequestBody taskRequestBody)
     {
         var responseMessage = await HttpClient.SendAsync(
             new HttpRequestMessage
@@ -122,7 +122,7 @@ internal class GitHubClient
 
         var amaurotJson = await responseMessage.Content.ReadFromJsonAsync<RepositoryAmaurotJson>();
 
-        return JsonSerializer.Deserialize<AmaurotJsonRedo>(
+        return JsonSerializer.Deserialize<AmaurotJson>(
             Encoding.UTF8.GetString(Convert.FromBase64String(amaurotJson!.Content))
         );
     }
