@@ -40,7 +40,7 @@ internal static class TofuClient
             }
         }
 
-        var tofu = Process.Start(processStartInfo);
+        using var tofu = Process.Start(processStartInfo);
 
         await tofu!.WaitForExitAsync();
 
