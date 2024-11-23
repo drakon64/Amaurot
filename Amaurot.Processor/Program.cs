@@ -2,6 +2,7 @@ using Amaurot.Common.Models;
 using Amaurot.Processor.Clients;
 using Amaurot.Processor.Models.Amaurot;
 using Amaurot.Processor.Models.GitHub.Commit;
+using Amaurot.Processor.Models.OpenTofu;
 
 namespace Amaurot.Processor;
 
@@ -49,6 +50,25 @@ public class Program
                     taskRequestBody,
                     taskRequestBody.Sha
                 );
+
+                var planOutputs = new Dictionary<string, Dictionary<string, ExecutionOutputs>>();
+
+                foreach (var workspace in workspaces.Workspaces)
+                {
+                    var init = await TofuClient.TofuExecution(
+                        new Execution { Workspace = workspace, ExecutionType = ExecutionType.Init }
+                    );
+
+                    var plan = await TofuClient.TofuExecution(
+                        new Execution { Workspace = workspace, ExecutionType = ExecutionType.Plan }
+                    );
+
+                    planOutputs[workspace.Directory][workspace.Name] = new ExecutionOutputs
+                    {
+                        Init = init,
+                        Execution = plan,
+                    };
+                }
 
                 return Results.Ok();
             }
