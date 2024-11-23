@@ -83,6 +83,8 @@ public class Program
                     }
                 }
 
+                tempDirectory.Delete();
+
                 await GitHubClient.CreateIssueComment(
                     await AmaurotClient.Comment(
                         new AmaurotComment
