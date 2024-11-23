@@ -1,8 +1,8 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;
-using System.Text;
 using System.Text.Json;
+using System.Web;
 using Amaurot.Common.Models;
 using Amaurot.Processor.Models;
 using Amaurot.Processor.Models.Amaurot;
@@ -101,8 +101,14 @@ internal class GitHubClient
         return _githubInstallationAccessToken.Token;
     }
 
-    public async Task<AmaurotJson> GetRepositoryAmaurotJson(TaskRequestBody taskRequestBody)
+    public async Task<AmaurotJson> GetRepositoryAmaurotJson(
+        TaskRequestBody taskRequestBody,
+        string mergeCommitSha
+    )
     {
+        var queryString = HttpUtility.ParseQueryString(string.Empty);
+        queryString["ref"] = mergeCommitSha;
+
         var responseMessage = await HttpClient.SendAsync(
             new HttpRequestMessage
             {
@@ -113,18 +119,17 @@ internal class GitHubClient
                         "Authorization",
                         $"Bearer {await GetGitHubInstallationAccessToken(taskRequestBody.InstallationId)}"
                     },
+                    { "Accept", "application/vnd.github.raw+json" },
                 },
                 RequestUri = new Uri(
-                    $"{GitHubApiUri}repos/{taskRequestBody.RepositoryOwner}/{taskRequestBody.RepositoryName}/contents/amaurot.json"
+                    $"{GitHubApiUri}repos/{taskRequestBody.RepositoryOwner}/{taskRequestBody.RepositoryName}/contents/amaurot.json{queryString}"
                 ),
             }
         );
 
         var amaurotJson = await responseMessage.Content.ReadFromJsonAsync<RepositoryAmaurotJson>();
 
-        return JsonSerializer.Deserialize<AmaurotJson>(
-            Encoding.UTF8.GetString(Convert.FromBase64String(amaurotJson!.Content))
-        );
+        return JsonSerializer.Deserialize<AmaurotJson>(amaurotJson!.Content);
     }
 
     public async Task<PullRequestFile[]> ListPullRequestFiles(TaskRequestBody taskRequestBody)

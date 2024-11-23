@@ -68,15 +68,17 @@ internal static class AmaurotClient
             $"Getting changed workspaces in pull request {pullRequestFull}"
         );
 
-        var amaurotJson = await Program.GitHubClient.GetRepositoryAmaurotJson(taskRequestBody);
+        var amaurotJson = await Program.GitHubClient.GetRepositoryAmaurotJson(
+            taskRequestBody,
+            mergeCommitSha
+        );
 
         var workspaces = (
             from changedDirectory in changedDirectories
             from changedTfVar in changedTfVars
             from workspace in amaurotJson.Workspaces
             where
-                workspace.Directory == changedDirectory
-                || workspace.VarFiles.Contains(changedTfVar)
+                workspace.Directory == changedDirectory || workspace.VarFiles.Contains(changedTfVar)
             select workspace
         )
             .Distinct()
