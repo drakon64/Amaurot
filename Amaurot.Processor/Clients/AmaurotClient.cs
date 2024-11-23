@@ -43,8 +43,10 @@ internal static class AmaurotClient
             $"Getting changed directories in pull request {pullRequestFull}"
         );
 
+        var pullRequestFiles = await Program.GitHubClient.ListPullRequestFiles(taskRequestBody);
+
         var changedDirectories = (
-            from file in await Program.GitHubClient.ListPullRequestFiles(taskRequestBody)
+            from file in pullRequestFiles
             let lastIndex = file.FileName.LastIndexOf('/')
             select lastIndex != -1 ? file.FileName.Remove(lastIndex) : file.FileName
         )
@@ -52,7 +54,7 @@ internal static class AmaurotClient
             .ToArray();
 
         var changedTfVars = (
-            from file in await Program.GitHubClient.ListPullRequestFiles(taskRequestBody)
+            from file in pullRequestFiles
             where file.FileName.EndsWith(".tfvars") || file.FileName.EndsWith(".tfvars.json")
             select file.FileName
         ).ToArray();
