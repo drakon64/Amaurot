@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using Amaurot.Processor.Models.Amaurot;
 using Amaurot.Processor.Models.GitHub.Commit;
 using Amaurot.Processor.Models.OpenTofu;
 
@@ -8,29 +9,32 @@ internal static class TofuClient
 {
     private static readonly string TofuPath = Environment.GetEnvironmentVariable("TOFU_PATH")!;
 
-    public static async Task<ExecutionOutput> TofuExecution(Execution execution)
+    public static async Task<ExecutionOutput> TofuExecution(
+        Workspace workspace,
+        ExecutionType executionType
+    )
     {
         var processStartInfo = new ProcessStartInfo
         {
             FileName = TofuPath,
-            WorkingDirectory = execution.Workspace.Directory,
+            WorkingDirectory = workspace.Directory,
             RedirectStandardOutput = true,
         };
 
-        processStartInfo.ArgumentList.Add(execution.ExecutionType.ToString().ToLower());
+        processStartInfo.ArgumentList.Add(executionType.ToString().ToLower());
         processStartInfo.ArgumentList.Add("-input=false");
         processStartInfo.ArgumentList.Add("-no-color");
 
         string? planOutPath = null;
 
-        if (execution.ExecutionType == ExecutionType.Plan)
+        if (executionType == ExecutionType.Plan)
         {
             planOutPath = Path.GetTempFileName();
             processStartInfo.ArgumentList.Add("-detailed-exitcode");
             processStartInfo.ArgumentList.Add($"-out={planOutPath}");
         }
 
-        var varFiles = execution.Workspace.VarFiles;
+        var varFiles = workspace.VarFiles;
 
         if (varFiles is not null)
         {
@@ -58,7 +62,7 @@ internal static class TofuClient
 
         return new ExecutionOutput
         {
-            ExecutionType = execution.ExecutionType,
+            ExecutionType = executionType,
             ExecutionState = tofu.ExitCode is 0 or 2
                 ? CommitStatusState.Success
                 : CommitStatusState.Failure,
