@@ -7,11 +7,12 @@ internal class AmaurotJson
 
 internal class AmaurotJsonRedo
 {
-    public required Dictionary<string, AmaurotWorkspaceRedo> Workspaces { get; init; }
+    public required AmaurotWorkspaceRedo[] Workspaces { get; init; }
 }
 
 internal class AmaurotWorkspaceRedo
 {
+    public required string Name { get; init; }
     public required string Directory { get; init; }
     public required string[] VarsFiles { get; init; }
 }
@@ -19,5 +20,5 @@ internal class AmaurotWorkspaceRedo
 internal class ChangedWorkspaces
 {
     public required AmaurotWorkspaceRedo[] Workspaces { get; init; }
-    public required string MergeSha { get; init; }
+    public required string MergeCommitSha { get; init; }
 }

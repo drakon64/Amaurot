@@ -51,6 +51,12 @@ internal static class AmaurotClient
             .Distinct()
             .ToArray();
 
+        var changedTfVars = (
+            from file in await Program.GitHubClient.ListPullRequestFiles(taskRequestBody)
+            where file.FileName.EndsWith(".tfvars") || file.FileName.EndsWith(".tfvars.json")
+            select file.FileName
+        ).ToArray();
+
         if (changedDirectories.Length == 0)
         {
             throw new Exception($"Pull request {pullRequestFull} is empty");
@@ -61,26 +67,25 @@ internal static class AmaurotClient
         );
 
         var amaurotJson = await Program.GitHubClient.GetRepositoryAmaurotJson(taskRequestBody);
-        var workspaces = new List<AmaurotWorkspaceRedo>();
 
-        foreach (var changedDirectory in changedDirectories)
-        {
-            if (amaurotJson.Workspaces.TryGetValue(changedDirectory, out var workspace))
-            {
-                workspaces.Add(workspace);
-            }
-        }
+        var workspaces = (
+            from changedDirectory in changedDirectories
+            from changedTfVar in changedTfVars
+            from workspace in amaurotJson.Workspaces
+            where
+                workspace.Directory == changedDirectory
+                || workspace.VarsFiles.Contains(changedTfVar)
+            select workspace
+        )
+            .Distinct()
+            .ToArray();
 
-        if (workspaces.Count == 0)
+        if (workspaces.Length == 0)
         {
             throw new Exception($"Pull request {pullRequestFull} contains no modified workspaces");
         }
 
-        return new ChangedWorkspaces
-        {
-            Workspaces = workspaces.ToArray(),
-            MergeSha = mergeCommitSha,
-        };
+        return new ChangedWorkspaces { Workspaces = workspaces, MergeCommitSha = mergeCommitSha };
     }
 
     public static async Task CreateCommitStatus(
