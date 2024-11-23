@@ -48,7 +48,7 @@ public class Program
 
                 var tempDirectory = await AmaurotClient.ExtractPullRequestZipball(
                     taskRequestBody,
-                    taskRequestBody.Sha
+                    workspaces.MergeCommitSha
                 );
 
                 var planOutputs = new Dictionary<string, Dictionary<string, ExecutionOutputs>>();
