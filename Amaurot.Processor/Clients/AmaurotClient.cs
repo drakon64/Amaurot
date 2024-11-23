@@ -131,7 +131,10 @@ internal static class AmaurotClient
         return tempDirectory;
     }
 
-    public static async Task<string> Comment(AmaurotComment amaurotComment)
+    public static async Task CreateComment(
+        TaskRequestBody taskRequestBody,
+        AmaurotComment amaurotComment
+    )
     {
         await Console.Out.WriteLineAsync(
             $"Creating plan output comment for pull request {amaurotComment.TaskRequestBody.PullRequest} commit {amaurotComment.TaskRequestBody.Sha}"
@@ -171,7 +174,7 @@ internal static class AmaurotClient
             }
         }
 
-        return comment.ToString().TrimEnd('\n');
+        await Program.GitHubClient.CreateIssueComment(comment.ToString(), taskRequestBody);
     }
 
     public static async Task SavePlanOutput(SavedPlan savedPlan)

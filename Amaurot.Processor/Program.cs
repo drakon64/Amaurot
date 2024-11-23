@@ -85,15 +85,13 @@ public class Program
 
                 tempDirectory.Delete();
 
-                await GitHubClient.CreateIssueComment(
-                    await AmaurotClient.Comment(
-                        new AmaurotComment
-                        {
-                            DirectoryOutputs = planOutputs,
-                            TaskRequestBody = taskRequestBody,
-                        }
-                    ),
-                    taskRequestBody
+                await AmaurotClient.CreateComment(
+                    taskRequestBody,
+                    new AmaurotComment
+                    {
+                        DirectoryOutputs = planOutputs,
+                        TaskRequestBody = taskRequestBody,
+                    }
                 );
 
                 await AmaurotClient.CreateCommitStatus(
