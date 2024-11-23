@@ -10,6 +10,7 @@ internal static class TofuClient
     private static readonly string TofuPath = Environment.GetEnvironmentVariable("TOFU_PATH")!;
 
     public static async Task<ExecutionOutput> TofuExecution(
+        string workingDirectory,
         Workspace workspace,
         ExecutionType executionType
     )
@@ -17,7 +18,7 @@ internal static class TofuClient
         var processStartInfo = new ProcessStartInfo
         {
             FileName = TofuPath,
-            WorkingDirectory = workspace.Directory,
+            WorkingDirectory = $"{workingDirectory}/{workspace.Directory}",
             RedirectStandardOutput = true,
         };
 

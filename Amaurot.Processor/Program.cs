@@ -56,8 +56,17 @@ public class Program
 
                 foreach (var workspace in workspaces.Workspaces)
                 {
-                    var init = await TofuClient.TofuExecution(workspace, ExecutionType.Init);
-                    var plan = await TofuClient.TofuExecution(workspace, ExecutionType.Plan);
+                    var init = await TofuClient.TofuExecution(
+                        tempDirectory.FullName,
+                        workspace,
+                        ExecutionType.Init
+                    );
+
+                    var plan = await TofuClient.TofuExecution(
+                        tempDirectory.FullName,
+                        workspace,
+                        ExecutionType.Plan
+                    );
 
                     planOutputs[workspace.Directory][workspace.Name] = new ExecutionOutputs
                     {
