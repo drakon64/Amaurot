@@ -48,7 +48,7 @@ internal static class AmaurotClient
         var changedDirectories = (
             from file in pullRequestFiles
             let lastIndex = file.FileName.LastIndexOf('/')
-            select lastIndex != -1 ? file.FileName.Remove(lastIndex) : file.FileName
+            select lastIndex != -1 ? file.FileName.Remove(lastIndex) : ""
         )
             .Distinct()
             .ToArray();
