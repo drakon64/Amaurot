@@ -13,7 +13,7 @@ internal static class TofuClient
         var processStartInfo = new ProcessStartInfo
         {
             FileName = TofuPath,
-            WorkingDirectory = execution.Directory,
+            WorkingDirectory = execution.Workspace.Directory,
             RedirectStandardOutput = true,
         };
 
