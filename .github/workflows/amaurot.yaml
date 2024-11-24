@@ -54,7 +54,7 @@ jobs:
 
       - uses: google-github-actions/setup-gcloud@v2
 
-      - run: gcloud auth configure-docker europe-west2-docker.pkg.dev
+      - run: gcloud auth configure-docker ${{ vars.GOOGLE_REGION }}-docker.pkg.dev
 
       - run: |
           docker push ${{ secrets.GOOGLE_ARTIFACT_REGISTRY }}/amaurot-processor:latest
