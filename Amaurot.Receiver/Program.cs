@@ -29,7 +29,7 @@ public class Program
         var app = builder.Build();
 
         app.MapGitHubWebhooks(secret: Environment.GetEnvironmentVariable("GITHUB_WEBHOOK_SECRET"));
-        app.MapGet("/healthcheck", () => Results.Ok());
+        app.MapGet("/", () => Results.Ok());
 
         app.Run($"http://*:{Environment.GetEnvironmentVariable("PORT")}");
     }
