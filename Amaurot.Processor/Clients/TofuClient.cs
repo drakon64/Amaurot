@@ -15,8 +15,6 @@ internal static class TofuClient
         ExecutionType executionType
     )
     {
-        await Console.Out.WriteLineAsync($"{workingDirectory}/{workspace.Directory}");
-
         var processStartInfo = new ProcessStartInfo
         {
             FileName = TofuPath,
