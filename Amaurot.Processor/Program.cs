@@ -91,14 +91,7 @@ public class Program
 
                 tempDirectory.Delete();
 
-                await AmaurotClient.CreateComment(
-                    taskRequestBody,
-                    new AmaurotComment
-                    {
-                        DirectoryOutputs = planOutputs,
-                        TaskRequestBody = taskRequestBody,
-                    }
-                );
+                await AmaurotClient.CreateComment(taskRequestBody, planOutputs);
 
                 await AmaurotClient.CreateCommitStatus(
                     taskRequestBody,

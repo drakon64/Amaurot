@@ -3,6 +3,7 @@ using System.Text;
 using Amaurot.Common.Models;
 using Amaurot.Processor.Models.Amaurot;
 using Amaurot.Processor.Models.GitHub.Commit;
+using Amaurot.Processor.Models.OpenTofu;
 using Google.Cloud.Firestore;
 
 namespace Amaurot.Processor.Clients;
@@ -133,19 +134,19 @@ internal static class AmaurotClient
 
     public static async Task CreateComment(
         TaskRequestBody taskRequestBody,
-        AmaurotComment amaurotComment
+        Dictionary<string, Dictionary<string, ExecutionOutputs>> amaurotComment
     )
     {
         await Console.Out.WriteLineAsync(
-            $"Creating plan output comment for pull request {amaurotComment.TaskRequestBody.PullRequest} commit {amaurotComment.TaskRequestBody.Sha}"
+            $"Creating plan output comment for pull request {taskRequestBody.PullRequest} commit {taskRequestBody.Sha}"
         );
 
         // TODO: Use StringBuilder
         var comment = new StringBuilder(
-            $"Amaurot plan output for commit {amaurotComment.TaskRequestBody.Sha}:\n\n" + "---\n"
+            $"Amaurot plan output for commit {taskRequestBody.Sha}:\n\n" + "---\n"
         );
 
-        foreach (var directory in amaurotComment.DirectoryOutputs)
+        foreach (var directory in amaurotComment)
         {
             comment.Append($"* `{directory.Key}`\n");
 
