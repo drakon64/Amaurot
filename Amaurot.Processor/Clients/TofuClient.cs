@@ -20,6 +20,7 @@ internal static class TofuClient
             FileName = TofuPath,
             WorkingDirectory = $"{workingDirectory}/{workspace.Directory}",
             RedirectStandardOutput = true,
+            RedirectStandardError = true,
         };
 
         processStartInfo.ArgumentList.Add(executionType.ToString().ToLower());
