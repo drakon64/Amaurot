@@ -96,7 +96,8 @@ internal static class AmaurotClient
     public static async Task CreateCommitStatus(
         TaskRequestBody taskRequestBody,
         string pullRequestFull,
-        CommitStatusState state
+        CommitStatusState state,
+        string context
     )
     {
         var stateString = state.ToString().ToLower(); // TODO: https://github.com/dotnet/runtime/issues/92828
@@ -106,7 +107,7 @@ internal static class AmaurotClient
         );
 
         await Program.GitHubClient.CreateCommitStatus(
-            new CreateCommitStatusRequest { State = stateString, Context = Program.GitHubContext },
+            new CreateCommitStatusRequest { State = stateString, Context = context },
             taskRequestBody
         );
     }

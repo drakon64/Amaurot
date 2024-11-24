@@ -16,7 +16,7 @@ public class Program
         Environment.GetEnvironmentVariable("GITHUB_CLIENT_ID")
         ?? throw new InvalidOperationException("GITHUB_CLIENT_ID is null");
 
-    public static readonly string GitHubContext =
+    private static readonly string GitHubContext =
         Environment.GetEnvironmentVariable("GITHUB_CONTEXT") ?? "Amaurot";
 
     internal static readonly GitHubClient GitHubClient = new(GitHubPrivateKey, GitHubClientId);
@@ -43,7 +43,8 @@ public class Program
                 await AmaurotClient.CreateCommitStatus(
                     taskRequestBody,
                     pullRequestFull,
-                    CommitStatusState.Pending
+                    CommitStatusState.Pending,
+                    GitHubContext
                 );
 
                 var tempDirectory = await AmaurotClient.ExtractPullRequestZipball(
@@ -96,7 +97,8 @@ public class Program
                 await AmaurotClient.CreateCommitStatus(
                     taskRequestBody,
                     pullRequestFull,
-                    executionState
+                    executionState,
+                    GitHubContext
                 );
 
                 return Results.Ok();
