@@ -106,9 +106,6 @@ internal class GitHubClient
         string mergeCommitSha
     )
     {
-        var queryString = HttpUtility.ParseQueryString(string.Empty);
-        queryString["ref"] = mergeCommitSha;
-
         var responseMessage = await HttpClient.SendAsync(
             new HttpRequestMessage
             {
@@ -122,14 +119,12 @@ internal class GitHubClient
                     { "Accept", "application/vnd.github.raw+json" },
                 },
                 RequestUri = new Uri(
-                    $"{GitHubApiUri}repos/{taskRequestBody.RepositoryOwner}/{taskRequestBody.RepositoryName}/contents/amaurot.json{queryString}"
+                    $"{GitHubApiUri}repos/{taskRequestBody.RepositoryOwner}/{taskRequestBody.RepositoryName}/contents/amaurot.json?ref={mergeCommitSha}"
                 ),
             }
         );
 
-        var amaurotJson = await responseMessage.Content.ReadFromJsonAsync<RepositoryAmaurotJson>();
-
-        return JsonSerializer.Deserialize<AmaurotJson>(amaurotJson!.Content);
+        return (await responseMessage.Content.ReadFromJsonAsync<AmaurotJson>())!;
     }
 
     public async Task<PullRequestFile[]> ListPullRequestFiles(TaskRequestBody taskRequestBody)
