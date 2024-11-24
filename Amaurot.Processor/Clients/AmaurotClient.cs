@@ -176,7 +176,10 @@ internal static class AmaurotClient
             }
         }
 
-        await Program.GitHubClient.CreateIssueComment(comment.ToString(), taskRequestBody);
+        await Program.GitHubClient.CreateIssueComment(
+            comment.ToString().TrimEnd('\n'),
+            taskRequestBody
+        );
     }
 
     public static async Task SavePlanOutput(SavedPlan savedPlan)
