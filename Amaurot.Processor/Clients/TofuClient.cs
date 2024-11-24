@@ -36,11 +36,9 @@ internal static class TofuClient
             processStartInfo.ArgumentList.Add($"-out={planOutPath}");
         }
 
-        var varFiles = workspace.VarFiles;
-
-        if (varFiles is not null)
+        if (workspace.VarFiles is not null)
         {
-            foreach (var varFile in varFiles)
+            foreach (var varFile in workspace.VarFiles)
             {
                 processStartInfo.ArgumentList.Add($"-var-file={varFile}");
             }
