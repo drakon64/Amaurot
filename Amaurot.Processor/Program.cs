@@ -69,7 +69,9 @@ public class Program
                         ExecutionType.Plan
                     );
 
+#pragma warning disable CA1854
                     if (!planOutputs.ContainsKey(workspace.Directory))
+#pragma warning restore CA1854
                     {
                         planOutputs[workspace.Directory] =
                             new Dictionary<string, ExecutionOutputs>();
