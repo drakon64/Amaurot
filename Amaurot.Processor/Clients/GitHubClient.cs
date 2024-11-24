@@ -124,7 +124,11 @@ internal class GitHubClient
             }
         );
 
-        return (await responseMessage.Content.ReadFromJsonAsync<AmaurotJson>())!;
+        return (
+            await responseMessage.Content.ReadFromJsonAsync<AmaurotJson>(
+                AmaurotSerializerContext.Default.AmaurotJson
+            )
+        )!;
     }
 
     public async Task<PullRequestFile[]> ListPullRequestFiles(TaskRequestBody taskRequestBody)
