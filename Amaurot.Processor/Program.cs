@@ -58,13 +58,13 @@ public class Program
                 foreach (var workspace in workspaces.Workspaces)
                 {
                     var init = await TofuClient.TofuExecution(
-                        tempDirectory.FullName,
+                        $"{tempDirectory.FullName}/{taskRequestBody.RepositoryOwner}-{taskRequestBody.RepositoryName}-{workspaces.MergeCommitSha}",
                         workspace,
                         ExecutionType.Init
                     );
 
                     var plan = await TofuClient.TofuExecution(
-                        tempDirectory.FullName,
+                        $"{tempDirectory.FullName}/{taskRequestBody.RepositoryOwner}-{taskRequestBody.RepositoryName}-{workspaces.MergeCommitSha}",
                         workspace,
                         ExecutionType.Plan
                     );
