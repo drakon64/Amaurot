@@ -68,6 +68,12 @@ public class Program
                         ExecutionType.Plan
                     );
 
+                    if (!planOutputs.ContainsKey(workspace.Directory))
+                    {
+                        planOutputs[workspace.Directory] =
+                            new Dictionary<string, ExecutionOutputs>();
+                    }
+
                     planOutputs[workspace.Directory][workspace.Name] = new ExecutionOutputs
                     {
                         Init = init,
