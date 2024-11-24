@@ -90,7 +90,7 @@ public class Program
                     }
                 }
 
-                tempDirectory.Delete();
+                tempDirectory.Delete(true);
 
                 await AmaurotClient.CreateComment(taskRequestBody, planOutputs);
 
