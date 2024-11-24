@@ -49,6 +49,7 @@ internal static class TofuClient
         await tofu!.WaitForExitAsync();
 
         var stdout = await tofu.StandardOutput.ReadToEndAsync();
+        var stderr = await tofu.StandardError.ReadToEndAsync();
 
         byte[]? planOut = null;
 
@@ -67,6 +68,7 @@ internal static class TofuClient
                 ? CommitStatusState.Success
                 : CommitStatusState.Failure,
             ExecutionStdout = stdout.TrimStart('\n').TrimEnd('\n'),
+            ExecutionStderr = stderr.TrimStart('\n').TrimEnd('\n'),
             PlanOut = planOut,
         };
     }
