@@ -43,7 +43,7 @@ internal static class TofuClient
             processStartInfo.ArgumentList.Add(outPath);
         }
 
-        if (workspace.VarFiles is not null)
+        if (workspace.VarFiles is not null && executionType != ExecutionType.Apply)
         {
             foreach (var varFile in workspace.VarFiles)
             {
