@@ -19,15 +19,22 @@ public sealed class GitHubWebhookEventProcessor : WebhookEventProcessor
         PullRequestAction pullRequestAction
     )
     {
+        string endpoint;
+
         if (
-            !(
+            (
                 pullRequestAction == PullRequestAction.Opened
                 || pullRequestAction == PullRequestAction.Synchronize
-            ) || pullRequestEvent.PullRequest.Draft
+            ) && !pullRequestEvent.PullRequest.Draft
         )
-        {
+            endpoint = "plan";
+        else if (
+            pullRequestAction == PullRequestAction.Closed
+            && pullRequestEvent.PullRequest.Merged is true
+        )
+            endpoint = "apply";
+        else
             return;
-        }
 
         await Program.CloudTasksClient.CreateTaskAsync(
             new CreateTaskRequest
@@ -56,7 +63,7 @@ public sealed class GitHubWebhookEventProcessor : WebhookEventProcessor
                         {
                             ServiceAccountEmail = Program.ServiceAccountEmail,
                         },
-                        Url = $"{Program.ProcessorUrl}/plan",
+                        Url = $"{Program.ProcessorUrl}/{endpoint}",
                     },
                 },
             }

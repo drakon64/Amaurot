@@ -35,6 +35,13 @@ internal static class TofuClient
             processStartInfo.ArgumentList.Add("-detailed-exitcode");
             processStartInfo.ArgumentList.Add($"-out={planOutPath}");
         }
+        else if (executionType == ExecutionType.Apply)
+        {
+            var outPath = Path.GetTempFileName();
+
+            await File.WriteAllBytesAsync(outPath, workspace.PlanOut!);
+            processStartInfo.ArgumentList.Add(outPath);
+        }
 
         if (workspace.VarFiles is not null)
         {

@@ -18,5 +18,5 @@ internal class Workspace
     public byte[]? PlanOut { get; set; }
 
     public string? InitStdout { get; set; }
-    public string? PlanStdout { get; set; }
+    public string? ExecutionStdout { get; set; }
 }

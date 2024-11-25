@@ -176,12 +176,12 @@ internal static class AmaurotClient
                         + "    </details>\n"
                 );
 
-                if (!string.IsNullOrWhiteSpace(workspace.Value.PlanStdout))
+                if (!string.IsNullOrWhiteSpace(workspace.Value.ExecutionStdout))
                 {
                     comment.Append(
                         $"    <details><summary>Plan</summary>\n\n"
                             + "    ```\n"
-                            + $"    {workspace.Value.PlanStdout.Replace("\n", "\n    ")}\n"
+                            + $"    {workspace.Value.ExecutionStdout.Replace("\n", "\n    ")}\n"
                             + "    ```\n"
                             + "    </details>\n"
                     );
@@ -200,5 +200,13 @@ internal static class AmaurotClient
         await FirestoreDatabase.Collection("plans").Document(headSha).SetAsync(savedWorkspaces);
     }
 
-    public static async Task GetSavedPlanOutput() { }
+    public static async Task<SavedWorkspaces> GetSavedPlanOutput(string headSha)
+    {
+        var documentSnapshot = await FirestoreDatabase
+            .Collection("plans")
+            .Document(headSha)
+            .GetSnapshotAsync();
+
+        return documentSnapshot.ConvertTo<SavedWorkspaces>();
+    }
 }

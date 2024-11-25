@@ -56,8 +56,11 @@ public class Program
 
                 foreach (var workspace in changedWorkspaces.Workspaces)
                 {
+                    var workingDirectory =
+                        $"{tempDirectory.FullName}/{taskRequestBody.RepositoryOwner}-{taskRequestBody.RepositoryName}-{changedWorkspaces.MergeCommitSha}";
+
                     var init = await TofuClient.TofuExecution(
-                        $"{tempDirectory.FullName}/{taskRequestBody.RepositoryOwner}-{taskRequestBody.RepositoryName}-{changedWorkspaces.MergeCommitSha}",
+                        workingDirectory,
                         workspace,
                         ExecutionType.Init
                     );
@@ -65,12 +68,12 @@ public class Program
                     workspace.InitStdout = init.ExecutionStdout;
 
                     var plan = await TofuClient.TofuExecution(
-                        $"{tempDirectory.FullName}/{taskRequestBody.RepositoryOwner}-{taskRequestBody.RepositoryName}-{changedWorkspaces.MergeCommitSha}",
+                        workingDirectory,
                         workspace,
                         ExecutionType.Plan
                     );
 
-                    workspace.PlanStdout = plan.ExecutionStdout;
+                    workspace.ExecutionStdout = plan.ExecutionStdout;
                     workspace.PlanOut = plan.PlanOut;
 
                     if (
@@ -109,7 +112,45 @@ public class Program
             }
         );
 
-        app.MapPost("/apply", async (TaskRequestBody taskRequestBody) => { });
+        app.MapPost(
+            "/apply",
+            async (TaskRequestBody taskRequestBody) =>
+            {
+                var pullRequestFull =
+                    $"{taskRequestBody.RepositoryOwner}/{taskRequestBody.RepositoryName}#{taskRequestBody.PullRequest}";
+
+                var changedWorkspaces = await AmaurotClient.GetSavedPlanOutput(taskRequestBody.Sha);
+
+                var tempDirectory = await AmaurotClient.ExtractPullRequestZipball(
+                    taskRequestBody,
+                    taskRequestBody.Sha
+                );
+
+                foreach (var workspace in changedWorkspaces.Workspaces)
+                {
+                    var workingDirectory =
+                        $"{tempDirectory.FullName}/{taskRequestBody.RepositoryOwner}-{taskRequestBody.RepositoryName}-{taskRequestBody.Sha}";
+
+                    var init = await TofuClient.TofuExecution(
+                        workingDirectory,
+                        workspace,
+                        ExecutionType.Init
+                    );
+
+                    workspace.InitStdout = init.ExecutionStdout;
+
+                    var apply = await TofuClient.TofuExecution(
+                        workingDirectory,
+                        workspace,
+                        ExecutionType.Apply
+                    );
+
+                    workspace.ExecutionStdout = apply.ExecutionStdout;
+                }
+
+                tempDirectory.Delete(true);
+            }
+        );
 
         app.Run($"http://*:{Environment.GetEnvironmentVariable("PORT")}");
     }
