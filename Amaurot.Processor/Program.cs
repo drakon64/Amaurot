@@ -35,7 +35,7 @@ public class Program
                 var pullRequestFull =
                     $"{taskRequestBody.RepositoryOwner}/{taskRequestBody.RepositoryName}#{taskRequestBody.PullRequest}";
 
-                var workspaces = await AmaurotClient.GetWorkspaces(
+                var changedWorkspaces = await AmaurotClient.GetWorkspaces(
                     taskRequestBody,
                     pullRequestFull
                 );
@@ -49,22 +49,22 @@ public class Program
 
                 var tempDirectory = await AmaurotClient.ExtractPullRequestZipball(
                     taskRequestBody,
-                    workspaces.MergeCommitSha
+                    changedWorkspaces.MergeCommitSha
                 );
 
                 var planOutputs = new Dictionary<string, Dictionary<string, ExecutionOutputs>>();
                 var executionState = CommitStatusState.Success;
 
-                foreach (var workspace in workspaces.Workspaces)
+                foreach (var workspace in changedWorkspaces.Workspaces)
                 {
                     var init = await TofuClient.TofuExecution(
-                        $"{tempDirectory.FullName}/{taskRequestBody.RepositoryOwner}-{taskRequestBody.RepositoryName}-{workspaces.MergeCommitSha}",
+                        $"{tempDirectory.FullName}/{taskRequestBody.RepositoryOwner}-{taskRequestBody.RepositoryName}-{changedWorkspaces.MergeCommitSha}",
                         workspace,
                         ExecutionType.Init
                     );
 
                     var plan = await TofuClient.TofuExecution(
-                        $"{tempDirectory.FullName}/{taskRequestBody.RepositoryOwner}-{taskRequestBody.RepositoryName}-{workspaces.MergeCommitSha}",
+                        $"{tempDirectory.FullName}/{taskRequestBody.RepositoryOwner}-{taskRequestBody.RepositoryName}-{changedWorkspaces.MergeCommitSha}",
                         workspace,
                         ExecutionType.Plan
                     );
@@ -104,11 +104,17 @@ public class Program
                             Workspaces = (
                                 from directory in planOutputs
                                 from workspace in directory.Value
+                                from changedWorkspace in changedWorkspaces.Workspaces
+                                where
+                                    changedWorkspace.Directory == directory.Key
+                                    && changedWorkspace.Name == workspace.Key
+                                let varFiles = changedWorkspace.VarFiles!
                                 select new SavedWorkspace
                                 {
                                     Name = workspace.Key,
                                     Directory = directory.Key,
                                     PlanOut = workspace.Value.Execution!.PlanOut,
+                                    VarFiles = varFiles,
                                 }
                             ).ToArray(),
                         }

@@ -13,14 +13,8 @@ internal class SavedWorkspaces
 }
 
 [FirestoreData]
-internal class SavedWorkspace
+internal class SavedWorkspace : Workspace
 {
-    [FirestoreProperty]
-    public required string Name { get; init; }
-
-    [FirestoreProperty]
-    public required string Directory { get; init; }
-
     [FirestoreProperty]
     public required byte[] PlanOut { get; init; }
 }
