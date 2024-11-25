@@ -107,6 +107,9 @@ internal static class AmaurotClient
             }
         }
 
+        if (executionType != "Plan")
+            comment.Append("\n---\n\nMerging this pull request will apply these changes.");
+
         await Program.GitHubClient.CreateIssueComment(
             comment.ToString().TrimEnd('\n'),
             taskRequestBody
