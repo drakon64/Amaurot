@@ -145,7 +145,7 @@ internal static class AmaurotClient
         );
 
         var comment = new StringBuilder(
-            $"Amaurot plan output for commit {taskRequestBody.Sha}:\n\n---\n"
+            $"Amaurot {executionType.ToLower()} output for commit {taskRequestBody.Sha}:\n\n---\n"
         );
 
         var directories = workspaces.Select(workspace => workspace.Directory).Distinct().ToArray();
