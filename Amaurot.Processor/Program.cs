@@ -1,5 +1,6 @@
 using Amaurot.Common.Models;
 using Amaurot.Processor.Clients;
+using Amaurot.Processor.Models.Amaurot;
 using Amaurot.Processor.Models.GitHub.Commit;
 using Amaurot.Processor.Models.OpenTofu;
 
@@ -92,6 +93,27 @@ public class Program
                 }
 
                 tempDirectory.Delete(true);
+
+                if (executionState != CommitStatusState.Error)
+                {
+                    await AmaurotClient.SavePlanOutput(
+                        taskRequestBody.Sha,
+                        new SavedWorkspaces
+                        {
+                            PullRequest = pullRequestFull,
+                            Workspaces = (
+                                from directory in planOutputs
+                                from workspace in directory.Value
+                                select new SavedWorkspace
+                                {
+                                    Name = workspace.Key,
+                                    Directory = directory.Key,
+                                    PlanOut = workspace.Value.Execution!.PlanOut,
+                                }
+                            ).ToArray(),
+                        }
+                    );
+                }
 
                 await AmaurotClient.CreateComment(taskRequestBody, planOutputs);
 

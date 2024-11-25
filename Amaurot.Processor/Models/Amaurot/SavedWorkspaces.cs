@@ -22,8 +22,5 @@ internal class SavedWorkspace
     public required string Directory { get; init; }
 
     [FirestoreProperty]
-    public string[]? VarFiles { get; init; }
-
-    [FirestoreProperty]
     public required byte[] PlanOut { get; init; }
 }

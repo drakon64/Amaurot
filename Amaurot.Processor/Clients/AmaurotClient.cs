@@ -10,7 +10,7 @@ namespace Amaurot.Processor.Clients;
 
 internal static class AmaurotClient
 {
-    private static readonly FirestoreDb FirestoreDb = FirestoreDb.Create();
+    private static readonly FirestoreDb FirestoreDatabase = FirestoreDb.Create();
 
     public static async Task<ChangedWorkspaces> GetWorkspaces(
         TaskRequestBody taskRequestBody,
@@ -183,7 +183,10 @@ internal static class AmaurotClient
         );
     }
 
-    public static async Task SavePlanOutput() { }
+    public static async Task SavePlanOutput(string headSha, SavedWorkspaces savedWorkspaces)
+    {
+        await FirestoreDatabase.Collection("plans").Document(headSha).SetAsync(savedWorkspaces);
+    }
 
     public static async Task GetSavedPlanOutput() { }
 }
