@@ -134,10 +134,7 @@ internal static class AmaurotClient
         return tempDirectory;
     }
 
-    public static async Task CreateComment(
-        TaskRequestBody taskRequestBody,
-        Dictionary<string, Dictionary<string, ExecutionOutputs>> amaurotComment
-    )
+    public static async Task CreateComment(TaskRequestBody taskRequestBody, Workspace[] workspaces)
     {
         await Console.Out.WriteLineAsync(
             $"Creating plan output comment for pull request {taskRequestBody.PullRequest} commit {taskRequestBody.Sha}"
@@ -148,7 +145,23 @@ internal static class AmaurotClient
             $"Amaurot plan output for commit {taskRequestBody.Sha}:\n\n" + "---\n"
         );
 
-        foreach (var directory in amaurotComment)
+        var directories = workspaces.Select(workspace => workspace.Directory).Distinct().ToArray();
+        var workspacesDictionary = new Dictionary<string, Dictionary<string, Workspace>>();
+
+        foreach (var directory in directories)
+        {
+            workspacesDictionary[directory] = new Dictionary<string, Workspace>();
+
+            foreach (var workspace in workspaces)
+            {
+                if (workspace.Directory == directory)
+                {
+                    workspacesDictionary[directory][workspace.Name] = workspace;
+                }
+            }
+        }
+
+        foreach (var directory in workspacesDictionary)
         {
             comment.Append($"* `{directory.Key}`\n");
 
@@ -157,19 +170,19 @@ internal static class AmaurotClient
                 comment.Append($"  * {workspace.Key}\n");
 
                 comment.Append(
-                    $"    <details><summary>{workspace.Value.Init.ExecutionType.ToString()}</summary>\n\n"
+                    $"    <details><summary>Init</summary>\n\n"
                         + "    ```\n"
-                        + $"    {workspace.Value.Init.ExecutionStdout.Replace("\n", "\n    ")}\n"
+                        + $"    {workspace.Value.InitStdout!.Replace("\n", "\n    ")}\n"
                         + "    ```\n"
                         + "    </details>\n"
                 );
 
-                if (workspace.Value.Execution is not null)
+                if (!string.IsNullOrWhiteSpace(workspace.Value.PlanStdout))
                 {
                     comment.Append(
-                        $"    <details><summary>{workspace.Value.Execution.ExecutionType.ToString()}</summary>\n\n"
+                        $"    <details><summary>Plan</summary>\n\n"
                             + "    ```\n"
-                            + $"    {workspace.Value.Execution.ExecutionStdout.Replace("\n", "\n    ")}\n"
+                            + $"    {workspace.Value.PlanStdout.Replace("\n", "\n    ")}\n"
                             + "    ```\n"
                             + "    </details>\n"
                     );

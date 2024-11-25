@@ -13,4 +13,10 @@ internal class Workspace
 
     [FirestoreProperty]
     public string[]? VarFiles { get; init; }
+
+    [FirestoreProperty]
+    public byte[]? PlanOut { get; set; }
+
+    public string? InitStdout { get; set; }
+    public string? PlanStdout { get; set; }
 }

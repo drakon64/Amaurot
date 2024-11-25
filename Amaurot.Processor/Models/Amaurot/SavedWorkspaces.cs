@@ -9,12 +9,5 @@ internal class SavedWorkspaces
     public required string PullRequest { get; init; }
 
     [FirestoreProperty]
-    public required SavedWorkspace[] Workspaces { get; init; }
-}
-
-[FirestoreData]
-internal class SavedWorkspace : Workspace
-{
-    [FirestoreProperty]
-    public required byte[] PlanOut { get; init; }
+    public required Workspace[] Workspaces { get; init; }
 }

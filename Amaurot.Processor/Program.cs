@@ -52,7 +52,6 @@ public class Program
                     changedWorkspaces.MergeCommitSha
                 );
 
-                var planOutputs = new Dictionary<string, Dictionary<string, ExecutionOutputs>>();
                 var executionState = CommitStatusState.Success;
 
                 foreach (var workspace in changedWorkspaces.Workspaces)
@@ -63,25 +62,16 @@ public class Program
                         ExecutionType.Init
                     );
 
+                    workspace.InitStdout = init.ExecutionStdout;
+
                     var plan = await TofuClient.TofuExecution(
                         $"{tempDirectory.FullName}/{taskRequestBody.RepositoryOwner}-{taskRequestBody.RepositoryName}-{changedWorkspaces.MergeCommitSha}",
                         workspace,
                         ExecutionType.Plan
                     );
 
-#pragma warning disable CA1854
-                    if (!planOutputs.ContainsKey(workspace.Directory))
-#pragma warning restore CA1854
-                    {
-                        planOutputs[workspace.Directory] =
-                            new Dictionary<string, ExecutionOutputs>();
-                    }
-
-                    planOutputs[workspace.Directory][workspace.Name] = new ExecutionOutputs
-                    {
-                        Init = init,
-                        Execution = plan,
-                    };
+                    workspace.PlanStdout = plan.ExecutionStdout;
+                    workspace.PlanOut = plan.PlanOut;
 
                     if (
                         init.ExecutionState == CommitStatusState.Error
@@ -101,27 +91,12 @@ public class Program
                         new SavedWorkspaces
                         {
                             PullRequest = pullRequestFull,
-                            Workspaces = (
-                                from directory in planOutputs
-                                from workspace in directory.Value
-                                from changedWorkspace in changedWorkspaces.Workspaces
-                                where
-                                    changedWorkspace.Directory == directory.Key
-                                    && changedWorkspace.Name == workspace.Key
-                                let varFiles = changedWorkspace.VarFiles!
-                                select new SavedWorkspace
-                                {
-                                    Name = workspace.Key,
-                                    Directory = directory.Key,
-                                    PlanOut = workspace.Value.Execution!.PlanOut,
-                                    VarFiles = varFiles,
-                                }
-                            ).ToArray(),
+                            Workspaces = changedWorkspaces.Workspaces,
                         }
                     );
                 }
 
-                await AmaurotClient.CreateComment(taskRequestBody, planOutputs);
+                await AmaurotClient.CreateComment(taskRequestBody, changedWorkspaces.Workspaces);
 
                 await AmaurotClient.CreateCommitStatus(
                     taskRequestBody,
