@@ -140,9 +140,8 @@ internal static class AmaurotClient
             $"Creating plan output comment for pull request {taskRequestBody.PullRequest} commit {taskRequestBody.Sha}"
         );
 
-        // TODO: Use StringBuilder
         var comment = new StringBuilder(
-            $"Amaurot plan output for commit {taskRequestBody.Sha}:\n\n" + "---\n"
+            $"Amaurot plan output for commit {taskRequestBody.Sha}:\n\n---\n"
         );
 
         var directories = workspaces.Select(workspace => workspace.Directory).Distinct().ToArray();
