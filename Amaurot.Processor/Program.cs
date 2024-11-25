@@ -154,6 +154,8 @@ public class Program
 
                 tempDirectory.Delete(true);
 
+                await AmaurotClient.DeleteSavedPlans(pullRequestFull);
+
                 await AmaurotClient.CreateComment(
                     taskRequestBody,
                     changedWorkspaces.Workspaces,

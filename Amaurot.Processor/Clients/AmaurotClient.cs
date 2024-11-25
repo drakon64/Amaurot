@@ -213,4 +213,17 @@ internal static class AmaurotClient
 
         return documentSnapshot.ConvertTo<SavedWorkspaces>();
     }
+
+    public static async Task DeleteSavedPlans(string pullRequest)
+    {
+        var savedPlans = await FirestoreDatabase
+            .Collection("plans")
+            .WhereEqualTo("PullRequest", pullRequest)
+            .GetSnapshotAsync();
+
+        foreach (var savedPlan in savedPlans.Documents)
+        {
+            await savedPlan.Reference.DeleteAsync();
+        }
+    }
 }
