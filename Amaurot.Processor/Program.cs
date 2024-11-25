@@ -1,6 +1,5 @@
 using Amaurot.Common.Models;
 using Amaurot.Processor.Clients;
-using Amaurot.Processor.Models.Amaurot;
 using Amaurot.Processor.Models.GitHub.Commit;
 using Amaurot.Processor.Models.OpenTofu;
 
@@ -107,20 +106,7 @@ public class Program
             }
         );
 
-        app.MapPost(
-            "/apply",
-            async (TaskRequestBody taskRequestBody) =>
-            {
-                var savedPlan = await AmaurotClient.GetSavedPlanOutput(
-                    new SavedPlanQuery
-                    {
-                        PullRequest =
-                            $"{taskRequestBody.RepositoryOwner}/{taskRequestBody.RepositoryName}#{taskRequestBody.PullRequest}",
-                        Sha = taskRequestBody.Sha,
-                    }
-                );
-            }
-        );
+        app.MapPost("/apply", async (TaskRequestBody taskRequestBody) => { });
 
         app.Run($"http://*:{Environment.GetEnvironmentVariable("PORT")}");
     }

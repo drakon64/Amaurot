@@ -3,19 +3,26 @@ using Google.Cloud.Firestore;
 namespace Amaurot.Processor.Models.Amaurot;
 
 [FirestoreData]
-internal class SavedPlan
+internal class SavedWorkspaces
 {
     [FirestoreProperty]
     public required string PullRequest { get; init; }
 
     [FirestoreProperty]
-    public required string Sha { get; init; }
+    public required SavedWorkspace[] Workspaces { get; init; }
+}
+
+[FirestoreData]
+internal class SavedWorkspace
+{
+    [FirestoreProperty]
+    public required string Name { get; init; }
 
     [FirestoreProperty]
     public required string Directory { get; init; }
 
     [FirestoreProperty]
-    public required string Workspace { get; init; }
+    public string[]? VarFiles { get; init; }
 
     [FirestoreProperty]
     public required byte[] PlanOut { get; init; }

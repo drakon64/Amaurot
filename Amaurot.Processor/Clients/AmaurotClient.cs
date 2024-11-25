@@ -183,19 +183,7 @@ internal static class AmaurotClient
         );
     }
 
-    public static async Task SavePlanOutput(SavedPlan savedPlan)
-    {
-        await FirestoreDb.Collection("plans").AddAsync(savedPlan);
-    }
+    public static async Task SavePlanOutput() { }
 
-    public static async Task<SavedPlan[]> GetSavedPlanOutput(SavedPlanQuery savedPlanQuery)
-    {
-        var snapshot = await FirestoreDb
-            .Collection("plans")
-            .WhereEqualTo("PullRequest", $"{savedPlanQuery.PullRequest}")
-            .WhereEqualTo("Sha", savedPlanQuery.Sha)
-            .GetSnapshotAsync();
-
-        return snapshot.Select(document => document.ConvertTo<SavedPlan>()).ToArray();
-    }
+    public static async Task GetSavedPlanOutput() { }
 }
