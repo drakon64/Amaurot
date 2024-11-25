@@ -134,7 +134,11 @@ internal static class AmaurotClient
         return tempDirectory;
     }
 
-    public static async Task CreateComment(TaskRequestBody taskRequestBody, Workspace[] workspaces)
+    public static async Task CreateComment(
+        TaskRequestBody taskRequestBody,
+        Workspace[] workspaces,
+        string executionType
+    )
     {
         await Console.Out.WriteLineAsync(
             $"Creating plan output comment for pull request {taskRequestBody.PullRequest} commit {taskRequestBody.Sha}"
@@ -179,7 +183,7 @@ internal static class AmaurotClient
                 if (!string.IsNullOrWhiteSpace(workspace.Value.ExecutionStdout))
                 {
                     comment.Append(
-                        $"    <details><summary>Plan</summary>\n\n"
+                        $"    <details><summary>{executionType}</summary>\n\n"
                             + "    ```\n"
                             + $"    {workspace.Value.ExecutionStdout.Replace("\n", "\n    ")}\n"
                             + "    ```\n"

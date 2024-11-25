@@ -99,7 +99,11 @@ public class Program
                     );
                 }
 
-                await AmaurotClient.CreateComment(taskRequestBody, changedWorkspaces.Workspaces);
+                await AmaurotClient.CreateComment(
+                    taskRequestBody,
+                    changedWorkspaces.Workspaces,
+                    "Plan"
+                );
 
                 await AmaurotClient.CreateCommitStatus(
                     taskRequestBody,
@@ -149,6 +153,12 @@ public class Program
                 }
 
                 tempDirectory.Delete(true);
+
+                await AmaurotClient.CreateComment(
+                    taskRequestBody,
+                    changedWorkspaces.Workspaces,
+                    "Apply"
+                );
             }
         );
 
