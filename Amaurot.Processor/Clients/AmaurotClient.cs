@@ -87,7 +87,7 @@ internal static class AmaurotClient
                 comment.Append($"  * {workspace.Key}\n");
 
                 comment.Append(
-                    $"    <details><summary>Init</summary>\n\n"
+                    "    <details><summary>Init</summary>\n\n"
                         + "    ```\n"
                         + $"    {workspace.Value.InitStdout!.Replace("\n", "\n    ")}\n"
                         + "    ```\n"
