@@ -1,8 +1,6 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;
-using System.Text.Json;
-using System.Web;
 using Amaurot.Common.Models;
 using Amaurot.Processor.Models;
 using Amaurot.Processor.Models.Amaurot;
