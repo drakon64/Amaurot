@@ -3,6 +3,7 @@ using Amaurot.Processor.Clients;
 using Amaurot.Processor.Models.Amaurot;
 using Amaurot.Processor.Models.GitHub.Commit;
 using Amaurot.Processor.Models.OpenTofu;
+using Google.Cloud.Firestore;
 
 namespace Amaurot.Processor;
 
@@ -21,6 +22,8 @@ public class Program
 
     internal static readonly GitHubClient GitHubClient = new(GitHubPrivateKey, GitHubClientId);
 
+    internal static readonly FirestoreDb FirestoreDatabase = FirestoreDb.Create();
+
     public static void Main()
     {
         var builder = WebApplication.CreateSlimBuilder();
@@ -35,10 +38,95 @@ public class Program
                 var pullRequestFull =
                     $"{taskRequestBody.RepositoryOwner}/{taskRequestBody.RepositoryName}#{taskRequestBody.PullRequest}";
 
-                var changedWorkspaces = await AmaurotClient.GetWorkspaces(
-                    taskRequestBody,
-                    pullRequestFull
+                await Console.Out.WriteLineAsync(
+                    $"Getting mergeability of pull request {pullRequestFull}"
                 );
+
+                string? mergeCommitSha;
+
+                while (true)
+                {
+                    var pullRequest = (await Program.GitHubClient.GetPullRequest(taskRequestBody))!;
+
+                    if (!pullRequest.Mergeable.HasValue)
+                    {
+                        await Task.Delay(3000);
+                        continue;
+                    }
+
+                    mergeCommitSha = pullRequest.MergeCommitSha;
+                    break;
+                }
+
+                if (mergeCommitSha is null)
+                {
+                    throw new Exception($"Pull request {pullRequestFull} is not mergeable");
+                }
+
+                await Console.Out.WriteLineAsync(
+                    $"Getting changed directories in pull request {pullRequestFull}"
+                );
+
+                var pullRequestFiles = await Program.GitHubClient.ListPullRequestFiles(
+                    taskRequestBody
+                );
+
+                var changedDirectories = (
+                    from file in pullRequestFiles
+                    let lastIndex = file.FileName.LastIndexOf('/')
+                    select lastIndex != -1 ? file.FileName.Remove(lastIndex) : ""
+                )
+                    .Distinct()
+                    .ToArray();
+
+                if (changedDirectories.Length == 0)
+                {
+                    throw new Exception($"Pull request {pullRequestFull} is empty");
+                }
+
+                var changedTfVars = (
+                    from file in pullRequestFiles
+                    where
+                        file.FileName.EndsWith(".tfvars") || file.FileName.EndsWith(".tfvars.json")
+                    select file.FileName
+                ).ToArray();
+
+                await Console.Out.WriteLineAsync(
+                    $"Getting changed workspaces in pull request {pullRequestFull}"
+                );
+
+                var amaurotJson = await Program.GitHubClient.GetRepositoryAmaurotJson(
+                    taskRequestBody,
+                    mergeCommitSha
+                );
+
+                var workspaces = (
+                    from changedDirectory in changedDirectories
+                    from changedTfVar in changedTfVars
+                    from workspace in amaurotJson.Workspaces
+                    where
+                        workspace.Directory == changedDirectory
+                        || (
+                            workspace.VarFiles is not null
+                            && workspace.VarFiles.Contains(changedTfVar)
+                        )
+                    select workspace
+                )
+                    .Distinct()
+                    .ToArray();
+
+                if (workspaces.Length == 0)
+                {
+                    throw new Exception(
+                        $"Pull request {pullRequestFull} contains no modified workspaces"
+                    );
+                }
+
+                var changedWorkspaces = new ChangedWorkspaces
+                {
+                    Workspaces = workspaces,
+                    MergeCommitSha = mergeCommitSha,
+                };
 
                 await AmaurotClient.CreateCommitStatus(
                     taskRequestBody,
@@ -89,14 +177,16 @@ public class Program
 
                 if (executionState != CommitStatusState.Error)
                 {
-                    await AmaurotClient.SavePlanOutput(
-                        taskRequestBody.Sha,
-                        new SavedWorkspaces
-                        {
-                            PullRequest = pullRequestFull,
-                            Workspaces = changedWorkspaces.Workspaces,
-                        }
-                    );
+                    await FirestoreDatabase
+                        .Collection("plans")
+                        .Document(taskRequestBody.Sha)
+                        .SetAsync(
+                            new SavedWorkspaces
+                            {
+                                PullRequest = pullRequestFull,
+                                Workspaces = changedWorkspaces.Workspaces,
+                            }
+                        );
                 }
 
                 await AmaurotClient.CreateComment(
@@ -123,7 +213,12 @@ public class Program
                 var pullRequestFull =
                     $"{taskRequestBody.RepositoryOwner}/{taskRequestBody.RepositoryName}#{taskRequestBody.PullRequest}";
 
-                var changedWorkspaces = await AmaurotClient.GetSavedPlanOutput(taskRequestBody.Sha);
+                var changedWorkspaces = (
+                    await FirestoreDatabase
+                        .Collection("plans")
+                        .Document(taskRequestBody.Sha)
+                        .GetSnapshotAsync()
+                ).ConvertTo<SavedWorkspaces>();
 
                 var tempDirectory = await AmaurotClient.ExtractPullRequestZipball(
                     taskRequestBody,
@@ -154,7 +249,15 @@ public class Program
 
                 tempDirectory.Delete(true);
 
-                await AmaurotClient.DeleteSavedPlans(pullRequestFull);
+                var savedPlans = await Program
+                    .FirestoreDatabase.Collection("plans")
+                    .WhereEqualTo("PullRequest", pullRequestFull)
+                    .GetSnapshotAsync();
+
+                foreach (var savedPlan in savedPlans.Documents)
+                {
+                    await savedPlan.Reference.DeleteAsync();
+                }
 
                 await AmaurotClient.CreateComment(
                     taskRequestBody,

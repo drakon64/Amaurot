@@ -3,97 +3,11 @@ using System.Text;
 using Amaurot.Common.Models;
 using Amaurot.Processor.Models.Amaurot;
 using Amaurot.Processor.Models.GitHub.Commit;
-using Amaurot.Processor.Models.OpenTofu;
-using Google.Cloud.Firestore;
 
 namespace Amaurot.Processor.Clients;
 
 internal static class AmaurotClient
 {
-    private static readonly FirestoreDb FirestoreDatabase = FirestoreDb.Create();
-
-    public static async Task<ChangedWorkspaces> GetWorkspaces(
-        TaskRequestBody taskRequestBody,
-        string pullRequestFull
-    )
-    {
-        await Console.Out.WriteLineAsync($"Getting mergeability of pull request {pullRequestFull}");
-
-        string? mergeCommitSha;
-
-        while (true)
-        {
-            var pullRequest = (await Program.GitHubClient.GetPullRequest(taskRequestBody))!;
-
-            if (!pullRequest.Mergeable.HasValue)
-            {
-                await Task.Delay(3000);
-                continue;
-            }
-
-            mergeCommitSha = pullRequest.MergeCommitSha;
-            break;
-        }
-
-        if (mergeCommitSha is null)
-        {
-            throw new Exception($"Pull request {pullRequestFull} is not mergeable");
-        }
-
-        await Console.Out.WriteLineAsync(
-            $"Getting changed directories in pull request {pullRequestFull}"
-        );
-
-        var pullRequestFiles = await Program.GitHubClient.ListPullRequestFiles(taskRequestBody);
-
-        var changedDirectories = (
-            from file in pullRequestFiles
-            let lastIndex = file.FileName.LastIndexOf('/')
-            select lastIndex != -1 ? file.FileName.Remove(lastIndex) : ""
-        )
-            .Distinct()
-            .ToArray();
-
-        var changedTfVars = (
-            from file in pullRequestFiles
-            where file.FileName.EndsWith(".tfvars") || file.FileName.EndsWith(".tfvars.json")
-            select file.FileName
-        ).ToArray();
-
-        if (changedDirectories.Length == 0)
-        {
-            throw new Exception($"Pull request {pullRequestFull} is empty");
-        }
-
-        await Console.Out.WriteLineAsync(
-            $"Getting changed workspaces in pull request {pullRequestFull}"
-        );
-
-        var amaurotJson = await Program.GitHubClient.GetRepositoryAmaurotJson(
-            taskRequestBody,
-            mergeCommitSha
-        );
-
-        var workspaces = (
-            from changedDirectory in changedDirectories
-            from changedTfVar in changedTfVars
-            from workspace in amaurotJson.Workspaces
-            where
-                workspace.Directory == changedDirectory
-                || (workspace.VarFiles is not null && workspace.VarFiles.Contains(changedTfVar))
-            select workspace
-        )
-            .Distinct()
-            .ToArray();
-
-        if (workspaces.Length == 0)
-        {
-            throw new Exception($"Pull request {pullRequestFull} contains no modified workspaces");
-        }
-
-        return new ChangedWorkspaces { Workspaces = workspaces, MergeCommitSha = mergeCommitSha };
-    }
-
     public static async Task CreateCommitStatus(
         TaskRequestBody taskRequestBody,
         string pullRequestFull,
@@ -197,33 +111,5 @@ internal static class AmaurotClient
             comment.ToString().TrimEnd('\n'),
             taskRequestBody
         );
-    }
-
-    public static async Task SavePlanOutput(string headSha, SavedWorkspaces savedWorkspaces)
-    {
-        await FirestoreDatabase.Collection("plans").Document(headSha).SetAsync(savedWorkspaces);
-    }
-
-    public static async Task<SavedWorkspaces> GetSavedPlanOutput(string headSha)
-    {
-        var documentSnapshot = await FirestoreDatabase
-            .Collection("plans")
-            .Document(headSha)
-            .GetSnapshotAsync();
-
-        return documentSnapshot.ConvertTo<SavedWorkspaces>();
-    }
-
-    public static async Task DeleteSavedPlans(string pullRequest)
-    {
-        var savedPlans = await FirestoreDatabase
-            .Collection("plans")
-            .WhereEqualTo("PullRequest", pullRequest)
-            .GetSnapshotAsync();
-
-        foreach (var savedPlan in savedPlans.Documents)
-        {
-            await savedPlan.Reference.DeleteAsync();
-        }
     }
 }
