@@ -22,7 +22,7 @@ public class Program
 
     internal static readonly GitHubClient GitHubClient = new(GitHubPrivateKey, GitHubClientId);
 
-    internal static readonly FirestoreDb FirestoreDatabase = FirestoreDb.Create();
+    private static readonly FirestoreDb FirestoreDatabase = FirestoreDb.Create();
 
     public static void Main()
     {
