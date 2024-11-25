@@ -74,8 +74,7 @@ internal static class TofuClient
             ExecutionState = tofu.ExitCode is 0 or 2
                 ? CommitStatusState.Success
                 : CommitStatusState.Failure,
-            ExecutionStdout = stdout.TrimStart('\n').TrimEnd('\n'),
-            ExecutionStderr = stderr.TrimStart('\n').TrimEnd('\n'),
+            ExecutionStdout = stderr + stdout.TrimStart('\n').TrimEnd('\n'),
             PlanOut = planOut,
         };
     }
