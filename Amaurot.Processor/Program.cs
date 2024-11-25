@@ -46,7 +46,7 @@ public class Program
 
                 while (true)
                 {
-                    var pullRequest = (await Program.GitHubClient.GetPullRequest(taskRequestBody))!;
+                    var pullRequest = (await GitHubClient.GetPullRequest(taskRequestBody))!;
 
                     if (!pullRequest.Mergeable.HasValue)
                     {
@@ -67,9 +67,7 @@ public class Program
                     $"Getting changed directories in pull request {pullRequestFull}"
                 );
 
-                var pullRequestFiles = await Program.GitHubClient.ListPullRequestFiles(
-                    taskRequestBody
-                );
+                var pullRequestFiles = await GitHubClient.ListPullRequestFiles(taskRequestBody);
 
                 var changedDirectories = (
                     from file in pullRequestFiles
@@ -95,7 +93,7 @@ public class Program
                     $"Getting changed workspaces in pull request {pullRequestFull}"
                 );
 
-                var amaurotJson = await Program.GitHubClient.GetRepositoryAmaurotJson(
+                var amaurotJson = await GitHubClient.GetRepositoryAmaurotJson(
                     taskRequestBody,
                     mergeCommitSha
                 );
@@ -249,8 +247,8 @@ public class Program
 
                 tempDirectory.Delete(true);
 
-                var savedPlans = await Program
-                    .FirestoreDatabase.Collection("plans")
+                var savedPlans = await FirestoreDatabase
+                    .Collection("plans")
                     .WhereEqualTo("PullRequest", pullRequestFull)
                     .GetSnapshotAsync();
 
