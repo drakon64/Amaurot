@@ -28,27 +28,16 @@ internal static class TofuClient
         processStartInfo.ArgumentList.Add("-no-color");
 
         string? planOutPath = null;
-        string? tempSshKeyPath = null;
 
         switch (executionType)
         {
             case ExecutionType.Init:
-                var sshKeyPath = Environment.GetEnvironmentVariable("SSH_KEY_PATH");
+                const string sshKeyPath = "/ssh/ssh-private-key";
 
-                if (sshKeyPath is not null)
+                if (File.Exists(sshKeyPath))
                 {
-                    tempSshKeyPath = Path.GetTempFileName();
-
-                    await File.WriteAllBytesAsync(
-                        tempSshKeyPath,
-                        await File.ReadAllBytesAsync(sshKeyPath)
-                    );
-#pragma warning disable CA1416
-                    File.SetUnixFileMode(tempSshKeyPath, UnixFileMode.UserRead);
-#pragma warning restore CA1416
-
                     processStartInfo.Environment["GIT_SSH_COMMAND"] =
-                        $"ssh -i {tempSshKeyPath} -o StrictHostKeyChecking=no";
+                        $"ssh -i {sshKeyPath} -o StrictHostKeyChecking=no";
                 }
 
                 break;
@@ -78,9 +67,6 @@ internal static class TofuClient
         using var tofu = Process.Start(processStartInfo);
 
         await tofu!.WaitForExitAsync();
-
-        if (tempSshKeyPath is not null)
-            File.Delete(tempSshKeyPath);
 
         var stdout = await tofu.StandardOutput.ReadToEndAsync();
         var stderr = await tofu.StandardError.ReadToEndAsync();
