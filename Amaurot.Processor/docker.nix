@@ -22,7 +22,7 @@ pkgs.dockerTools.buildLayeredImage {
       "${runner}/lib/amaurot-processor/Amaurot.Processor.dll"
     ];
 
-    env = [
+    Env = [
       "PATH=${pkgs.git}/bin:${pkgs.openssh}/bin"
       "TOFU_PATH=${lib.getExe pkgs.opentofu}"
     ];
