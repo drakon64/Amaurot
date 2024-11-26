@@ -22,7 +22,10 @@ pkgs.dockerTools.buildLayeredImage {
       "${runner}/lib/amaurot-processor/Amaurot.Processor.dll"
     ];
 
-    env = [ "TOFU_PATH=${lib.getExe pkgs.opentofu}" ];
+    env = [
+      "PATH=${pkgs.git}/bin:${pkgs.openssh}/bin"
+      "TOFU_PATH=${lib.getExe pkgs.opentofu}"
+    ];
   };
 
   contents = with pkgs; [ cacert ];
