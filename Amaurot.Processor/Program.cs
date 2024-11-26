@@ -262,6 +262,8 @@ public class Program
                     changedWorkspaces.Workspaces,
                     "Apply"
                 );
+
+                return Results.Ok();
             }
         );
 
