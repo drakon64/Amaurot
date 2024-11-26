@@ -29,6 +29,6 @@ pkgs.dockerTools.buildLayeredImage {
   };
 
   contents = with pkgs; [ cacert ];
-
+  maxLayers = 101;
   tag = "latest";
 }
