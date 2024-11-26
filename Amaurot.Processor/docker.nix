@@ -9,6 +9,32 @@
 let
   lib = pkgs.lib;
 
+  nonRootShadowSetup =
+    {
+      user,
+      uid,
+      gid ? uid,
+    }:
+    with pkgs;
+    [
+      (writeTextDir "etc/shadow" ''
+        root:!x:::::::
+        ${user}:!:::::::
+      '')
+      (writeTextDir "etc/passwd" ''
+        root:x:0:0::/root:${runtimeShell}
+        ${user}:x:${toString uid}:${toString gid}::/home/${user}:
+      '')
+      (writeTextDir "etc/group" ''
+        root:x:0:
+        ${user}:x:${toString gid}:
+      '')
+      (writeTextDir "etc/gshadow" ''
+        root:x::
+        ${user}:x::
+      '')
+    ];
+
   runner = pkgs.callPackage ./. { };
 in
 pkgs.dockerTools.buildLayeredImage {
@@ -28,7 +54,13 @@ pkgs.dockerTools.buildLayeredImage {
     ];
   };
 
-  contents = with pkgs; [ cacert ];
-  maxLayers = 101;
+  contents =
+    with pkgs;
+    [ cacert ]
+    ++ nonRootShadowSetup {
+      uid = 1000;
+      user = "amaurot";
+    };
+  maxLayers = 105;
   tag = "latest";
 }
