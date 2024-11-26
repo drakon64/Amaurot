@@ -83,7 +83,6 @@ internal static class TofuClient
 
         return new ExecutionOutput
         {
-            ExecutionType = executionType,
             ExecutionState = tofu.ExitCode is 0 or 2
                 ? CommitStatusState.Success
                 : CommitStatusState.Failure,
