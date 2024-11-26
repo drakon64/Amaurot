@@ -4,63 +4,46 @@
       npins = import ../npins;
     in
     import npins.nixpkgs { },
-  compressor ? "none",
 }:
 let
-  lib = pkgs.lib;
+  # A user must be defined else OpenSSH won't work
+  shadow = with pkgs; [
+    (writeTextDir "etc/shadow" ''
+      root:!x:::::::
+    '')
+    (writeTextDir "etc/passwd" ''
+      root:x:0:0::/root:${runtimeShell}
+    '')
+    (writeTextDir "etc/group" ''
+      root:x:0:
+    '')
+    (writeTextDir "etc/gshadow" ''
+      root:x::
+    '')
+  ];
 
-  nonRootShadowSetup =
-    {
-      user,
-      uid,
-      gid ? uid,
-    }:
-    with pkgs;
-    [
-      (writeTextDir "etc/shadow" ''
-        root:!x:::::::
-        ${user}:!:::::::
-      '')
-      (writeTextDir "etc/passwd" ''
-        root:x:0:0::/root:${runtimeShell}
-        ${user}:x:${toString uid}:${toString gid}::/home/${user}:
-      '')
-      (writeTextDir "etc/group" ''
-        root:x:0:
-        ${user}:x:${toString gid}:
-      '')
-      (writeTextDir "etc/gshadow" ''
-        root:x::
-        ${user}:x::
-      '')
-    ];
-
-  runner = pkgs.callPackage ./. { };
+  processor = pkgs.callPackage ./. { };
 in
 pkgs.dockerTools.buildLayeredImage {
   name = "amaurot-processor";
 
-  inherit compressor;
-
   config = {
     Entrypoint = [
-      (lib.getExe runner.dotnet-runtime)
-      "${runner}/lib/amaurot-processor/Amaurot.Processor.dll"
+      (pkgs.lib.getExe processor.dotnet-runtime)
+      "${processor}/lib/amaurot-processor/Amaurot.Processor.dll"
     ];
 
-    Env = [
-      "PATH=${pkgs.git}/bin:${pkgs.openssh}/bin"
-      "TOFU_PATH=${lib.getExe pkgs.opentofu}"
+    Env = with pkgs; [
+      "PATH=${git}/bin:${openssh}/bin"
+      "TOFU_PATH=${lib.getExe opentofu}"
     ];
   };
 
-  contents =
-    with pkgs;
-    [ cacert ]
-    ++ nonRootShadowSetup {
-      uid = 1000;
-      user = "amaurot";
-    };
+  contents = [
+    pkgs.cacert
+    shadow
+  ];
+
   maxLayers = 105;
   tag = "latest";
 }
