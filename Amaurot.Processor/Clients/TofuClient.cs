@@ -35,7 +35,8 @@ internal static class TofuClient
                 var sshKeyPath = Environment.GetEnvironmentVariable("SSH_KEY_PATH");
 
                 if (sshKeyPath is not null)
-                    processStartInfo.Environment["GIT_SSH_COMMAND"] = $"ssh -i {sshKeyPath}";
+                    processStartInfo.Environment["GIT_SSH_COMMAND"] =
+                        $"ssh -i {sshKeyPath} -o StrictHostKeyChecking=no";
 
                 break;
             case ExecutionType.Plan:
