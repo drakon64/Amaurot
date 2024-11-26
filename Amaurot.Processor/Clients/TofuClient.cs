@@ -29,18 +29,28 @@ internal static class TofuClient
 
         string? planOutPath = null;
 
-        if (executionType == ExecutionType.Plan)
+        switch (executionType)
         {
-            planOutPath = Path.GetTempFileName();
-            processStartInfo.ArgumentList.Add("-detailed-exitcode");
-            processStartInfo.ArgumentList.Add($"-out={planOutPath}");
-        }
-        else if (executionType == ExecutionType.Apply)
-        {
-            var outPath = Path.GetTempFileName();
+            case ExecutionType.Init:
+                var sshKeyPath = Environment.GetEnvironmentVariable("SSH_KEY_PATH");
 
-            await File.WriteAllBytesAsync(outPath, workspace.PlanOut!);
-            processStartInfo.ArgumentList.Add(outPath);
+                if (sshKeyPath is not null)
+                    processStartInfo.Environment["GIT_SSH_COMMAND"] = $"ssh -i {sshKeyPath}";
+
+                break;
+            case ExecutionType.Plan:
+                planOutPath = Path.GetTempFileName();
+                processStartInfo.ArgumentList.Add("-detailed-exitcode");
+                processStartInfo.ArgumentList.Add($"-out={planOutPath}");
+
+                break;
+            case ExecutionType.Apply:
+                var outPath = Path.GetTempFileName();
+
+                await File.WriteAllBytesAsync(outPath, workspace.PlanOut!);
+                processStartInfo.ArgumentList.Add(outPath);
+
+                break;
         }
 
         if (workspace.VarFiles is not null && executionType != ExecutionType.Apply)
