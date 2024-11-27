@@ -100,14 +100,8 @@ public class Program
 
                 var workspaces = (
                     from changedDirectory in changedDirectories
-                    from changedTfVar in changedTfVars
                     from workspace in amaurotJson.Workspaces
-                    where
-                        workspace.Directory == changedDirectory
-                        || (
-                            workspace.VarFiles is not null
-                            && workspace.VarFiles.Contains(changedTfVar)
-                        )
+                    where workspace.Directory == changedDirectory
                     select workspace
                 )
                     .Distinct()
