@@ -98,14 +98,29 @@ public class Program
                     mergeCommitSha
                 );
 
-                var workspaces = (
+                // TODO: Merge these into one query
+                var workspacesList = (
                     from changedDirectory in changedDirectories
                     from workspace in amaurotJson.Workspaces
                     where workspace.Directory == changedDirectory
                     select workspace
                 )
                     .Distinct()
-                    .ToArray();
+                    .ToList();
+                foreach (var workspace in amaurotJson.Workspaces)
+                {
+                    if (workspace.VarFiles is null)
+                        continue;
+
+                    workspacesList.AddRange(
+                        (
+                            from changedTfVar in changedTfVars
+                            where workspace.VarFiles.Contains(changedTfVar)
+                            select workspace
+                        ).Distinct()
+                    );
+                }
+                var workspaces = workspacesList.Distinct().ToArray();
 
                 if (workspaces.Length == 0)
                 {
