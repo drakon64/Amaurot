@@ -15,10 +15,12 @@ internal static class TofuClient
         ExecutionType executionType
     )
     {
+        var workspaceDirectory = $"{workingDirectory}/{workspace.Directory}";
+        
         var processStartInfo = new ProcessStartInfo
         {
             FileName = TofuPath,
-            WorkingDirectory = $"{workingDirectory}/{workspace.Directory}",
+            WorkingDirectory = workspaceDirectory,
             RedirectStandardOutput = true,
             RedirectStandardError = true,
         };
@@ -60,7 +62,9 @@ internal static class TofuClient
         {
             foreach (var varFile in workspace.VarFiles)
             {
-                processStartInfo.ArgumentList.Add($"-var-file={varFile}");
+                processStartInfo.ArgumentList.Add(
+                    $"-var-file={Path.GetRelativePath(workspaceDirectory, $"{workingDirectory}/{varFile}")}"
+                );
             }
         }
 
