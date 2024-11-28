@@ -61,15 +61,15 @@ jobs:
       - run: |
           docker push ${{ secrets.GOOGLE_ARTIFACT_REGISTRY }}/amaurot-processor:latest
           docker push ${{ secrets.GOOGLE_ARTIFACT_REGISTRY }}/amaurot-receiver:latest
-          
-      - uses: google-github-actions/deploy-cloudrun@v2
-        with:
-          service: amaurot-receiver
-          image: ${{ secrets.GOOGLE_ARTIFACT_REGISTRY }}/amaurot-receiver:latest
-          region: ${{ vars.GOOGLE_REGION }}
-          
+
       - uses: google-github-actions/deploy-cloudrun@v2
         with:
           service: amaurot-processor
           image: ${{ secrets.GOOGLE_ARTIFACT_REGISTRY }}/amaurot-processor:latest
+          region: ${{ vars.GOOGLE_REGION }}
+
+      - uses: google-github-actions/deploy-cloudrun@v2
+        with:
+          service: amaurot-receiver
+          image: ${{ secrets.GOOGLE_ARTIFACT_REGISTRY }}/amaurot-receiver:latest
           region: ${{ vars.GOOGLE_REGION }}
