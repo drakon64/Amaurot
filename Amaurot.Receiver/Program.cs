@@ -21,9 +21,9 @@ public class Program
 
     internal static readonly CloudTasksClient CloudTasksClient = CloudTasksClient.Create();
 
-    public static void Main(string[] args)
+    public static void Main()
     {
-        var builder = WebApplication.CreateSlimBuilder(args);
+        var builder = WebApplication.CreateSlimBuilder();
         builder.Services.AddSingleton<WebhookEventProcessor, GitHubWebhookEventProcessor>();
 
         var app = builder.Build();
