@@ -28,10 +28,7 @@ pkgs.dockerTools.buildLayeredImage {
   name = "amaurot-processor";
 
   config = {
-    Entrypoint = [
-      (pkgs.lib.getExe processor.dotnet-runtime)
-      "${processor}/lib/amaurot-processor/Amaurot.Processor.dll"
-    ];
+    Entrypoint = [ "${processor}/lib/amaurot-processor/Amaurot.Processor" ];
 
     Env = with pkgs; [
       "PATH=${git}/bin:${openssh}/bin"
@@ -44,6 +41,5 @@ pkgs.dockerTools.buildLayeredImage {
     shadow
   ];
 
-  maxLayers = 105;
   tag = "latest";
 }
