@@ -6,6 +6,11 @@
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
 
+  <PropertyGroup>
+    <PublishReadyToRun>true</PublishReadyToRun>
+    <PublishReadyToRunComposite>true</PublishReadyToRunComposite>
+  </PropertyGroup>
+
   <ItemGroup>
     <PackageReference Include="Google.Cloud.Tasks.V2" Version="3.5.0" />
     <PackageReference Include="Octokit.Webhooks.AspNetCore" Version="2.4.1" />
