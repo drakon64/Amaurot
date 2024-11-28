@@ -8,6 +8,7 @@
   </PropertyGroup>
 
   <PropertyGroup>
+    <InvariantGlobalization>true</InvariantGlobalization>
     <PublishReadyToRun>true</PublishReadyToRun>
     <PublishReadyToRunComposite>true</PublishReadyToRunComposite>
   </PropertyGroup>
