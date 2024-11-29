@@ -27,6 +27,15 @@ public class Program
     public static void Main()
     {
         var builder = WebApplication.CreateSlimBuilder();
+
+        builder.Services.ConfigureHttpJsonOptions(options =>
+        {
+            options.SerializerOptions.TypeInfoResolverChain.Insert(
+                0,
+                TaskRequestBodyJsonSerializerContext.Default
+            );
+        });
+
         var app = builder.Build();
 
         app.MapGet("/", () => Results.Ok());
