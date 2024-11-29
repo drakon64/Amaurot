@@ -34,10 +34,10 @@ pkgs.dockerTools.buildLayeredImage {
     Env =
       with pkgs;
       [ "TOFU_PATH=${lib.getExe opentofu}" ]
-      ++ pkgs.lib.optional enableGit [ "PATH=${git}/bin:${openssh}/bin" ];
+      ++ pkgs.lib.optional enableGit "PATH=${git}/bin:${openssh}/bin";
   };
 
-  contents = [ pkgs.cacert ] ++ pkgs.lib.optional enableGit [ shadow ];
+  contents = [ pkgs.cacert ] ++ pkgs.lib.optional enableGit shadow;
 
   tag = "latest";
 }
