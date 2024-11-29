@@ -113,22 +113,13 @@ public class Program
                     from workspace in amaurotJson.Workspaces
                     where workspace.Directory == changedDirectory
                     select workspace
-                )
-                    .Distinct()
-                    .ToList();
-                foreach (var workspace in amaurotJson.Workspaces)
-                {
-                    if (workspace.VarFiles is null)
-                        continue;
-
-                    workspacesList.AddRange(
-                        (
-                            from changedTfVar in changedTfVars
-                            where workspace.VarFiles.Contains(changedTfVar)
-                            select workspace
-                        ).Distinct()
-                    );
-                }
+                ).ToList();
+                workspacesList.AddRange(
+                    from workspace in amaurotJson.Workspaces
+                    from changedTfVar in changedTfVars
+                    where workspace.VarFiles.Contains(changedTfVar)
+                    select workspace
+                );
                 var workspaces = workspacesList.Distinct().ToArray();
 
                 if (workspaces.Length == 0)
