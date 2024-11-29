@@ -4,6 +4,7 @@
       npins = import ../npins;
     in
     import npins.nixpkgs { },
+  enableGit ? true,
 }:
 let
   # A user must be defined else OpenSSH won't work
@@ -30,16 +31,13 @@ pkgs.dockerTools.buildLayeredImage {
   config = {
     Entrypoint = [ "${processor}/lib/amaurot-processor/Amaurot.Processor" ];
 
-    Env = with pkgs; [
-      "PATH=${git}/bin:${openssh}/bin"
-      "TOFU_PATH=${lib.getExe opentofu}"
-    ];
+    Env =
+      with pkgs;
+      [ "TOFU_PATH=${lib.getExe opentofu}" ]
+      ++ pkgs.lib.optional enableGit [ "PATH=${git}/bin:${openssh}/bin" ];
   };
 
-  contents = [
-    pkgs.cacert
-    shadow
-  ];
+  contents = [ pkgs.cacert ] ++ pkgs.lib.optional enableGit [ shadow ];
 
   tag = "latest";
 }
