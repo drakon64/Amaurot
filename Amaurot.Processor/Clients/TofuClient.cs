@@ -16,7 +16,7 @@ internal static class TofuClient
     )
     {
         var workspaceDirectory = $"{workingDirectory}/{workspace.Directory}";
-        
+
         var processStartInfo = new ProcessStartInfo
         {
             FileName = TofuPath,
