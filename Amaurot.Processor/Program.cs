@@ -117,7 +117,8 @@ public class Program
                 workspacesList.AddRange(
                     from workspace in amaurotJson.Workspaces
                     from changedTfVar in changedTfVars
-                    where workspace.VarFiles.Contains(changedTfVar)
+                    where
+                        workspace.VarFiles is not null && workspace.VarFiles.Contains(changedTfVar)
                     select workspace
                 );
                 var workspaces = workspacesList.Distinct().ToArray();
