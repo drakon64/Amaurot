@@ -100,23 +100,23 @@
   })
   (fetchNuGet {
     pname = "Microsoft.IdentityModel.Abstractions";
-    version = "8.2.1";
-    hash = "sha256-+9aIQ5tVPM915SEaquiiVUYaW2wk2MvkYWEMTzGYEl4=";
+    version = "8.3.0";
+    hash = "sha256-LSZ91DbPswCWibHNSGWC3Jh3KQwAthVaU3r7XQJyutM=";
   })
   (fetchNuGet {
     pname = "Microsoft.IdentityModel.JsonWebTokens";
-    version = "8.2.1";
-    hash = "sha256-0tL7K87O8w2IOje7+WFZQiPiYFWLMqMRsVoHKVose+0=";
+    version = "8.3.0";
+    hash = "sha256-Hiiv10LSOMIt7KsQSsteJV4DFkLebHMYmoISn/pl2F8=";
   })
   (fetchNuGet {
     pname = "Microsoft.IdentityModel.Logging";
-    version = "8.2.1";
-    hash = "sha256-0FHmPBoogYIEAa7hxVvxIYy1jCCB3NmnVS5eoVWsjrU=";
+    version = "8.3.0";
+    hash = "sha256-0P14ilpV+9yp+nqZWI/ilkTnRas4pic8NjNVcYxuXWs=";
   })
   (fetchNuGet {
     pname = "Microsoft.IdentityModel.Tokens";
-    version = "8.2.1";
-    hash = "sha256-kO/Xrv/XbJ0hKqA0PFWMKJA8EBCuAjBO7D6XoPH0l8k=";
+    version = "8.3.0";
+    hash = "sha256-+TzBeZH2Tgs0EMoU5QuCdOD/5V8xM7MHClX578AUIxw=";
   })
   (fetchNuGet {
     pname = "Newtonsoft.Json";
@@ -140,8 +140,8 @@
   })
   (fetchNuGet {
     pname = "System.IdentityModel.Tokens.Jwt";
-    version = "8.2.1";
-    hash = "sha256-osV3VbG9k5Jb4XSlUsDxqbMEASNR3c7DA6+AKVXVhHQ=";
+    version = "8.3.0";
+    hash = "sha256-dKBMVbKT8sf6dZPEioClYwHT/0PccwbXThUOOeCaihU=";
   })
   (fetchNuGet {
     pname = "System.Linq.Async";
