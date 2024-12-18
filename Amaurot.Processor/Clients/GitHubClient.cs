@@ -55,21 +55,23 @@ internal class GitHubClient
         return new JwtSecurityTokenHandler().WriteToken(jwt);
     }
 
-    private static readonly HttpClient HttpClient =
-        new()
+    private static readonly HttpClient HttpClient = new()
+    {
+        DefaultRequestHeaders =
         {
-            DefaultRequestHeaders =
-            {
-                { "User-Agent", "Amaurot/0.0.1" },
-                { "Accept", "application/vnd.github+json" },
-                { "X-GitHub-Api-Version", "2022-11-28" },
-            },
-        };
+            { "User-Agent", "Amaurot/0.0.1" },
+            { "Accept", "application/vnd.github+json" },
+            { "X-GitHub-Api-Version", "2022-11-28" },
+        },
+    };
 
     private const string GitHubApiUri = "https://api.github.com/";
 
-    private InstallationAccessToken _githubInstallationAccessToken =
-        new() { Token = "", ExpiresAt = DateTime.Now };
+    private InstallationAccessToken _githubInstallationAccessToken = new()
+    {
+        Token = "",
+        ExpiresAt = DateTime.Now,
+    };
 
     private async Task<string> GetGitHubInstallationAccessToken(long installationId)
     {
