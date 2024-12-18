@@ -2,6 +2,7 @@ using System.IO.Compression;
 using System.Text;
 using Amaurot.Common.Models;
 using Amaurot.Processor.Models.Amaurot;
+using Amaurot.Processor.Models.GitHub;
 using Amaurot.Processor.Models.GitHub.Commit;
 
 namespace Amaurot.Processor.Clients;
@@ -12,7 +13,8 @@ internal static class AmaurotClient
         TaskRequestBody taskRequestBody,
         string pullRequestFull,
         CommitStatusState state,
-        string context
+        string context,
+        string? targetUrl = null
     )
     {
         var stateString = state.ToString().ToLower(); // TODO: https://github.com/dotnet/runtime/issues/92828
@@ -22,7 +24,12 @@ internal static class AmaurotClient
         );
 
         await Program.GitHubClient.CreateCommitStatus(
-            new CreateCommitStatusRequest { State = stateString, Context = context },
+            new CreateCommitStatusRequest
+            {
+                State = stateString,
+                TargetUrl = targetUrl,
+                Context = context,
+            },
             taskRequestBody
         );
     }
@@ -48,7 +55,7 @@ internal static class AmaurotClient
         return tempDirectory;
     }
 
-    public static async Task CreateComment(
+    public static async Task<Comment> CreateComment(
         TaskRequestBody taskRequestBody,
         Workspace[] workspaces,
         string executionType
@@ -110,7 +117,7 @@ internal static class AmaurotClient
         if (executionType == "Plan")
             comment.Append("\n---\n\nMerging this pull request will apply these changes.");
 
-        await Program.GitHubClient.CreateIssueComment(
+        return await Program.GitHubClient.CreateIssueComment(
             comment.ToString().TrimEnd('\n'),
             taskRequestBody
         );

@@ -240,7 +240,7 @@ internal class GitHubClient
         return await responseMessage.Content.ReadAsStreamAsync();
     }
 
-    public async Task CreateIssueComment(string body, TaskRequestBody taskRequestBody)
+    public async Task<Comment> CreateIssueComment(string body, TaskRequestBody taskRequestBody)
     {
         var responseMessage = await HttpClient.SendAsync(
             new HttpRequestMessage
@@ -263,15 +263,6 @@ internal class GitHubClient
             }
         );
 
-        if (responseMessage.IsSuccessStatusCode)
-        {
-            return;
-        }
-
-        var error = await responseMessage.Content.ReadFromJsonAsync<GitHubError>(
-            AmaurotSerializerContext.Default.GitHubError
-        );
-
-        throw new Exception(error!.ToString());
+        return (await responseMessage.Content.ReadFromJsonAsync<Comment>())!;
     }
 }

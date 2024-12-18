@@ -7,12 +7,13 @@ using Amaurot.Processor.Models.GitHub.PullRequest;
 
 namespace Amaurot.Processor.Models;
 
+[JsonSerializable(typeof(AmaurotJson))]
+[JsonSerializable(typeof(Comment))]
 [JsonSerializable(typeof(CreateCommitStatusRequest))]
 [JsonSerializable(typeof(CreateIssueCommentRequest))]
-[JsonSerializable(typeof(PullRequest))]
 [JsonSerializable(typeof(GitHubError))]
 [JsonSerializable(typeof(InstallationAccessToken))]
-[JsonSerializable(typeof(AmaurotJson))]
+[JsonSerializable(typeof(PullRequest))]
 [JsonSourceGenerationOptions(
     PropertyNamingPolicy = JsonKnownNamingPolicy.SnakeCaseLower,
     UseStringEnumConverter = true

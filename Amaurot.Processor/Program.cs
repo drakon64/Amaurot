@@ -201,17 +201,18 @@ public class Program
                         );
                 }
 
-                await AmaurotClient.CreateComment(
-                    taskRequestBody,
-                    changedWorkspaces.Workspaces,
-                    "Plan"
-                );
-
                 await AmaurotClient.CreateCommitStatus(
                     taskRequestBody,
                     pullRequestFull,
                     executionState,
-                    GitHubContext
+                    GitHubContext,
+                    (
+                        await AmaurotClient.CreateComment(
+                            taskRequestBody,
+                            changedWorkspaces.Workspaces,
+                            "Plan"
+                        )
+                    ).HtmlUrl
                 );
 
                 return Results.Ok();
