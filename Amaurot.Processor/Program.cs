@@ -193,6 +193,8 @@ public class Program
 
                 if (executionState != CommitStatusState.Error)
                 {
+                    await Console.Out.WriteLineAsync("Saving plan output to Firestore");
+                    
                     await FirestoreDatabase
                         .Collection("plans")
                         .Document(taskRequestBody.Sha)
