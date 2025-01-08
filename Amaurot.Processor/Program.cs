@@ -159,6 +159,8 @@ public class Program
                     var workingDirectory =
                         $"{tempDirectory.FullName}/{taskRequestBody.RepositoryOwner}-{taskRequestBody.RepositoryName}-{changedWorkspaces.MergeCommitSha}";
 
+                    await Console.Out.WriteLineAsync($"Running `tofu init` for {workspace.Name}");
+
                     var init = await TofuClient.TofuExecution(
                         workingDirectory,
                         workspace,
@@ -166,6 +168,8 @@ public class Program
                     );
 
                     workspace.InitStdout = init.ExecutionStdout;
+
+                    await Console.Out.WriteLineAsync($"Running `tofu plan` for {workspace.Name}");
 
                     var plan = await TofuClient.TofuExecution(
                         workingDirectory,
@@ -242,6 +246,8 @@ public class Program
                     var workingDirectory =
                         $"{tempDirectory.FullName}/{taskRequestBody.RepositoryOwner}-{taskRequestBody.RepositoryName}-{taskRequestBody.Sha}";
 
+                    await Console.Out.WriteLineAsync($"Running `tofu init` for {workspace.Name}");
+
                     var init = await TofuClient.TofuExecution(
                         workingDirectory,
                         workspace,
@@ -249,6 +255,8 @@ public class Program
                     );
 
                     workspace.InitStdout = init.ExecutionStdout;
+
+                    await Console.Out.WriteLineAsync($"Running `tofu apply` for {workspace.Name}");
 
                     var apply = await TofuClient.TofuExecution(
                         workingDirectory,
