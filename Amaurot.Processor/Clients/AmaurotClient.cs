@@ -43,6 +43,10 @@ internal static class AmaurotClient
 
         var tempDirectory = Directory.CreateTempSubdirectory();
 
+        await Console.Out.WriteLineAsync(
+            $"Extracting repository {taskRequestBody.RepositoryOwner}/{taskRequestBody.RepositoryName} at commit {commit}"
+        );
+
         ZipFile.ExtractToDirectory(zipball, tempDirectory.FullName);
 
         return tempDirectory;
