@@ -71,6 +71,7 @@ internal static class TofuClient
         using var tofu = Process.Start(processStartInfo);
 
         await tofu!.WaitForExitAsync();
+        await Console.Out.WriteLineAsync($"OpenTofu exited with code {tofu.ExitCode}");
 
         var stdout = await tofu.StandardOutput.ReadToEndAsync();
         var stderr = await tofu.StandardError.ReadToEndAsync();
