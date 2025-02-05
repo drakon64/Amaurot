@@ -1,10 +1,4 @@
-{
-  pkgs ?
-    let
-      npins = import ../npins;
-    in
-    import npins.nixpkgs { },
-}:
+{ pkgs }:
 let
   receiver = pkgs.callPackage ./. { };
 in

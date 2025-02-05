@@ -1,10 +1,4 @@
-{
-  pkgs ?
-    let
-      npins = import ../npins;
-    in
-    import npins.nixpkgs { },
-}:
+{ pkgs }:
 let
   fs = pkgs.lib.fileset;
   sourceFiles = fs.intersection (fs.gitTracked ../.) (

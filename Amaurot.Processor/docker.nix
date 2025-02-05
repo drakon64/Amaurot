@@ -1,9 +1,5 @@
 {
-  pkgs ?
-    let
-      npins = import ../npins;
-    in
-    import npins.nixpkgs { },
+  pkgs,
   enableGit ? true,
 }:
 let
