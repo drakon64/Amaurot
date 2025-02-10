@@ -34,8 +34,9 @@ internal static class TofuClient
         switch (executionType)
         {
             case ExecutionType.Init:
+                processStartInfo.ArgumentList.Add("-reconfigure");
+                
                 const string sshKeyPath = "/ssh/ssh-private-key";
-
                 if (File.Exists(sshKeyPath))
                 {
                     processStartInfo.Environment["GIT_SSH_COMMAND"] =
