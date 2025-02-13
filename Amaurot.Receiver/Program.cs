@@ -19,6 +19,11 @@ public class Program
         Environment.GetEnvironmentVariable("PROCESSOR_URL")
         ?? throw new InvalidOperationException("PROCESSOR_URL is null");
 
+    internal static readonly string[] AllowedRepositories = (
+        Environment.GetEnvironmentVariable("ALLOWED_REPOSITORIES")
+        ?? throw new InvalidOperationException("ALLOWED_REPOSITORIES is null")
+    ).Split(" ");
+
     internal static readonly CloudTasksClient CloudTasksClient = CloudTasksClient.Create();
 
     public static void Main()

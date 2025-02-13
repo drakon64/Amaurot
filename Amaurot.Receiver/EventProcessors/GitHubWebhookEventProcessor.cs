@@ -19,6 +19,11 @@ public sealed class GitHubWebhookEventProcessor : WebhookEventProcessor
         PullRequestAction pullRequestAction
     )
     {
+        if (!Program.AllowedRepositories.Contains(pullRequestEvent.Repository!.FullName))
+        {
+            return;
+        }
+
         string endpoint;
 
         if (
