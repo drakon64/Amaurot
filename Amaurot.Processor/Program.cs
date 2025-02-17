@@ -9,6 +9,11 @@ namespace Amaurot.Processor;
 
 public class Program
 {
+    private static readonly string[] AllowedRepositories = (
+        Environment.GetEnvironmentVariable("ALLOWED_REPOSITORIES")
+        ?? throw new InvalidOperationException("ALLOWED_REPOSITORIES is null")
+    ).Split(" ");
+
     private static readonly string GitHubPrivateKey =
         Environment.GetEnvironmentVariable("GITHUB_PRIVATE_KEY")
         ?? throw new InvalidOperationException("GITHUB_PRIVATE_KEY is null");
@@ -44,6 +49,15 @@ public class Program
             "/plan",
             async (TaskRequestBody taskRequestBody) =>
             {
+                if (
+                    !AllowedRepositories.Contains(
+                        $"{taskRequestBody.RepositoryOwner}/{taskRequestBody.RepositoryName}"
+                    )
+                )
+                {
+                    throw new Exception();
+                }
+
                 var pullRequestFull =
                     $"{taskRequestBody.RepositoryOwner}/{taskRequestBody.RepositoryName}#{taskRequestBody.PullRequest}";
 
