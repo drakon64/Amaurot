@@ -25,6 +25,10 @@ public class Program
     private static readonly string GitHubContext =
         Environment.GetEnvironmentVariable("GITHUB_CONTEXT") ?? "Amaurot";
 
+    private static readonly string PlanBucket =
+        Environment.GetEnvironmentVariable("PLAN_BUCKET")
+        ?? throw new InvalidOperationException("PLAN_BUCKET is null");
+
     internal static readonly GitHubClient GitHubClient = new(GitHubPrivateKey, GitHubClientId);
 
     private static readonly FirestoreDb FirestoreDatabase = FirestoreDb.Create();
@@ -207,18 +211,17 @@ public class Program
 
                 if (executionState != CommitStatusState.Error)
                 {
-                    await Console.Out.WriteLineAsync("Saving plan output to Firestore");
+                    await Console.Out.WriteLineAsync("Saving plan output to Cloud Storage");
 
-                    await FirestoreDatabase
-                        .Collection("plans")
-                        .Document(taskRequestBody.Sha)
-                        .SetAsync(
-                            new SavedWorkspaces
-                            {
-                                PullRequest = pullRequestFull,
-                                Workspaces = changedWorkspaces.Workspaces,
-                            }
-                        );
+                    await GoogleClient.SavePlanOutput(
+                        PlanBucket,
+                        taskRequestBody.Sha,
+                        new SavedWorkspaces
+                        {
+                            PullRequest = pullRequestFull,
+                            Workspaces = changedWorkspaces.Workspaces,
+                        }
+                    );
                 }
 
                 await AmaurotClient.CreateComment(

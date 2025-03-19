@@ -13,6 +13,7 @@ namespace Amaurot.Processor.Models;
 [JsonSerializable(typeof(GitHubError))]
 [JsonSerializable(typeof(InstallationAccessToken))]
 [JsonSerializable(typeof(AmaurotJson))]
+[JsonSerializable(typeof(SavedWorkspaces))]
 [JsonSourceGenerationOptions(
     PropertyNamingPolicy = JsonKnownNamingPolicy.SnakeCaseLower,
     UseStringEnumConverter = true
