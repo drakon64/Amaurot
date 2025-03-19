@@ -1,10 +1,6 @@
-{
-  pkgs ?
-    let
-      npins = import ./npins;
-    in
-    import npins.nixpkgs { },
-}:
+let
+  pkgs = (import ./. { }).nixpkgs;
+in
 pkgs.mkShellNoCC {
   packages = with pkgs; [
     nixfmt-rfc-style
