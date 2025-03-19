@@ -3,7 +3,6 @@ using Amaurot.Processor.Clients;
 using Amaurot.Processor.Models.Amaurot;
 using Amaurot.Processor.Models.GitHub.Commit;
 using Amaurot.Processor.Models.OpenTofu;
-using Google.Cloud.Firestore;
 
 namespace Amaurot.Processor;
 
@@ -30,9 +29,7 @@ public class Program
         ?? throw new InvalidOperationException("PLAN_BUCKET is null");
 
     internal static readonly GitHubClient GitHubClient = new(GitHubPrivateKey, GitHubClientId);
-
-    private static readonly FirestoreDb FirestoreDatabase = FirestoreDb.Create();
-
+    
     public static void Main()
     {
         var builder = WebApplication.CreateSlimBuilder();
@@ -248,12 +245,10 @@ public class Program
                 var pullRequestFull =
                     $"{taskRequestBody.RepositoryOwner}/{taskRequestBody.RepositoryName}#{taskRequestBody.PullRequest}";
 
-                var changedWorkspaces = (
-                    await FirestoreDatabase
-                        .Collection("plans")
-                        .Document(taskRequestBody.Sha)
-                        .GetSnapshotAsync()
-                ).ConvertTo<SavedWorkspaces>();
+                var changedWorkspaces = await GoogleClient.GetPlanOutput(
+                    PlanBucket,
+                    taskRequestBody.Sha
+                );
 
                 var tempDirectory = await AmaurotClient.ExtractPullRequestZipball(
                     taskRequestBody,
@@ -287,16 +282,6 @@ public class Program
                 }
 
                 tempDirectory.Delete(true);
-
-                var savedPlans = await FirestoreDatabase
-                    .Collection("plans")
-                    .WhereEqualTo("PullRequest", pullRequestFull)
-                    .GetSnapshotAsync();
-
-                foreach (var savedPlan in savedPlans.Documents)
-                {
-                    await savedPlan.Reference.DeleteAsync();
-                }
 
                 await AmaurotClient.CreateComment(
                     taskRequestBody,

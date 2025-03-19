@@ -79,4 +79,29 @@ internal static class GoogleClient
             }
         );
     }
+
+    public static async Task<SavedWorkspaces> GetPlanOutput(string bucket, string plan)
+    {
+        var accessToken = await GetAccessToken();
+
+        var request = await HttpClient.SendAsync(
+            new HttpRequestMessage
+            {
+                Method = HttpMethod.Get,
+                Headers =
+                {
+                    { "Authorization", $"{accessToken.TokenType} {accessToken.AccessToken}" },
+                },
+                RequestUri = new Uri(
+                    $"https://storage.googleapis.com/upload/storage/v1/b/{bucket}/o/{plan}?alt=media"
+                ),
+            }
+        );
+
+        return (
+            await request.Content.ReadFromJsonAsync<SavedWorkspaces>(
+                AmaurotSerializerContext.Default.SavedWorkspaces
+            )
+        )!;
+    }
 }
