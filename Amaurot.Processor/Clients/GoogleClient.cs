@@ -71,10 +71,15 @@ internal static class GoogleClient
                 Headers =
                 {
                     { "Authorization", $"{accessToken.TokenType} {accessToken.AccessToken}" },
-                    { "Content-Length", body.Length.ToString() },
-                    { "Content-Type", "application/json" },
                 },
-                Content = new ByteArrayContent(Encoding.UTF8.GetBytes(body)),
+                Content = new ByteArrayContent(Encoding.UTF8.GetBytes(body))
+                {
+                    Headers =
+                    {
+                        { "Content-Length", body.Length.ToString() },
+                        { "Content-Type", "application/json" },
+                    },
+                },
                 RequestUri = new Uri(QueryHelpers.AddQueryString(url, parameters!)),
             }
         );
