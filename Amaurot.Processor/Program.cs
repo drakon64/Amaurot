@@ -29,7 +29,7 @@ public class Program
         ?? throw new InvalidOperationException("PLAN_BUCKET is null");
 
     internal static readonly GitHubClient GitHubClient = new(GitHubPrivateKey, GitHubClientId);
-    
+
     public static void Main()
     {
         var builder = WebApplication.CreateSlimBuilder();
