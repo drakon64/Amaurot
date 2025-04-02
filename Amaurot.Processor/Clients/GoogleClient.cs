@@ -98,7 +98,7 @@ internal static class GoogleClient
                     { "Authorization", $"{accessToken.TokenType} {accessToken.AccessToken}" },
                 },
                 RequestUri = new Uri(
-                    $"https://storage.googleapis.com/upload/storage/v1/b/{bucket}/o/{plan}?alt=media"
+                    $"https://storage.googleapis.com/storage/v1/b/{bucket}/o/{plan}?alt=media"
                 ),
             }
         );
