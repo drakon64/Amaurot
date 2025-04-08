@@ -30,6 +30,7 @@ public sealed class GitHubWebhookEventProcessor : WebhookEventProcessor
             (
                 pullRequestAction == PullRequestAction.Opened
                 || pullRequestAction == PullRequestAction.Synchronize
+                || pullRequestAction == PullRequestAction.ReadyForReview
             ) && !pullRequestEvent.PullRequest.Draft
         )
             endpoint = "plan";
