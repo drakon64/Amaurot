@@ -7,7 +7,7 @@ pkgs.dockerTools.buildLayeredImage {
 
   config.Entrypoint = [ "${receiver}/lib/amaurot-receiver/Amaurot.Receiver" ];
 
-  contents = with pkgs; [ cacert ];
+  contents = with pkgs; [ dockerTools.caCertificates ];
 
   tag = "latest";
 }
