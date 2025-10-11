@@ -71,9 +71,6 @@ buildDotnetModule (finalAttrs: {
         ];
       };
 
-      contents = [
-        dockerTools.caCertificates
-      ]
-      ++ lib.optional (enableGit && enableSsh) dockerTools.fakeNss;
+      contents = with dockerTools; [ caCertificates ] ++ lib.optional (enableGit && enableSsh) fakeNss;
     };
 })
