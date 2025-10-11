@@ -3,12 +3,13 @@
   lib,
   buildDotnetModule,
   dotnetCorePackages,
+  dockerTools,
   ...
 }:
 let
   fs = lib.fileset;
 in
-buildDotnetModule {
+buildDotnetModule (finalAttrs: {
   pname = "amaurot-receiver";
   version = builtins.readFile ../../version;
 
@@ -24,7 +25,6 @@ buildDotnetModule {
 
         (lib.fileset.maybeMissing ./deps.json)
         ./package.nix
-        ./docker.nix
       ]
     );
   };
@@ -42,4 +42,13 @@ buildDotnetModule {
     mainProgram = "Amaurot.Receiver";
     maintainers = with lib.maintainers; [ drakon64 ];
   };
-}
+
+  passthru.docker = dockerTools.buildLayeredImage {
+    name = "amaurot-receiver";
+    tag = "latest";
+
+    config.Cmd = [ (lib.getExe finalAttrs.finalPackage) ];
+
+    contents = [ dockerTools.caCertificates ];
+  };
+})

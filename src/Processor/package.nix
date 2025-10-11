@@ -3,13 +3,14 @@
   lib,
   buildDotnetModule,
   dotnetCorePackages,
+  stdenv,
   dockerTools,
   ...
 }:
 let
   fs = lib.fileset;
 in
-buildDotnetModule {
+buildDotnetModule (finalAttrs: {
   pname = "amaurot-processor";
   version = builtins.readFile ../../version;
 
@@ -23,7 +24,7 @@ buildDotnetModule {
         (lib.fileset.maybeMissing ./obj)
 
         (lib.fileset.maybeMissing ./deps.json)
-        ./default.nix
+        ./package.nix
       ]
     );
   };
@@ -32,13 +33,26 @@ buildDotnetModule {
   nugetDeps = ./deps.json;
 
   dotnet-sdk = dotnetCorePackages.sdk_9_0;
-  dotnet-runtime = dotnetCorePackages.aspnetcore_9_0;
 
   executables = [ "Amaurot.Processor" ];
+
+  # Native AOT
+  dotnet-runtime = null;
+  selfContainedBuild = true;
+  nativeBuildInputs = [ stdenv.cc ];
 
   meta = {
     license = lib.licenses.eupl12;
     mainProgram = "Amaurot.Processor";
     maintainers = with lib.maintainers; [ drakon64 ];
   };
-}
+
+  passthru.docker = dockerTools.buildLayeredImage {
+    name = "amaurot-processor";
+    tag = "latest";
+
+    config.Cmd = [ (lib.getExe finalAttrs.finalPackage) ];
+
+    contents = [ dockerTools.caCertificates ];
+  };
+})
