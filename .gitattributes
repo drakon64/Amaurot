@@ -1,3 +1,5 @@
-Amaurot.Processor/deps.nix linguist-generated=true
-Amaurot.Receiver/deps.nix linguist-generated=true
-npins/* linguist-generated=true
+lon.lock linguist-generated=true
+lon.nix linguist-generated=true
+
+src/Processor/deps.json linguist-generated=true
+src/Receiver/deps.json linguist-generated=true

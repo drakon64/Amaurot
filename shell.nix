@@ -1,9 +1,17 @@
-let
-  pkgs = (import ./. { }).nixpkgs;
-in
+{
+  pkgs ? import (import ./lon.nix).nixpkgs { },
+}:
 pkgs.mkShellNoCC {
   packages = with pkgs; [
+    graphviz
+    lon
     nixfmt-rfc-style
-    npins
+    opentofu
   ];
+
+  passthru = {
+    lon = pkgs.mkShellNoCC {
+      packages = with pkgs; [ lon ];
+    };
+  };
 }
