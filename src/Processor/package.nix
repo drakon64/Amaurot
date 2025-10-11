@@ -5,6 +5,9 @@
   dotnetCorePackages,
   stdenv,
   dockerTools,
+  opentofu,
+  git,
+  openssh,
   ...
 }:
 let
@@ -47,12 +50,30 @@ buildDotnetModule (finalAttrs: {
     maintainers = with lib.maintainers; [ drakon64 ];
   };
 
-  passthru.docker = dockerTools.buildLayeredImage {
-    name = "amaurot-processor";
-    tag = "latest";
+  passthru.docker =
+    {
+      enableGit ? true,
+      enableSsh ? true,
+    }:
+    dockerTools.buildLayeredImage {
+      name = "amaurot-processor";
+      tag = "latest";
 
-    config.Cmd = [ (lib.getExe finalAttrs.finalPackage) ];
+      config = {
+        Cmd = [ (lib.getExe finalAttrs.finalPackage) ];
 
-    contents = [ dockerTools.caCertificates ];
-  };
+        Env = [
+          (
+            "PATH=${opentofu}/bin"
+            + lib.optionalString enableGit ":${git}/bin"
+            + lib.optionalString (enableGit && enableSsh) ":${openssh}/bin"
+          )
+        ];
+      };
+
+      contents = [
+        dockerTools.caCertificates
+      ]
+      ++ lib.optional (enableGit && enableSsh) dockerTools.fakeNss;
+    };
 })
