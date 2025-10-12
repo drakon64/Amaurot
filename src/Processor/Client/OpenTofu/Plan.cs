@@ -10,15 +10,15 @@ internal partial class OpenTofuClient
 
         var processStartInfo = new ProcessStartInfo
         {
-            FileName = Environment.GetEnvironmentVariable("OPENTOFU"),
-            WorkingDirectory = workingDirectory.FullName,
+            FileName = _opentofu,
+            WorkingDirectory = _workingDirectory,
         };
 
         processStartInfo.ArgumentList.Add("plan");
 
-        if (varFiles != null)
-            foreach (var varFile in varFiles)
-                processStartInfo.ArgumentList.Add($"-var-file={varFile.FullName}");
+        if (_varFiles != null)
+            foreach (var varFile in _varFiles)
+                processStartInfo.ArgumentList.Add($"-var-file={varFile}");
 
         processStartInfo.ArgumentList.Add("-detailed-exitcode");
         processStartInfo.ArgumentList.Add("-input=false");
