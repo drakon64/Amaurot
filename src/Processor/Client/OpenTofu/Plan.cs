@@ -4,15 +4,13 @@ namespace Amaurot.Processor.Client.OpenTofu;
 
 internal partial class OpenTofuClient
 {
-    internal async Task<PlanOutput> Plan()
+    private static readonly int[] SucceededExitCodes = [0, 2];
+
+    internal async Task<RunOutput> Plan()
     {
         var outFile = Path.GetTempFileName();
 
-        var processStartInfo = new ProcessStartInfo
-        {
-            FileName = _opentofu,
-            WorkingDirectory = _workingDirectory,
-        };
+        var processStartInfo = CreateProcessStartInfo();
 
         processStartInfo.ArgumentList.Add("plan");
 
@@ -34,7 +32,7 @@ internal partial class OpenTofuClient
         await tofu.WaitForExitAsync();
 
         if (!SucceededExitCodes.Contains(tofu.ExitCode))
-            return new PlanOutput
+            return new RunOutput
             {
                 StandardOutput = await tofu.StandardOutput.ReadToEndAsync(),
                 StandardError = await tofu.StandardError.ReadToEndAsync(),
@@ -43,7 +41,7 @@ internal partial class OpenTofuClient
         var planOut = await File.ReadAllBytesAsync(outFile);
         File.Delete(outFile);
 
-        return new SuccessfulPlanOutput
+        return new PlanOutput
         {
             Out = planOut,
             StandardOutput = await tofu.StandardOutput.ReadToEndAsync(),
@@ -51,15 +49,7 @@ internal partial class OpenTofuClient
         };
     }
 
-    private static readonly int[] SucceededExitCodes = [0, 2];
-
-    internal class PlanOutput
-    {
-        public required string StandardOutput { get; init; }
-        public required string StandardError { get; init; }
-    }
-
-    internal sealed class SuccessfulPlanOutput : PlanOutput
+    internal sealed class PlanOutput : RunOutput
     {
         public required byte[] Out { get; init; }
     }

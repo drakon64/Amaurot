@@ -1,3 +1,5 @@
+using System.Diagnostics;
+
 namespace Amaurot.Processor.Client.OpenTofu;
 
 internal partial class OpenTofuClient
@@ -17,5 +19,14 @@ internal partial class OpenTofuClient
             return;
 
         _varFiles = varFiles.Select(varFile => $"-var-file={varFile.FullName}").ToArray();
+    }
+
+    private ProcessStartInfo CreateProcessStartInfo() =>
+        new() { FileName = _opentofu, WorkingDirectory = _workingDirectory };
+
+    internal class RunOutput
+    {
+        public required string StandardOutput { get; init; }
+        public required string StandardError { get; init; }
     }
 }
