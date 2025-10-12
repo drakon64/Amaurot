@@ -1,7 +1,42 @@
 [
   {
+    "pname": "Microsoft.Extensions.DependencyInjection.Abstractions",
+    "version": "8.0.0",
+    "hash": "sha256-75KzEGWjbRELczJpCiJub+ltNUMMbz5A/1KQU+5dgP8="
+  },
+  {
+    "pname": "Microsoft.Extensions.Logging.Abstractions",
+    "version": "8.0.0",
+    "hash": "sha256-Jmddjeg8U5S+iBTwRlVAVLeIHxc4yrrNgqVMOB7EjM4="
+  },
+  {
+    "pname": "Microsoft.IdentityModel.Abstractions",
+    "version": "8.14.0",
+    "hash": "sha256-bkCuz1Wj56N+LHWLvHKLcCtIRqBK+3k5vD2qfB7xXKk="
+  },
+  {
+    "pname": "Microsoft.IdentityModel.JsonWebTokens",
+    "version": "8.14.0",
+    "hash": "sha256-YBXaSWnLgxIQxv+Lwt2aRC20miFguNZbbuTc2Jjq+Ys="
+  },
+  {
+    "pname": "Microsoft.IdentityModel.Logging",
+    "version": "8.14.0",
+    "hash": "sha256-QvCJplLvTGTXZKGbRMccW2hld6oWUhHkneZd+msn9aE="
+  },
+  {
+    "pname": "Microsoft.IdentityModel.Tokens",
+    "version": "8.14.0",
+    "hash": "sha256-ALeMe3AjEy4dazHTBeR1JHMtzm+sqS3RbrjQWoNbuno="
+  },
+  {
     "pname": "System.CommandLine",
     "version": "2.0.0-rc.1.25451.107",
     "hash": "sha256-Hucak/8DT564rJedLEE/1SEUtQh/jWfRhME6JHpna30="
+  },
+  {
+    "pname": "System.IdentityModel.Tokens.Jwt",
+    "version": "8.14.0",
+    "hash": "sha256-huaZiEg+jXsWnVA+kYmMbajYhagqi08mwZ0WhNml7ek="
   }
 ]

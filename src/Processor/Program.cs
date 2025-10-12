@@ -1,37 +1,50 @@
 ﻿using System.CommandLine;
 
-var repository = new Argument<string>("repository") { Description = "The repository to pull from" };
+namespace Amaurot.Processor;
 
-var pullRequest = new Argument<ulong>("pull request")
+public static class Program
 {
-    Description = "The pull request number to comment on",
-};
+    internal static readonly HttpClient HttpClient = new();
 
-var commit = new Argument<string>("commit")
-{
-    Description = "The commit hash to perform a run against",
-};
+    public static async Task<int> Main(string[] args)
+    {
+        var repository = new Argument<string>("repository")
+        {
+            Description = "The repository to pull from",
+        };
 
-var plan = new Command("plan", "Perform an OpenTofu plan run");
-var apply = new Command("apply", "Perform an OpenTofu apply run");
+        var pullRequest = new Argument<ulong>("pull request")
+        {
+            Description = "The pull request number to comment on",
+        };
 
-var path = new Option<string>("--path", "-p")
-{
-    Description = "The subdirectory in the repository to perform the run in",
-};
+        var commit = new Argument<string>("commit")
+        {
+            Description = "The commit hash to perform a run against",
+        };
 
-var varsFile = new Option<string[]>("--vars-file")
-{
-    Description = "Path to a vars file to be used during the run",
-};
+        var plan = new Command("plan", "Perform an OpenTofu plan run");
+        var apply = new Command("apply", "Perform an OpenTofu apply run");
 
-var rootCommand = new RootCommand("Sample app for System.CommandLine");
-rootCommand.Arguments.Add(repository);
-rootCommand.Arguments.Add(pullRequest);
-rootCommand.Arguments.Add(commit);
-rootCommand.Subcommands.Add(plan);
-rootCommand.Subcommands.Add(apply);
-rootCommand.Options.Add(path);
-rootCommand.Options.Add(varsFile);
+        var path = new Option<string>("--path", "-p")
+        {
+            Description = "The subdirectory in the repository to perform the run in",
+        };
 
-return await rootCommand.Parse(args).InvokeAsync();
+        var varsFile = new Option<string[]>("--vars-file")
+        {
+            Description = "Path to a vars file to be used during the run",
+        };
+
+        var rootCommand = new RootCommand("Sample app for System.CommandLine");
+        rootCommand.Arguments.Add(repository);
+        rootCommand.Arguments.Add(pullRequest);
+        rootCommand.Arguments.Add(commit);
+        rootCommand.Subcommands.Add(plan);
+        rootCommand.Subcommands.Add(apply);
+        rootCommand.Options.Add(path);
+        rootCommand.Options.Add(varsFile);
+
+        return await rootCommand.Parse(args).InvokeAsync();
+    }
+}
