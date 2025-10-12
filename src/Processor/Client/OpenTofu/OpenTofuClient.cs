@@ -11,7 +11,7 @@ internal partial class OpenTofuClient
     private readonly string _workingDirectory;
     private readonly string[]? _varFiles;
 
-    private OpenTofuClient(DirectoryInfo workingDirectory, FileInfo[]? varFiles)
+    public OpenTofuClient(DirectoryInfo workingDirectory, FileInfo[]? varFiles)
     {
         _workingDirectory = workingDirectory.FullName;
 
