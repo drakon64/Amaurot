@@ -54,14 +54,7 @@ public static class Program
 
             var workingDirectory = Directory.CreateTempSubdirectory();
 
-            await TarFile.ExtractToDirectoryAsync(
-                new GZipStream(
-                    await githubClient.DownloadRepositoryArchive(),
-                    CompressionMode.Decompress
-                ),
-                workingDirectory.FullName,
-                false
-            );
+            await ExtractRepository(githubClient, workingDirectory);
 
             workingDirectory.Delete(true);
 
@@ -81,5 +74,18 @@ public static class Program
         rootCommand.Options.Add(varsFile);
 
         return await rootCommand.Parse(args).InvokeAsync();
+
+        static async Task ExtractRepository(
+            GitHubClient githubClient,
+            DirectoryInfo workingDirectory
+        ) =>
+            await TarFile.ExtractToDirectoryAsync(
+                new GZipStream(
+                    await githubClient.DownloadRepositoryArchive(),
+                    CompressionMode.Decompress
+                ),
+                workingDirectory.FullName,
+                false
+            );
     }
 }
