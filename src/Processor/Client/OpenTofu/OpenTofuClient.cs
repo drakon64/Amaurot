@@ -9,20 +9,23 @@ internal partial class OpenTofuClient
         ?? throw new InvalidOperationException("OPENTOFU is null");
 
     private readonly string _workingDirectory;
+    private readonly string? _path;
     private readonly string[]? _varFiles;
 
-    public OpenTofuClient(DirectoryInfo workingDirectory, FileInfo[]? varFiles)
+    internal OpenTofuClient(DirectoryInfo workingDirectory, string? path, string[]? varFiles)
     {
         _workingDirectory = workingDirectory.FullName;
+        _path = path;
 
-        if (varFiles == null)
-            return;
-
-        _varFiles = varFiles.Select(varFile => $"-var-file={varFile.FullName}").ToArray();
+        _varFiles = varFiles
+            ?.Select(varFile =>
+                $"-var-file={new FileInfo(Path.Join(_workingDirectory, varFile)).FullName}"
+            )
+            .ToArray();
     }
 
     private ProcessStartInfo CreateProcessStartInfo() =>
-        new() { FileName = _opentofu, WorkingDirectory = _workingDirectory };
+        new() { FileName = _opentofu, WorkingDirectory = Path.Join(_workingDirectory, _path) };
 
     internal class RunOutput
     {

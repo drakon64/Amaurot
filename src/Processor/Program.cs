@@ -1,6 +1,7 @@
 ﻿using System.CommandLine;
 using System.Formats.Tar;
 using Amaurot.Processor.Client.GitHub;
+using Amaurot.Processor.Client.OpenTofu;
 
 namespace Amaurot.Processor;
 
@@ -54,6 +55,15 @@ public static class Program
             var workingDirectory = Directory.CreateTempSubdirectory();
 
             await ExtractRepository(githubClient, workingDirectory);
+
+            var opentofuClient = new OpenTofuClient(
+                workingDirectory,
+                parseResult.GetValue(path),
+                parseResult.GetValue(varsFile)
+            );
+
+            await opentofuClient.Init();
+            await opentofuClient.Plan();
 
             workingDirectory.Delete(true);
 
