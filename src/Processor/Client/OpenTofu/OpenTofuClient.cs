@@ -16,6 +16,6 @@ internal partial class OpenTofuClient
         if (varFiles == null)
             return;
 
-        _varFiles = varFiles.Select(varFile => varFile.FullName).ToArray();
+        _varFiles = varFiles.Select(varFile => $"-var-file={varFile.FullName}").ToArray();
     }
 }

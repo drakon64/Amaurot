@@ -18,7 +18,7 @@ internal partial class OpenTofuClient
 
         if (_varFiles != null)
             foreach (var varFile in _varFiles)
-                processStartInfo.ArgumentList.Add($"-var-file={varFile}");
+                processStartInfo.ArgumentList.Add(varFile);
 
         processStartInfo.ArgumentList.Add("-detailed-exitcode");
         processStartInfo.ArgumentList.Add("-input=false");
