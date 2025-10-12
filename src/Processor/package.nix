@@ -63,10 +63,13 @@ buildDotnetModule (finalAttrs: {
         Cmd = [ (lib.getExe finalAttrs.finalPackage) ];
 
         Env = [
+          "OPENTOFU=${lib.getExe opentofu}"
           (
-            "PATH=${builtins.dirOf (lib.getExe opentofu)}"
-            + lib.optionalString enableGit ":${builtins.dirOf (lib.getExe git)}"
-            + lib.optionalString (enableGit && enableSsh) ":${builtins.dirOf (lib.getExe openssh)}"
+            if enableGit then
+              "PATH=${builtins.dirOf (lib.getExe git)}"
+              + lib.optionalString enableSsh ":${builtins.dirOf (lib.getExe openssh)}"
+            else
+              null
           )
         ];
       };

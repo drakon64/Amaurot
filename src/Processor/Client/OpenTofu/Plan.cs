@@ -10,6 +10,7 @@ internal partial class OpenTofuClient
 
         var processStartInfo = new ProcessStartInfo
         {
+            FileName = Environment.GetEnvironmentVariable("OPENTOFU"),
             WorkingDirectory = workingDirectory.FullName,
         };
 
