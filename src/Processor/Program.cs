@@ -34,4 +34,4 @@ rootCommand.Subcommands.Add(apply);
 rootCommand.Options.Add(path);
 rootCommand.Options.Add(varsFile);
 
-return rootCommand.Parse(args).Invoke();
+return await rootCommand.Parse(args).InvokeAsync();
