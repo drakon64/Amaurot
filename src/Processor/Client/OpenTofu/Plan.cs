@@ -8,7 +8,7 @@ internal partial class OpenTofuClient
 
     internal async Task<RunOutput> Plan()
     {
-        var outFile = Path.GetTempFileName();
+        var outFile = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
 
         var processStartInfo = CreateProcessStartInfo();
 
