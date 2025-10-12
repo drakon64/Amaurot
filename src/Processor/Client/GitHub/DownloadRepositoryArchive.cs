@@ -1,0 +1,27 @@
+namespace Amaurot.Processor.Client.GitHub;
+
+internal partial class GitHubClient
+{
+    internal async Task<byte[]> DownloadRepositoryArchive()
+    {
+        var request = await Program.HttpClient.SendAsync(
+            new HttpRequestMessage
+            {
+                RequestUri = new Uri($"https://api.github.com/repos/{repository}/tarball/{commit}"),
+                Headers =
+                {
+                    { "Accept", "application/vnd.github+json" },
+                    { "Authorization", $"Bearer {await GetInstallationAccessToken()}" },
+                    { "X-GitHub-Api-Version", "2022-11-28" },
+                },
+            }
+        );
+
+        if (request.IsSuccessStatusCode)
+        {
+            return await request.Content.ReadAsByteArrayAsync();
+        }
+
+        throw new Exception(); // TODO: Useful exception
+    }
+}

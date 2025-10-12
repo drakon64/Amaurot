@@ -7,7 +7,7 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace Amaurot.Processor.Client.GitHub;
 
-internal static partial class GitHubClient
+internal partial class GitHubClient(string repository, string commit, long installationId)
 {
     private static readonly string ClientId =
         Environment.GetEnvironmentVariable("AMAUROT_GITHUB_CLIENT_ID")
@@ -51,7 +51,7 @@ internal static partial class GitHubClient
         return new JwtSecurityTokenHandler().WriteToken(jwt);
     }
 
-    private static async Task<string> GetInstallationAccessToken(long installationId)
+    private async Task<string> GetInstallationAccessToken()
     {
         var response = await Program.HttpClient.SendAsync(
             new HttpRequestMessage

@@ -23,6 +23,11 @@ public static class Program
             Description = "The commit hash to perform a run against",
         };
 
+        var installationId = new Argument<long>("installation id")
+        {
+            Description = "The installation ID of the GitHub App",
+        };
+
         var plan = new Command("plan", "Perform an OpenTofu plan run");
         var apply = new Command("apply", "Perform an OpenTofu apply run");
 
@@ -40,6 +45,7 @@ public static class Program
         rootCommand.Arguments.Add(repository);
         rootCommand.Arguments.Add(pullRequest);
         rootCommand.Arguments.Add(commit);
+        rootCommand.Arguments.Add(installationId);
         rootCommand.Subcommands.Add(plan);
         rootCommand.Subcommands.Add(apply);
         rootCommand.Options.Add(path);
