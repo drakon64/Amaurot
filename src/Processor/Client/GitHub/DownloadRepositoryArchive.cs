@@ -1,3 +1,5 @@
+using System.IO.Compression;
+
 namespace Amaurot.Processor.Client.GitHub;
 
 internal partial class GitHubClient
@@ -18,9 +20,10 @@ internal partial class GitHubClient
         );
 
         if (request.IsSuccessStatusCode)
-        {
-            return await request.Content.ReadAsStreamAsync();
-        }
+            return new GZipStream(
+                await request.Content.ReadAsStreamAsync(),
+                CompressionMode.Decompress
+            );
 
         throw new Exception(); // TODO: Useful exception
     }

@@ -1,6 +1,5 @@
 ﻿using System.CommandLine;
 using System.Formats.Tar;
-using System.IO.Compression;
 using Amaurot.Processor.Client.GitHub;
 
 namespace Amaurot.Processor;
@@ -80,10 +79,7 @@ public static class Program
             DirectoryInfo workingDirectory
         ) =>
             await TarFile.ExtractToDirectoryAsync(
-                new GZipStream(
-                    await githubClient.DownloadRepositoryArchive(),
-                    CompressionMode.Decompress
-                ),
+                await githubClient.DownloadRepositoryArchive(),
                 workingDirectory.FullName,
                 false
             );
