@@ -2,7 +2,7 @@ namespace Amaurot.Processor.Client.GitHub;
 
 internal partial class GitHubClient
 {
-    internal async Task<byte[]> DownloadRepositoryArchive()
+    internal async Task<Stream> DownloadRepositoryArchive()
     {
         var request = await Program.HttpClient.SendAsync(
             new HttpRequestMessage
@@ -19,7 +19,7 @@ internal partial class GitHubClient
 
         if (request.IsSuccessStatusCode)
         {
-            return await request.Content.ReadAsByteArrayAsync();
+            return await request.Content.ReadAsStreamAsync();
         }
 
         throw new Exception(); // TODO: Useful exception

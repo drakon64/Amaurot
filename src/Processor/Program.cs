@@ -1,4 +1,7 @@
 ﻿using System.CommandLine;
+using System.Formats.Tar;
+using System.IO.Compression;
+using Amaurot.Processor.Client.GitHub;
 
 namespace Amaurot.Processor;
 
@@ -28,9 +31,6 @@ public static class Program
             Description = "The installation ID of the GitHub App",
         };
 
-        var plan = new Command("plan", "Perform an OpenTofu plan run");
-        var apply = new Command("apply", "Perform an OpenTofu apply run");
-
         var path = new Option<string>("--path", "-p")
         {
             Description = "The subdirectory in the repository to perform the run in",
@@ -40,6 +40,35 @@ public static class Program
         {
             Description = "Path to a vars file to be used during the run",
         };
+
+        var plan = new Command("plan", "Perform an OpenTofu plan run");
+
+        plan.SetAction(async parseResult =>
+        {
+            var githubClient = new GitHubClient(
+                parseResult.GetRequiredValue(repository),
+                parseResult.GetRequiredValue(pullRequest),
+                parseResult.GetRequiredValue(commit),
+                parseResult.GetRequiredValue(installationId)
+            );
+
+            var workingDirectory = Directory.CreateTempSubdirectory();
+
+            await TarFile.ExtractToDirectoryAsync(
+                new GZipStream(
+                    await githubClient.DownloadRepositoryArchive(),
+                    CompressionMode.Decompress
+                ),
+                workingDirectory.FullName,
+                false
+            );
+
+            workingDirectory.Delete(true);
+
+            return 0;
+        });
+
+        var apply = new Command("apply", "Perform an OpenTofu apply run");
 
         var rootCommand = new RootCommand("Sample app for System.CommandLine");
         rootCommand.Arguments.Add(repository);

@@ -7,7 +7,12 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace Amaurot.Processor.Client.GitHub;
 
-internal partial class GitHubClient(string repository, string commit, long installationId)
+internal partial class GitHubClient(
+    string repository,
+    ulong pullRequest,
+    string commit,
+    long installationId
+)
 {
     private static readonly string ClientId =
         Environment.GetEnvironmentVariable("AMAUROT_GITHUB_CLIENT_ID")
