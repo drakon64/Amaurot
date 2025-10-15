@@ -1,0 +1,26 @@
+name: Lon
+
+on:
+  schedule:
+    - cron: "0 12 * * 2"
+  workflow_dispatch:
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: write
+      pull-requests: write
+      issues: write
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Lix
+        uses: samueldr/lix-gha-installer-action@v2025-02-26.prerelease
+
+      - env:
+          LON_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          LON_LABELS: "lon,bot"
+        run: nix-shell -A lon --run "lon bot github"
