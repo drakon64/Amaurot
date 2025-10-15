@@ -36,7 +36,7 @@ jobs:
         run: cachix watch-exec drakon64-amaurot -- nix-build -A processor.docker
 
       - name: Create Cachix pin
-        run: cachix pin drakon64-amaurot processor-docker "$(nix eval --file ./default.nix processor.docker --raw)" --keep-revisions 1
+        run: cachix pin drakon64-amaurot processor-docker "$(nix-build -A processor.docker)" --keep-revisions 1
 
 #      - run: docker load < result
 
