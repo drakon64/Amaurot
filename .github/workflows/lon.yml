@@ -19,6 +19,8 @@ jobs:
 
       - name: Install Lix
         uses: samueldr/lix-gha-installer-action@v2025-02-26.prerelease
+        
+      - uses: DeterminateSystems/magic-nix-cache-action@v13
 
       - env:
           LON_TOKEN: ${{ secrets.GITHUB_TOKEN }}
