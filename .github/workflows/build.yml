@@ -1,0 +1,55 @@
+name: Build
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "**.cs"
+      - "**.csproj"
+      - "**/deps.json"
+      - "**.nix"
+      - "lon.lock"
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+      id-token: write
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Lix
+        uses: samueldr/lix-gha-installer-action@v2025-02-26.prerelease
+
+      - name: Install Cachix
+        uses: cachix/cachix-action@v15
+        with:
+          name: drakon64-amaurot
+          authToken: "${{ secrets.CACHIX_AUTH_TOKEN }}"
+
+      - name: Build
+        run: cachix watch-exec drakon64-amaurot -- nix-build -A processor.docker
+
+      - name: Create Cachix pin
+        run: cachix pin drakon64-amaurot processor-docker "$(nix eval --file ./default.nix processor.docker --raw)" --keep-revisions 1
+
+#      - run: docker load < result
+
+#      - uses: google-github-actions/auth@v3
+#        with:
+#          project_id: "${{ secrets.GCP_PROJECT }}"
+#          workload_identity_provider: "${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER }}"
+
+#      - uses: google-github-actions/setup-gcloud@v3
+
+#      - run: gcloud auth configure-docker europe-west2-docker.pkg.dev
+
+#      - name: Upload to Artifact Registry
+#        run: |
+#          docker tag amaurot-processor europe-west2-docker.pkg.dev/${{ secrets.GCP_PROJECT }}/amaurot/amaurot-processor
+#          docker push europe-west2-docker.pkg.dev/${{ secrets.GCP_PROJECT }}/amaurot/amaurot-processor
