@@ -34,18 +34,18 @@ jobs:
       - name: Install Cachix
         uses: cachix/cachix-action@v16
         with:
-          name: drakon64-amaurot
+          name: drakon64
           authToken: "${{ secrets.CACHIX_AUTH_TOKEN }}"
 
       - name: Build
-        run: cachix watch-exec drakon64-amaurot -- nix-build -A processor.docker -A receiver.docker
+        run: cachix watch-exec drakon64 -- nix-build -A processor.docker -A receiver.docker
 
       - name: Create Cachix pins
         run: |
-          cachix pin drakon64-amaurot processor "$(nix eval --expr '(import ./. {}).processor' --raw --impure)" --keep-revisions 1
-          cachix pin drakon64-amaurot processor-docker "$(nix eval --expr '(import ./. {}).processor.docker {}' --raw --impure)" --keep-revisions 1
-          cachix pin drakon64-amaurot receiver "$(nix eval --expr '(import ./. {}).receiver' --raw --impure)" --keep-revisions 1
-          cachix pin drakon64-amaurot receiver-docker "$(nix eval --expr '(import ./. {}).receiver.docker' --raw --impure)" --keep-revisions 1
+          cachix pin drakon64 amaurot-processor "$(nix eval --expr '(import ./. {}).processor' --raw --impure)" --keep-revisions 1
+          cachix pin drakon64 amaurot-processor-docker "$(nix eval --expr '(import ./. {}).processor.docker {}' --raw --impure)" --keep-revisions 1
+          cachix pin drakon64 amaurot-receiver "$(nix eval --expr '(import ./. {}).receiver' --raw --impure)" --keep-revisions 1
+          cachix pin drakon64 amaurot-receiver-docker "$(nix eval --expr '(import ./. {}).receiver.docker' --raw --impure)" --keep-revisions 1
 
       - run: |
           docker load < result
