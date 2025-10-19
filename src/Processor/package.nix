@@ -60,7 +60,7 @@ buildDotnetModule (finalAttrs: {
       tag = "latest";
 
       config = {
-        Cmd = [ (lib.getExe finalAttrs.finalPackage) ];
+        Entrypoint = [ (lib.getExe finalAttrs.finalPackage) ];
 
         Env = [
           "OPENTOFU=${lib.getExe opentofu}"
