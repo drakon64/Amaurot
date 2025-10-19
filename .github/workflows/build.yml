@@ -73,7 +73,7 @@ jobs:
       - name: Upload Processor to GitHub Packages
         uses: docker/build-push-action@v6
         with:
-          context: ./src/Amaurot.Processor
+          context: ./src/Processor
           push: true
           tags: ${{ steps.processor-meta.outputs.tags }}
         env:
@@ -82,7 +82,7 @@ jobs:
       - name: Upload Receiver to GitHub Packages
         uses: docker/build-push-action@v6
         with:
-          context: ./src/Amaurot.Receiver
+          context: ./src/Receiver
           push: true
           tags: ${{ steps.receiver-meta.outputs.tags }}
         env:
