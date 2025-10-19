@@ -31,8 +31,8 @@ jobs:
 
       - name: Evaluate with current lockfile
         run: |
-          echo "CURRENT_PROCESSOR_HASH=$(nix eval --file ./default.nix processor.docker --raw)" >> "$GITHUB_ENV"
-          echo "CURRENT_RECEIVER_HASH=$(nix eval --file ./default.nix receiver.docker --raw)" >> "$GITHUB_ENV"
+          echo "CURRENT_PROCESSOR_HASH=$(nix eval --expr '(import ./. {}).processor.docker {}' --raw --impure)" >> "$GITHUB_ENV"
+          echo "CURRENT_RECEIVER_HASH=$(nix eval --expr '(import ./. {}).receiver.docker {}' --raw --impure)" >> "$GITHUB_ENV"
           echo "CURRENT_SHELL_HASH=$(nix eval --expr 'import ./shell.nix {}' --raw --impure)" >> "$GITHUB_ENV"
 
       - name: Update Lon lockfile
