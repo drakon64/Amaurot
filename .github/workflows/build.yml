@@ -43,7 +43,9 @@ jobs:
 
       - name: Create Cachix pins
         run: |
+          cachix pin drakon64-amaurot processor "$(nix eval --expr '(import ./. {}).processor' --raw --impure)" --keep-revisions 1
           cachix pin drakon64-amaurot processor-docker "$(nix eval --expr '(import ./. {}).processor.docker {}' --raw --impure)" --keep-revisions 1
+          cachix pin drakon64-amaurot receiver "$(nix eval --expr '(import ./. {}).receiver' --raw --impure)" --keep-revisions 1
           cachix pin drakon64-amaurot receiver-docker "$(nix eval --expr '(import ./. {}).receiver.docker' --raw --impure)" --keep-revisions 1
 
       - run: |
