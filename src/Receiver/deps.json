@@ -1,1 +1,17 @@
-[]
+[
+  {
+    "pname": "Macross.Json.Extensions",
+    "version": "3.0.0",
+    "hash": "sha256-nBoB4vY+R19jGPdnlN6hNmZjOeAEkOA1CS+DHLjZUJA="
+  },
+  {
+    "pname": "Octokit.Webhooks",
+    "version": "3.2.1",
+    "hash": "sha256-faCweS7w1CGCszPt7xfE7UhO21HpmgHcFQBgeB/RgO0="
+  },
+  {
+    "pname": "Octokit.Webhooks.AspNetCore",
+    "version": "3.2.1",
+    "hash": "sha256-ZTZ/8+BwqZU0dCOoUMreIZAuocG2FZlSzb1Rm9klFJY="
+  }
+]
