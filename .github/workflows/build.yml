@@ -18,7 +18,10 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on:
+      - self-hosted
+      - Linux
+      - X64
 
     permissions:
       contents: read
@@ -46,6 +49,9 @@ jobs:
           cachix pin drakon64 amaurot-processor-docker "$(nix eval --expr '(import ./. {}).processor.docker {}' --raw --impure)" --keep-revisions 1
           cachix pin drakon64 amaurot-receiver "$(nix eval --expr '(import ./. {}).receiver' --raw --impure)" --keep-revisions 1
           cachix pin drakon64 amaurot-receiver-docker "$(nix eval --expr '(import ./. {}).receiver.docker' --raw --impure)" --keep-revisions 1
+
+      - name: Set up Docker
+        uses: docker/setup-docker-action@v4
 
       - run: |
           docker load < result
