@@ -22,6 +22,7 @@ buildDotnetModule (finalAttrs: {
         (lib.fileset.maybeMissing ./bin)
         (lib.fileset.maybeMissing ./config)
         (lib.fileset.maybeMissing ./obj)
+        ./Dockerfile
 
         (lib.fileset.maybeMissing ./deps.json)
         ./package.nix
