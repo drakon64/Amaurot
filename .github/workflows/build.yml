@@ -12,7 +12,8 @@ on:
       - default.nix
       - lon.nix
       - lon.lock
-#      - Dockerfile
+      - Dockerfile.Processor
+      - Dockerfile.Receiver
       - .github/workflows/build.yml
   workflow_dispatch:
 
@@ -23,7 +24,7 @@ jobs:
     permissions:
       contents: read
       id-token: write
-#      packages: write
+      packages: write
 
     steps:
       - uses: actions/checkout@v5
@@ -45,29 +46,48 @@ jobs:
           cachix pin drakon64-amaurot processor-docker "$(nix eval --expr '(import ./. {}).processor.docker {}' --raw --impure)" --keep-revisions 1
           cachix pin drakon64-amaurot receiver-docker "$(nix eval --expr '(import ./. {}).receiver.docker' --raw --impure)" --keep-revisions 1
 
-#      - run: docker load < result
+      - run: |
+          docker load < result
+          docker load < result-2
 
-#      - uses: docker/metadata-action@v5
-#        id: meta
-#        with:
-#          images: ghcr.io/${{ github.repository }}
-#          tags: latest
+      - uses: docker/metadata-action@v5
+        id: processor-meta
+        with:
+          images: ghcr.io/${{ github.repository }}-processor
+          tags: latest
+          
+      - uses: docker/metadata-action@v5
+        id: receiver-meta
+        with:
+          images: ghcr.io/${{ github.repository }}-receiver
+          tags: latest
 
-#      - name: Login to GitHub Packages
-#        uses: docker/login-action@v3
-#        with:
-#          registry: ghcr.io
-#          username: ${{ github.actor }}
-#          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Login to GitHub Packages
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
 
-#      - name: Upload to GitHub Packages
-#        uses: docker/build-push-action@v6
-#        with:
-#          context: .
-#          push: true
-#          tags: ${{ steps.meta.outputs.tags }}
-#        env:
-#          SOURCE_DATE_EPOCH: 0
+      - name: Upload Processor to GitHub Packages
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: Dockerfile.Processor
+          push: true
+          tags: ${{ steps.processor-meta.outputs.tags }}
+        env:
+          SOURCE_DATE_EPOCH: 0
+
+      - name: Upload Receiver to GitHub Packages
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: Dockerfile.Receiver
+          push: true
+          tags: ${{ steps.receiver-meta.outputs.tags }}
+        env:
+          SOURCE_DATE_EPOCH: 0
 
 #      - name: Build Nix shell
 #        run: nix-shell -A opentofu --run "exit"
