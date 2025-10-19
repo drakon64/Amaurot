@@ -50,6 +50,9 @@ jobs:
           cachix pin drakon64 amaurot-receiver "$(nix eval --expr '(import ./. {}).receiver' --raw --impure)" --keep-revisions 1
           cachix pin drakon64 amaurot-receiver-docker "$(nix eval --expr '(import ./. {}).receiver.docker' --raw --impure)" --keep-revisions 1
 
+     - name: Install iptables
+       run: sudo apt-get -y install iptables
+
       - name: Set up Docker
         uses: docker/setup-docker-action@v4
 
