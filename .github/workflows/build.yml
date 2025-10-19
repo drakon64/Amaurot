@@ -50,49 +50,31 @@ jobs:
           cachix pin drakon64 amaurot-receiver "$(nix eval --expr '(import ./. {}).receiver' --raw --impure)" --keep-revisions 1
           cachix pin drakon64 amaurot-receiver-docker "$(nix eval --expr '(import ./. {}).receiver.docker' --raw --impure)" --keep-revisions 1
 
-      - name: Set up Docker
-        uses: docker/setup-docker-action@v4
-        with:
-          rootless: true
+      - name: Install Podman
+        run: sudo apt-get -y install podman
 
       - run: |
-          docker load < result
-          docker load < result-2
-
-      - uses: docker/metadata-action@v5
-        id: processor-meta
-        with:
-          images: ghcr.io/${{ github.repository }}-processor
-          tags: latest
-          
-      - uses: docker/metadata-action@v5
-        id: receiver-meta
-        with:
-          images: ghcr.io/${{ github.repository }}-receiver
-          tags: latest
+          podman load < result
+          podman load < result-2
 
       - name: Login to GitHub Packages
-        uses: docker/login-action@v3
-        with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
+        run: echo $GITHUB_TOKEN | podman login ghcr.io -u ${{ github.actor }} --password-stdin
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Upload Processor to GitHub Packages
-        uses: docker/build-push-action@v6
-        with:
-          context: ./src/Processor
-          push: true
-          tags: ${{ steps.processor-meta.outputs.tags }}
+        run: |
+          podman build -t ghcr.io/drakon64/amaurot-processor:latest .
+          podman push ghcr.io/drakon64/amaurot-processor:latest
+        working-directory: src/Processor
         env:
           SOURCE_DATE_EPOCH: 0
 
       - name: Upload Receiver to GitHub Packages
-        uses: docker/build-push-action@v6
-        with:
-          context: ./src/Receiver
-          push: true
-          tags: ${{ steps.receiver-meta.outputs.tags }}
+        run: |
+          podman build -t ghcr.io/drakon64/amaurot-receiver:latest .
+          podman push ghcr.io/drakon64/amaurot-receiver:latest
+        working-directory: src/Receiver
         env:
           SOURCE_DATE_EPOCH: 0
 
