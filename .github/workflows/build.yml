@@ -9,11 +9,10 @@ on:
       - src/*/*.csproj
       - src/*/package.nix
       - src/*/deps.json
+      - src/*/Dockerfile
       - default.nix
       - lon.nix
       - lon.lock
-      - Dockerfile.Processor
-      - Dockerfile.Receiver
       - .github/workflows/build.yml
   workflow_dispatch:
 
