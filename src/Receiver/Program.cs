@@ -37,7 +37,7 @@ public class Program
                     : Results.NotFound()
         );
 
-        app.Run();
+        app.Run($"http://*:{Environment.GetEnvironmentVariable("PORT")}");
     }
 }
 
