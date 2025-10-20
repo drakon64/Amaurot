@@ -5,7 +5,7 @@ using Amaurot.Processor.Client.OpenTofu;
 
 namespace Amaurot.Processor;
 
-public static class Program
+internal static class Program
 {
     internal static readonly HttpClient HttpClient = new();
 
