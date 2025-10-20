@@ -9,7 +9,7 @@ internal static class Program
 {
     internal static readonly HttpClient HttpClient = new();
 
-    public static async Task<int> Main(string[] args)
+    internal static async Task<int> Main(string[] args)
     {
         var repository = new Argument<string>("repository")
         {
