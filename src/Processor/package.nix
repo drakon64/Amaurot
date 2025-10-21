@@ -40,6 +40,8 @@ buildDotnetModule (finalAttrs: {
   dotnet-runtime = null;
 
   executables = [ "Amaurot.Processor" ];
+  
+  selfContainedBuild = true;
 
   # Native AOT
   nativeBuildInputs = [ stdenv.cc ];
