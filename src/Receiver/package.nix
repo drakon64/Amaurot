@@ -34,9 +34,11 @@ buildDotnetModule (finalAttrs: {
   nugetDeps = ./deps.json;
 
   dotnet-sdk = dotnetCorePackages.sdk_10_0;
-  dotnet-runtime = dotnetCorePackages.aspnetcore_10_0;
+  dotnet-runtime = null;
 
   executables = [ "Amaurot.Receiver" ];
+
+  selfContainedBuild = true;
 
   meta = {
     license = lib.licenses.eupl12;

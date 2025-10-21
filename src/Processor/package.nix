@@ -37,12 +37,11 @@ buildDotnetModule (finalAttrs: {
   nugetDeps = ./deps.json;
 
   dotnet-sdk = dotnetCorePackages.sdk_10_0;
+  dotnet-runtime = null;
 
   executables = [ "Amaurot.Processor" ];
 
   # Native AOT
-  dotnet-runtime = null;
-  selfContainedBuild = true;
   nativeBuildInputs = [ stdenv.cc ];
 
   meta = {
