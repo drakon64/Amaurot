@@ -6,6 +6,11 @@ updates:
       interval: daily
 
   - package-ecosystem: nuget
-    directory: /
+    directory: /src/Processor/Amaurot.Processor.csproj
+    schedule:
+      interval: daily
+
+  - package-ecosystem: nuget
+    directory: /src/Processor/Amaurot.Receiver.csproj
     schedule:
       interval: daily
