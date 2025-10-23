@@ -1,4 +1,4 @@
-﻿using System.CommandLine;
+using System.CommandLine;
 using System.Formats.Tar;
 using Amaurot.Processor.Client.GitHub;
 using Amaurot.Processor.Client.OpenTofu;
