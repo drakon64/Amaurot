@@ -14,5 +14,5 @@ resource "google_cloud_run_v2_job" "processor" {
 resource "google_cloud_run_v2_job_iam_member" "processor" {
   member = google_service_account.amaurot["receiver"].member
   name   = google_cloud_run_v2_job.processor.name
-  role   = "roles/run.invoker"
+  role   = "roles/run.jobsExecutorWithOverrides"
 }
