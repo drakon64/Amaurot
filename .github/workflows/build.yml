@@ -64,19 +64,15 @@ jobs:
 
       - name: Upload Processor to GitHub Packages
         run: |
-          podman build -t ghcr.io/drakon64/amaurot-processor:latest .
+          podman build -t ghcr.io/drakon64/amaurot-processor:latest --timestamp 0 .
           podman push ghcr.io/drakon64/amaurot-processor:latest
         working-directory: src/Processor
-        env:
-          SOURCE_DATE_EPOCH: 0
 
       - name: Upload Receiver to GitHub Packages
         run: |
-          podman build -t ghcr.io/drakon64/amaurot-receiver:latest .
+          podman build -t ghcr.io/drakon64/amaurot-receiver:latest --timestamp 0 .
           podman push ghcr.io/drakon64/amaurot-receiver:latest
         working-directory: src/Receiver
-        env:
-          SOURCE_DATE_EPOCH: 0
 
 #      - name: Build Nix shell
 #        run: nix-shell -A opentofu --run "exit"
