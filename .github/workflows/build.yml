@@ -5,11 +5,11 @@ on:
     branches:
       - main
     paths:
-      - src/*/*.cs
-      - src/*/*.csproj
-      - src/*/package.nix
-      - src/*/deps.json
-      - src/*/Dockerfile
+      - src/**/*.cs
+      - src/**/*.csproj
+      - src/**/package.nix
+      - src/**/deps.json
+      - src/**/Dockerfile
       - default.nix
       - lon.nix
       - lon.lock
