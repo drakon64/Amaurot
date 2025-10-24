@@ -1,4 +1,4 @@
-using System.Text.Json.Serialization;
+using Amaurot.Receiver.SourceGenerationContext;
 
 namespace Amaurot.Receiver.Client;
 
@@ -21,7 +21,7 @@ internal static class GoogleCloudClient
             throw new Exception(await response.Content.ReadAsStringAsync());
 
         var token = await response.Content.ReadFromJsonAsync<AccessTokenResponse>(
-            SourceGenerationContext.Default.AccessTokenResponse
+            SnakeCaseLowerSourceGenerationContext.Default.AccessTokenResponse
         );
 
         return $"{token!.TokenType} {token.AccessToken}";
@@ -33,7 +33,3 @@ internal static class GoogleCloudClient
         public required string TokenType { get; init; }
     }
 }
-
-[JsonSourceGenerationOptions(PropertyNamingPolicy = JsonKnownNamingPolicy.SnakeCaseLower)]
-[JsonSerializable(typeof(GoogleCloudClient.AccessTokenResponse))]
-internal sealed partial class SourceGenerationContext : JsonSerializerContext;
