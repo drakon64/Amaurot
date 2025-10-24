@@ -1,6 +1,6 @@
 using System.Text.Json.Serialization;
 
-namespace Amaurot.Receiver.Clients;
+namespace Amaurot.Receiver.Client;
 
 internal static class GoogleCloudClient
 {

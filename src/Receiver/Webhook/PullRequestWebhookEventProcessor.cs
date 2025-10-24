@@ -1,4 +1,4 @@
-using Amaurot.Receiver.Clients;
+using Amaurot.Receiver.Client;
 using Octokit.Webhooks;
 using Octokit.Webhooks.Events;
 using Octokit.Webhooks.Events.PullRequest;
