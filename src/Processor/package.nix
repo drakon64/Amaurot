@@ -68,10 +68,9 @@ buildDotnetModule (finalAttrs: {
           let
             path =
               let
-                git = builtins.dirOf (lib.getExe gitMinimal);
-                ssh = builtins.dirOf (lib.getExe openssh);
+                binPath = lib.makeBinPath ([ gitMinimal ] ++ lib.optional withSsh openssh);
               in
-              if withGit then "PATH=${git}" + lib.optionalString withSsh ":${ssh}" else null;
+              if withGit then "PATH=${binPath}" else null;
           in
           [
             "OPENTOFU=${lib.getExe opentofu}"
