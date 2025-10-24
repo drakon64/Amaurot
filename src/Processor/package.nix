@@ -66,11 +66,16 @@ buildDotnetModule (finalAttrs: {
 
         Env =
           let
-            git = builtins.dirOf (lib.getExe (gitMinimal.override { inherit withSsh; }));
+            path =
+              let
+                git = builtins.dirOf (lib.getExe gitMinimal);
+                ssh = builtins.dirOf (lib.getExe openssh);
+              in
+              if withGit then git + lib.optionalString withSsh ":${ssh}" else null;
           in
           [
             "OPENTOFU=${lib.getExe opentofu}"
-            (if withGit then "PATH=${git}" else null)
+            path
           ];
       };
 
