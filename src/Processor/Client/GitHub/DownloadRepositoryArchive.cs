@@ -4,7 +4,7 @@ namespace Amaurot.Processor.Client.GitHub;
 
 internal partial class GitHubClient
 {
-    internal async Task<Stream> DownloadRepositoryArchive()
+    internal async Task<GZipStream> DownloadRepositoryArchive()
     {
         var request = await Program.HttpClient.SendAsync(
             new HttpRequestMessage
@@ -19,12 +19,12 @@ internal partial class GitHubClient
             }
         );
 
-        if (request.IsSuccessStatusCode)
-            return new GZipStream(
-                await request.Content.ReadAsStreamAsync(),
-                CompressionMode.Decompress
-            );
+        if (!request.IsSuccessStatusCode)
+            throw new Exception(); // TODO: Useful exception
 
-        throw new Exception(); // TODO: Useful exception
+        return new GZipStream(
+            await request.Content.ReadAsStreamAsync(),
+            CompressionMode.Decompress
+        );
     }
 }
