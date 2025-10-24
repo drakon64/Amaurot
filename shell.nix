@@ -11,10 +11,7 @@ pkgs.mkShellNoCC {
 
   passthru = {
     lon = pkgs.mkShellNoCC {
-      packages = with pkgs; [
-        git
-        lon
-      ];
+      packages = with pkgs; [ lon ];
     };
 
     opentofu = pkgs.mkShellNoCC {

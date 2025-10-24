@@ -18,6 +18,8 @@ jobs:
       issues: write
 
     steps:
+      - run: sudo apt-get -y install git
+        
       - uses: actions/checkout@v5
 
       - name: Install Lix
@@ -49,7 +51,7 @@ jobs:
 
       - name: Open pull request
         run: |
-          nix-shell -A lon --run "git checkout lon.lock"
+          git checkout lon.lock
           nix-shell -A lon --run "lon bot github"
         env:
           LON_TOKEN: ${{ secrets.GITHUB_TOKEN }}
