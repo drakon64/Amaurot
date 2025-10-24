@@ -2,7 +2,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Net.Http.Json;
 using System.Security.Claims;
 using System.Security.Cryptography;
-using System.Text.Json.Serialization;
+using Amaurot.Processor.SourceGenerationContext;
 using Microsoft.IdentityModel.Tokens;
 
 namespace Amaurot.Processor.Client.GitHub;
@@ -79,7 +79,7 @@ internal partial class GitHubClient(
             throw new Exception(await response.Content.ReadAsStringAsync());
 
         var token = await response.Content.ReadFromJsonAsync<InstallationAccessToken>(
-            SourceGenerationContext.Default.InstallationAccessToken
+            SnakeCaseLowerSourceGenerationContext.Default.InstallationAccessToken
         );
 
         return $"Bearer {token!.Token}";
@@ -89,8 +89,4 @@ internal partial class GitHubClient(
     {
         public required string Token { get; init; }
     }
-
-    [JsonSourceGenerationOptions(PropertyNamingPolicy = JsonKnownNamingPolicy.SnakeCaseLower)]
-    [JsonSerializable(typeof(InstallationAccessToken))]
-    private sealed partial class SourceGenerationContext : JsonSerializerContext;
 }
