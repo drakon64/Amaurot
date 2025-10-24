@@ -4,7 +4,7 @@ namespace Amaurot.Processor.Client.OpenTofu;
 
 internal partial class OpenTofuClient
 {
-    internal async Task<InitOutput> Init()
+    internal async Task<RunOutput> Init()
     {
         var processStartInfo = CreateProcessStartInfo();
 
@@ -23,16 +23,13 @@ internal partial class OpenTofuClient
 
         await tofu.WaitForExitAsync();
 
-        return new InitOutput
+        if (tofu.ExitCode != 0)
+            throw new Exception(); // TODO: Useful exception
+
+        return new RunOutput
         {
-            ExitCode = tofu.ExitCode,
             StandardOutput = await tofu.StandardOutput.ReadToEndAsync(),
             StandardError = await tofu.StandardError.ReadToEndAsync(),
         };
-    }
-
-    internal sealed class InitOutput : RunOutput
-    {
-        public required int ExitCode { get; init; }
     }
 }
