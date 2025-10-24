@@ -6,7 +6,7 @@
   stdenv,
   dockerTools,
   opentofu,
-  git,
+  gitMinimal,
   openssh,
   ...
 }:
@@ -40,7 +40,7 @@ buildDotnetModule (finalAttrs: {
   dotnet-runtime = null;
 
   executables = [ "Amaurot.Processor" ];
-  
+
   selfContainedBuild = true;
 
   # Native AOT
@@ -54,8 +54,8 @@ buildDotnetModule (finalAttrs: {
 
   passthru.docker =
     {
-      enableGit ? true,
-      enableSsh ? true,
+      withGit ? true,
+      withSsh ? true,
     }:
     dockerTools.buildLayeredImage {
       name = "amaurot-processor";
@@ -64,18 +64,16 @@ buildDotnetModule (finalAttrs: {
       config = {
         Entrypoint = [ (lib.getExe finalAttrs.finalPackage) ];
 
-        Env = [
-          "OPENTOFU=${lib.getExe opentofu}"
-          (
-            if enableGit then
-              "PATH=${builtins.dirOf (lib.getExe git)}"
-              + lib.optionalString enableSsh ":${builtins.dirOf (lib.getExe openssh)}"
-            else
-              null
-          )
-        ];
+        Env =
+          let
+            git = builtins.dirOf (lib.getExe (gitMinimal.override { inherit withSsh; }));
+          in
+          [
+            "OPENTOFU=${lib.getExe opentofu}"
+            (if withGit then "PATH=${git}" else null)
+          ];
       };
 
-      contents = with dockerTools; [ caCertificates ] ++ lib.optional (enableGit && enableSsh) fakeNss;
+      contents = with dockerTools; [ caCertificates ] ++ lib.optional (withGit && withSsh) fakeNss;
     };
 })
