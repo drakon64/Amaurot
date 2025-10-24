@@ -5,9 +5,9 @@
   dotnetCorePackages,
   stdenv,
   dockerTools,
-  opentofu,
   gitMinimal,
   openssh,
+  opentofu,
   ...
 }:
 let
