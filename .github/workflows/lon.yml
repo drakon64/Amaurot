@@ -49,7 +49,7 @@ jobs:
 
       - name: Open pull request
         run: |
-          git checkout lon.lock
+          nix-shell -A lon --run "git checkout lon.lock"
           nix-shell -A lon --run "lon bot github"
         env:
           LON_TOKEN: ${{ secrets.GITHUB_TOKEN }}
