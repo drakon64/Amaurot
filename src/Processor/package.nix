@@ -71,7 +71,7 @@ buildDotnetModule (finalAttrs: {
                 git = builtins.dirOf (lib.getExe gitMinimal);
                 ssh = builtins.dirOf (lib.getExe openssh);
               in
-              if withGit then git + lib.optionalString withSsh ":${ssh}" else null;
+              if withGit then "PATH=${git}" + lib.optionalString withSsh ":${ssh}" else null;
           in
           [
             "OPENTOFU=${lib.getExe opentofu}"
