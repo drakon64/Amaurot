@@ -18,10 +18,7 @@ on:
 
 jobs:
   build:
-    runs-on:
-      - self-hosted
-      - Linux
-      - X64
+    runs-on: ubuntu-latest
 
     permissions:
       contents: read
@@ -48,23 +45,29 @@ jobs:
           cachix pin drakon64 amaurot "$(nix eval --expr '(import ./. {})' --raw --impure)" --keep-revisions 1
           cachix pin drakon64 amaurot-docker "$(nix eval --expr '(import ./. {}).docker {}' --raw --impure)" --keep-revisions 1
 
-      - name: Install Podman
-        run: |
-          sudo apt-get update
-          sudo apt-get -y install podman
+      - run: docker load < result
 
-      - run: podman load < result
+      - uses: docker/metadata-action@v5
+        id: meta
+        with:
+          images: ghcr.io/${{ github.repository }}
+          tags: latest
 
       - name: Login to GitHub Packages
-        run: echo $GITHUB_TOKEN | podman login ghcr.io -u ${{ github.actor }} --password-stdin
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Upload to GitHub Packages
-        run: |
-          podman build -t ghcr.io/drakon64/amaurot:latest --timestamp 0 .
-          podman push ghcr.io/drakon64/amaurot:latest
-        working-directory: src
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+        env:
+          SOURCE_DATE_EPOCH: 0
 
 #      - name: Build Nix shell
 #        run: nix-shell -A opentofu --run "exit"
