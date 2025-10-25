@@ -1,0 +1,32 @@
+name: Vulnerability scan
+
+on:
+  push:
+    branches:
+      - main
+
+  schedule:
+    - cron: "0 13 * * *"
+
+  workflow_dispatch:
+
+jobs:
+  vulnix:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Install Lix
+        uses: samueldr/lix-gha-installer-action@v2025-02-26.prerelease
+
+      - name: Install Cachix
+        uses: cachix/cachix-action@v16
+        with:
+          name: drakon64
+
+      - name: Build Nix shell
+        run: nix-shell -A vulnix --run "exit"
+
+      - name: Scan for vulnerabilities
+        run: nix-shell -A vulnix --run "vulnix $(nix-instantiate -A docker)"
