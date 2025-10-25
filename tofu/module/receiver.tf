@@ -6,7 +6,7 @@ resource "google_cloud_run_v2_service" "receiver" {
 
   template {
     containers {
-      image = local.receiver_image
+      image = local.image
 
       args = ["receiver"]
 
