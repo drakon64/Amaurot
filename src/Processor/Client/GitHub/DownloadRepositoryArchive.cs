@@ -20,7 +20,7 @@ internal partial class GitHubClient
         );
 
         if (!request.IsSuccessStatusCode)
-            throw new Exception(); // TODO: Useful exception
+            throw new Exception();
 
         return new GZipStream(
             await request.Content.ReadAsStreamAsync(),

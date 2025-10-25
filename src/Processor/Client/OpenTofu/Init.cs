@@ -19,12 +19,12 @@ internal partial class OpenTofuClient
         using var tofu = Process.Start(processStartInfo);
 
         if (tofu == null)
-            throw new Exception(); // TODO: Useful exception
+            throw new Exception();
 
         await tofu.WaitForExitAsync();
 
         if (tofu.ExitCode != 0)
-            throw new Exception(); // TODO: Useful exception
+            throw new Exception();
 
         return new RunOutput
         {
