@@ -9,4 +9,7 @@
   <PropertyGroup>
     <PublishReadyToRunComposite>true</PublishReadyToRunComposite>
   </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Octokit.Webhooks.AspNetCore" Version="3.2.1" />
+  </ItemGroup>
 </Project>
