@@ -63,7 +63,7 @@ jobs:
         with:
           context: ./src/Processor
           push: true
-          tags: amaurot-processor:latest
+          tags: ghcr.io/drakon64/amaurot-processor:latest
         env:
           SOURCE_DATE_EPOCH: 0
 
@@ -72,7 +72,7 @@ jobs:
         with:
           context: ./src/Receiver
           push: true
-          tags: amaurot-receiver:latest
+          tags: ghcr.io/drakon64/amaurot-receiver:latest
         env:
           SOURCE_DATE_EPOCH: 0
 
