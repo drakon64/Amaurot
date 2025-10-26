@@ -45,7 +45,7 @@ jobs:
           cachix pin drakon64 amaurot-processor "$(nix eval --file ./default.nix processor --raw --impure)" --keep-revisions 1
           cachix pin drakon64 amaurot-processor-docker "$(nix eval --expr '(import ./. {}).processor.docker {}' --raw --impure)" --keep-revisions 1
           cachix pin drakon64 amaurot-receiver "$(nix eval --file ./default.nix receiver --raw --impure)" --keep-revisions 1
-          cachix pin drakon64 amaurot-receiver-docker "$(nix eval --expr '(import ./. {}).receiver.docker' --raw --impure" --keep-revisions 1
+          cachix pin drakon64 amaurot-receiver-docker "$(nix eval --expr '(import ./. {}).receiver.docker' --raw --impure)" --keep-revisions 1
 
       - run: |
           docker load < result
