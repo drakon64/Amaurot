@@ -22,7 +22,7 @@ internal sealed class PullRequestWebhookEventProcessor(
         CancellationToken cancellationToken = default
     )
     {
-        if (!Actions.Contains(action))
+        if (!(Actions.Contains(action) && pullRequestEvent.PullRequest.Draft))
         {
             logger.LogInformation(
                 "Not responding to {PullRequestAction} event from {FullName} #{PullRequestNumber}",
