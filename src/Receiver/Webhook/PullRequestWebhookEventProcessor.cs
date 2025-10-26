@@ -25,10 +25,10 @@ internal sealed class PullRequestWebhookEventProcessor(
         if (!(Actions.Contains(action) && pullRequestEvent.PullRequest.Draft))
         {
             logger.LogInformation(
-                "Not responding to {PullRequestAction} event from {FullName} #{PullRequestNumber}",
+                "Not responding to {PullRequestAction} event from {FullName} #{Number}",
                 action,
                 pullRequestEvent.Repository!.FullName,
-                pullRequestEvent.PullRequest.Number
+                pullRequestEvent.Number
             );
 
             return new ValueTask();
