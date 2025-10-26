@@ -7,6 +7,8 @@ namespace Amaurot.Receiver;
 
 internal static class Program
 {
+    internal static readonly HttpClient HttpClient = new();
+
     private static void Main()
     {
         var builder = WebApplication.CreateSlimBuilder();
