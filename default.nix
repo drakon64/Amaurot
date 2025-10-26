@@ -1,4 +1,7 @@
 {
   pkgs ? import (import ./lon.nix).nixpkgs { },
 }:
-pkgs.callPackage ./src/package.nix { }
+{
+  processor = pkgs.callPackage ./src/Processor/package.nix { };
+  receiver = pkgs.callPackage ./src/Receiver/package.nix { };
+}

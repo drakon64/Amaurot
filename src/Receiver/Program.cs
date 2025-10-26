@@ -1,6 +1,6 @@
 using System.Text.Json.Serialization;
 
-namespace Amaurot;
+namespace Amaurot.Receiver;
 
 public class Program
 {
@@ -30,7 +30,7 @@ public class Program
         var todosApi = app.MapGroup("/todos");
         todosApi.MapGet("/", () => sampleTodos);
         todosApi.MapGet(
-            "/{id}",
+            "/{id:int}",
             (int id) =>
                 sampleTodos.FirstOrDefault(a => a.Id == id) is { } todo
                     ? Results.Ok(todo)
@@ -44,4 +44,4 @@ public class Program
 public record Todo(int Id, string? Title, DateOnly? DueBy = null, bool IsComplete = false);
 
 [JsonSerializable(typeof(Todo[]))]
-internal partial class AppJsonSerializerContext : JsonSerializerContext { }
+internal partial class AppJsonSerializerContext : JsonSerializerContext;

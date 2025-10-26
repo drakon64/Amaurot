@@ -14,8 +14,8 @@ let
   fs = lib.fileset;
 in
 buildDotnetModule (finalAttrs: {
-  pname = "amaurot";
-  version = builtins.readFile ../version;
+  pname = "amaurot-processor";
+  version = builtins.readFile ../../version;
 
   src = fs.toSource {
     root = ./.;
@@ -28,23 +28,27 @@ buildDotnetModule (finalAttrs: {
 
         (lib.fileset.maybeMissing ./deps.json)
         ./package.nix
+
+        ./Dockerfile
       ]
     );
   };
 
-  projectFile = "Amaurot.csproj";
+  projectFile = "Amaurot.Processor.csproj";
   nugetDeps = ./deps.json;
 
   dotnet-sdk = dotnetCorePackages.sdk_9_0;
   dotnet-runtime = null;
 
-  executables = [ "Amaurot" ];
+  executables = [ "Amaurot.Processor" ];
 
   selfContainedBuild = true;
 
+  nativeBuildInputs = [ stdenv.cc ];
+
   meta = {
     license = lib.licenses.eupl12;
-    mainProgram = "Amaurot";
+    mainProgram = "Amaurot.Processor";
     maintainers = with lib.maintainers; [ drakon64 ];
   };
 
@@ -54,7 +58,7 @@ buildDotnetModule (finalAttrs: {
       withSsh ? true,
     }:
     dockerTools.buildLayeredImage {
-      name = "amaurot";
+      name = "amaurot-processor";
       tag = "latest";
 
       config = {

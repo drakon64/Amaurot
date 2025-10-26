@@ -5,11 +5,11 @@ on:
     branches:
       - main
     paths:
-      - src/*.cs
-      - src/Amaurot.csproj
-      - src/package.nix
-      - src/deps.json
-      - src/Dockerfile
+      - src/**/*.cs
+      - src/**/*.csproj
+      - src/**/package.nix
+      - src/**/deps.json
+      - src/**/Dockerfile
       - default.nix
       - lon.nix
       - lon.lock
@@ -38,20 +38,18 @@ jobs:
           authToken: "${{ secrets.CACHIX_AUTH_TOKEN }}"
 
       - name: Build
-        run: cachix watch-exec drakon64 -- nix-build -A docker
+        run: cachix watch-exec drakon64 -- nix-build -A processor.docker -A receiver.docker
 
       - name: Create Cachix pins
         run: |
-          cachix pin drakon64 amaurot "$(nix eval --expr '(import ./. {})' --raw --impure)" --keep-revisions 1
-          cachix pin drakon64 amaurot-docker "$(nix eval --expr '(import ./. {}).docker {}' --raw --impure)" --keep-revisions 1
+          cachix pin drakon64 amaurot-processor "$(nix eval --file ./default.nix processor)' --raw --impure)" --keep-revisions 1
+          cachix pin drakon64 amaurot-processor-docker "$(nix eval --expr '(import ./. {}).processor.docker {}' --raw --impure)" --keep-revisions 1
+          cachix pin drakon64 amaurot-receiver "$(nix eval --file ./default.nix receiver)' --raw --impure)" --keep-revisions 1
+          cachix pin drakon64 amaurot-receiver-docker "$(nix eval --expr '(import ./. {}).receiver.docker {}' --raw --impure)" --keep-revisions 1
 
-      - run: docker load < result
-
-      - uses: docker/metadata-action@v5
-        id: meta
-        with:
-          images: ghcr.io/${{ github.repository }}
-          tags: latest
+      - run: |
+          docker load < result
+          docker load < result-2
 
       - name: Login to GitHub Packages
         uses: docker/login-action@v3
@@ -60,12 +58,23 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Upload to GitHub Packages
+      - name: Upload Processor to GitHub Packages
         uses: docker/build-push-action@v6
         with:
-          context: .
+          context: ./src/Processor
           push: true
-          tags: ${{ steps.meta.outputs.tags }}
+          tags:
+            - amaurot-processor:latest
+        env:
+          SOURCE_DATE_EPOCH: 0
+
+      - name: Upload Receiver to GitHub Packages
+        uses: docker/build-push-action@v6
+        with:
+          context: ./src/Receiver
+          push: true
+          tags:
+            - amaurot-receiver:latest
         env:
           SOURCE_DATE_EPOCH: 0
 
