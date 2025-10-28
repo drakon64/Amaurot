@@ -7,7 +7,6 @@ pkgs.mkShellNoCC {
     lon
     nixfmt-rfc-style
     opentofu
-    vulnix
   ];
 
   passthru = {
@@ -17,10 +16,6 @@ pkgs.mkShellNoCC {
 
     opentofu = pkgs.mkShellNoCC {
       packages = with pkgs; [ opentofu ];
-    };
-
-    vulnix = pkgs.mkShellNoCC {
-      packages = with pkgs; [ vulnix ];
     };
   };
 }
