@@ -4,11 +4,7 @@ namespace Amaurot.Receiver.Client.GitHub;
 
 internal static partial class GitHubClient
 {
-    internal static async Task<PullRequest> GetPullRequest(
-        string repo,
-        long number,
-        long installationId
-    )
+    internal static async Task<string> GetPullRequest(string repo, long number, long installationId)
     {
         var pullRequest = await Loop(repo, number, installationId);
 
@@ -18,7 +14,7 @@ internal static partial class GitHubClient
             pullRequest = await Loop(repo, number, installationId);
         }
 
-        return pullRequest.Mergeable == true ? pullRequest : throw new Exception();
+        return pullRequest.Mergeable == true ? pullRequest.MergeCommitSha! : throw new Exception();
 
         static async Task<PullRequest> Loop(string repo, long number, long installationId)
         {
