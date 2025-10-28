@@ -28,5 +28,8 @@ jobs:
       - name: Build Nix shell
         run: nix-shell -A vulnix --run "exit"
 
-      - name: Scan for vulnerabilities
-        run: nix-shell -A vulnix --run "vulnix $(nix-instantiate -A docker)"
+      - name: Scan for vulnerabilities in Processor
+        run: nix-shell -A vulnix --run "vulnix $(nix-instantiate -A processor.docker)"
+
+      - name: Scan for vulnerabilities in Receiver
+        run: nix-shell -A vulnix --run "vulnix $(nix-instantiate -A receiver.docker)"
