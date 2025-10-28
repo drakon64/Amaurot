@@ -1,7 +1,8 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;
-using System.Text.Json.Serialization;
+
+using Amaurot.Receiver.SourceGenerationContext;
 
 using Microsoft.IdentityModel.Tokens;
 
@@ -84,9 +85,4 @@ internal static partial class GitHubClient
     {
         public required string Token { get; init; }
     }
-
-    [JsonSourceGenerationOptions(PropertyNamingPolicy = JsonKnownNamingPolicy.SnakeCaseLower)]
-    [JsonSerializable(typeof(InstallationAccessToken))]
-    [JsonSerializable(typeof(PullRequest))]
-    private sealed partial class SnakeCaseLowerSourceGenerationContext : JsonSerializerContext;
 }

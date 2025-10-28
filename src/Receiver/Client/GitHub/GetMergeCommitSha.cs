@@ -1,8 +1,14 @@
+using Amaurot.Receiver.SourceGenerationContext;
+
 namespace Amaurot.Receiver.Client.GitHub;
 
 internal static partial class GitHubClient
 {
-    internal static async Task<string> GetPullRequest(string repo, long number, long installationId)
+    internal static async Task<string> GetMergeCommitSha(
+        string repo,
+        long number,
+        long installationId
+    )
     {
         var pullRequest = await Loop(repo, number, installationId);
 
@@ -40,7 +46,7 @@ internal static partial class GitHubClient
         }
     }
 
-    private sealed class PullRequest
+    internal sealed class PullRequest
     {
         public bool? Mergeable { get; init; }
         public string? MergeCommitSha { get; init; }

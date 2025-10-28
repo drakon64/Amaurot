@@ -1,3 +1,6 @@
+using Amaurot.Receiver.Client.CloudRun;
+using Amaurot.Receiver.Client.GitHub;
+
 using Octokit.Webhooks;
 using Octokit.Webhooks.Events;
 using Octokit.Webhooks.Events.PullRequest;
@@ -15,7 +18,7 @@ internal sealed class PullRequestWebhookEventProcessor(
         PullRequestAction.ReadyForReview,
     ];
 
-    protected override ValueTask ProcessPullRequestWebhookAsync(
+    protected override async ValueTask ProcessPullRequestWebhookAsync(
         WebhookHeaders headers,
         PullRequestEvent pullRequestEvent,
         PullRequestAction action,
@@ -31,7 +34,7 @@ internal sealed class PullRequestWebhookEventProcessor(
                 pullRequestEvent.Number
             );
 
-            return new ValueTask();
+            return;
         }
 
         logger.LogInformation(
@@ -41,6 +44,12 @@ internal sealed class PullRequestWebhookEventProcessor(
             pullRequestEvent.Number
         );
 
-        return new ValueTask();
+        var commit = await GitHubClient.GetMergeCommitSha(
+            pullRequestEvent.Repository.FullName,
+            pullRequestEvent.Number,
+            pullRequestEvent.Installation!.Id
+        );
+
+        await CloudRunClient.RunJob();
     }
 }
