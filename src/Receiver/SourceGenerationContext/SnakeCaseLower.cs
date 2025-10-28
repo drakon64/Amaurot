@@ -6,4 +6,5 @@ namespace Amaurot.Receiver.SourceGenerationContext;
 
 [JsonSourceGenerationOptions(PropertyNamingPolicy = JsonKnownNamingPolicy.SnakeCaseLower)]
 [JsonSerializable(typeof(GitHubClient.InstallationAccessToken))]
+[JsonSerializable(typeof(GitHubClient.PullRequest))]
 internal sealed partial class SnakeCaseLowerSourceGenerationContext : JsonSerializerContext;
