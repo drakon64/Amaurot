@@ -1,5 +1,3 @@
-using Amaurot.Receiver.SourceGenerationContext;
-
 namespace Amaurot.Receiver.Client.GitHub;
 
 internal static partial class GitHubClient
@@ -42,7 +40,7 @@ internal static partial class GitHubClient
         }
     }
 
-    internal sealed class PullRequest
+    private sealed class PullRequest
     {
         public bool? Mergeable { get; init; }
         public string? MergeCommitSha { get; init; }
