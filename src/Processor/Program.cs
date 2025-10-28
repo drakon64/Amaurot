@@ -1,6 +1,6 @@
 namespace Amaurot.Processor;
 
-internal sealed class Program
+internal static class Program
 {
     internal static readonly HttpClient HttpClient = new();
 
