@@ -19,6 +19,12 @@ resource "google_cloud_run_v2_service" "receiver" {
           value = join(" ", var.allowed_repositories)
         }
       }
+      
+      env {
+        name = "AMAUROT_PROCESSOR"
+        
+        value = "https://run.googleapis.com/v2/projects/${data.google_project.project.id}/locations/${var.region}/jobs/${google_cloud_run_v2_job.processor.name}:run"
+      }
 
       resources {
         cpu_idle = true

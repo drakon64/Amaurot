@@ -2,6 +2,10 @@ namespace Amaurot.Receiver.Client.CloudRun;
 
 internal static partial class CloudRunClient
 {
+    private static readonly string Processor =
+        Environment.GetEnvironmentVariable("AMAUROT_PROCESSOR")
+        ?? throw new InvalidOperationException("AMAUROT_PROCESSOR is null");
+
     internal static async Task RunJob()
     {
         var response = await Program.HttpClient.SendAsync(
@@ -18,9 +22,7 @@ internal static partial class CloudRunClient
                     CamelCaseSourceGenerationContext.Default.RunJobWithOverrides
                 ),
                 Headers = { { "Authorization", await GetAccessToken() } },
-                RequestUri = new Uri(
-                    "https://run.googleapis.com/v2/projects/PROJECT_ID/locations/REGION/jobs/JOB-NAME:run"
-                ),
+                RequestUri = new Uri(Processor),
             }
         );
 
