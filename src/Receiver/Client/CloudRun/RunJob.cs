@@ -6,7 +6,7 @@ internal static partial class CloudRunClient
         Environment.GetEnvironmentVariable("AMAUROT_PROCESSOR")
         ?? throw new InvalidOperationException("AMAUROT_PROCESSOR is null");
 
-    internal static async Task RunJob()
+    internal static async Task RunJob(string repo, long number, string commit)
     {
         var response = await Program.HttpClient.SendAsync(
             new HttpRequestMessage
@@ -16,7 +16,10 @@ internal static partial class CloudRunClient
                     {
                         Overrides = new Overrides
                         {
-                            ContainerOverrides = [new ContainerOverride { Args = [""] }],
+                            ContainerOverrides =
+                            [
+                                new ContainerOverride { Args = [repo, number.ToString(), commit] },
+                            ],
                         },
                     },
                     CamelCaseSourceGenerationContext.Default.RunJobWithOverrides
