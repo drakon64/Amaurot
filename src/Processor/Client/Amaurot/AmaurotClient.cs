@@ -1,6 +1,6 @@
 using System.Text.Json.Serialization;
 
-namespace Amaurot.Receiver.Client.Amaurot;
+namespace Amaurot.Processor.Client.Amaurot;
 
 internal sealed partial class AmaurotClient
 {
