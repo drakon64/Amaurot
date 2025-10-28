@@ -2,6 +2,8 @@ namespace Amaurot.Processor;
 
 internal sealed class Program
 {
+    internal static readonly HttpClient HttpClient = new();
+
     private static void Main(string[] args)
     {
         var repo = args[0];
