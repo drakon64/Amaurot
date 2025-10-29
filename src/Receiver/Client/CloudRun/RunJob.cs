@@ -6,7 +6,7 @@ internal static partial class CloudRunClient
         Environment.GetEnvironmentVariable("AMAUROT_PROCESSOR")
         ?? throw new InvalidOperationException("AMAUROT_PROCESSOR is null");
 
-    internal static async Task RunJob(string repo, long number, string commit)
+    internal static async Task RunJob(string repo, long number, string commit, long installationId)
     {
         var response = await Program.HttpClient.SendAsync(
             new HttpRequestMessage
@@ -18,7 +18,16 @@ internal static partial class CloudRunClient
                         {
                             ContainerOverrides =
                             [
-                                new ContainerOverride { Args = [repo, number.ToString(), commit] },
+                                new ContainerOverride
+                                {
+                                    Args =
+                                    [
+                                        repo,
+                                        number.ToString(),
+                                        commit,
+                                        installationId.ToString(),
+                                    ],
+                                },
                             ],
                         },
                     },

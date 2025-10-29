@@ -53,7 +53,8 @@ internal sealed class PullRequestWebhookEventProcessor(
         await CloudRunClient.RunJob(
             pullRequestEvent.Repository.FullName,
             pullRequestEvent.Number,
-            commit
+            commit,
+            pullRequestEvent.Installation.Id
         );
     }
 }
