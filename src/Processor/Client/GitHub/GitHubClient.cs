@@ -88,5 +88,6 @@ internal static partial class GitHubClient
 
     [JsonSourceGenerationOptions(PropertyNamingPolicy = JsonKnownNamingPolicy.SnakeCaseLower)]
     [JsonSerializable(typeof(InstallationAccessToken))]
+    [JsonSerializable(typeof(PullRequestFile[]))]
     private sealed partial class SnakeCaseLowerSourceGenerationContext : JsonSerializerContext;
 }
