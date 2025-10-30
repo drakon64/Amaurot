@@ -4,10 +4,10 @@ namespace Amaurot.Receiver.Client.Amaurot;
 
 internal sealed partial class AmaurotClient
 {
-    internal async Task<string[]> GetPullRequestPaths(string repo, long number, long installationId)
+    internal string[] GetPullRequestPaths(GitHubClient.PullRequestFile[] files)
     {
         return (
-            from file in await GitHubClient.ListPullRequestFiles(repo, number, installationId)
+            from file in files
             where
                 _amaurotPaths.Contains(file.Filename[..(file.Filename.LastIndexOf('/') - 1)])
                 && (

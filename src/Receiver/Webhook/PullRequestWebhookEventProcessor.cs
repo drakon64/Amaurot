@@ -44,11 +44,11 @@ internal sealed class PullRequestWebhookEventProcessor(
             pullRequestEvent.Number
         );
 
-        var commit = await GitHubClient.GetMergeCommitSha(
+        var commit = await new GitHubClient(
             pullRequestEvent.Repository.FullName,
             pullRequestEvent.Number,
             pullRequestEvent.Installation!.Id
-        );
+        ).GetMergeCommitSha();
 
         await CloudRunClient.RunJob(
             pullRequestEvent.Repository.FullName,

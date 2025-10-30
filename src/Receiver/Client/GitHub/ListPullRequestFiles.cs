@@ -2,20 +2,16 @@ using Amaurot.Receiver.SourceGenerationContext;
 
 namespace Amaurot.Receiver.Client.GitHub;
 
-internal static partial class GitHubClient
+internal partial class GitHubClient
 {
-    internal static async Task<PullRequestFile[]> ListPullRequestFiles(
-        string repo,
-        long number,
-        long installationId
-    )
+    internal async Task<PullRequestFile[]> ListPullRequestFiles()
     {
         var response = await Program.HttpClient.SendAsync(
             new HttpRequestMessage
             {
                 Headers =
                 {
-                    { "Authorization", await GetInstallationAccessToken(installationId) },
+                    { "Authorization", await GetInstallationAccessToken() },
                     { "Accept", "application/vnd.github+json" },
                     { "X-GitHub-Api-Version", "2022-11-28" },
                 },
