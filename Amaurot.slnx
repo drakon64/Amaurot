@@ -3,8 +3,6 @@
     <Platform Name="Any CPU" />
     <Platform Name="x64" />
   </Configurations>
-  <Folder Name="/src/">
-    <Project Path="src/Processor/Amaurot.Processor.csproj" />
-    <Project Path="src/Receiver/Amaurot.Receiver.csproj" />
-  </Folder>
+  <Project Path="src/Processor/Amaurot.Processor.csproj" />
+  <Project Path="src/Receiver/Amaurot.Receiver.csproj" />
 </Solution>
