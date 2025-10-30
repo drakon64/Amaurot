@@ -1,6 +1,6 @@
-using System.Net.Http.Json;
+using Amaurot.Receiver.SourceGenerationContext;
 
-namespace Amaurot.Processor.Client.GitHub;
+namespace Amaurot.Receiver.Client.GitHub;
 
 internal static partial class GitHubClient
 {
