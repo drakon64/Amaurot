@@ -1,4 +1,6 @@
-namespace Amaurot.Processor.Client.Amaurot;
+using System.Text.Json.Serialization;
+
+namespace Amaurot.Receiver.Client.Amaurot;
 
 internal sealed partial class AmaurotClient
 {
@@ -12,4 +14,8 @@ internal sealed partial class AmaurotClient
             public string[]? VarFiles { get; init; }
         }
     }
+
+    [JsonSourceGenerationOptions(PropertyNamingPolicy = JsonKnownNamingPolicy.KebabCaseLower)]
+    [JsonSerializable(typeof(AmaurotJson))]
+    private sealed partial class KebabCaseLowerSourceGenerationContext : JsonSerializerContext;
 }
