@@ -1,8 +1,10 @@
+using Amaurot.Processor.Client.GitHub;
+
 namespace Amaurot.Processor;
 
 internal static class Program
 {
-    internal static readonly HttpClient HttpClient = new();
+    private static readonly HttpClient HttpClient = new();
 
     private static async Task Main(string[] args)
     {
@@ -13,5 +15,7 @@ internal static class Program
         await Console.Out.WriteLineAsync($"Repository: {repo}");
         await Console.Out.WriteLineAsync($"Number: {number}");
         await Console.Out.WriteLineAsync($"Commit: {commit}");
+
+        var client = new GitHubClient(HttpClient, long.Parse(args[3]));
     }
 }

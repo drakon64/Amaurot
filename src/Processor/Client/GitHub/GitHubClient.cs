@@ -8,35 +8,43 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace Amaurot.Processor.Client.GitHub;
 
-internal static partial class GitHubClient
+internal partial class GitHubClient
 {
-    private static readonly string ClientId =
+    private readonly string _clientId =
         Environment.GetEnvironmentVariable("AMAUROT_GITHUB_CLIENT_ID")
         ?? throw new InvalidOperationException("AMAUROT_GITHUB_CLIENT_ID is null");
 
-    private static readonly SigningCredentials GitHubSigningCredentials = GetSigningCredentials();
+    private readonly HttpClient _httpClient;
+    private readonly long _installationId;
+    private readonly SigningCredentials _signingCredentials;
 
-    private static SigningCredentials GetSigningCredentials()
+    internal GitHubClient(HttpClient client, long installationId)
     {
+        _httpClient = client;
+        _installationId = installationId;
+
         var rsa = RSA.Create();
         rsa.ImportFromPem(
             Environment.GetEnvironmentVariable("AMAUROT_GITHUB_PRIVATE_KEY")
                 ?? throw new InvalidOperationException("AMAUROT_GITHUB_PRIVATE_KEY is null")
         );
 
-        return new SigningCredentials(new RsaSecurityKey(rsa), SecurityAlgorithms.RsaSha256)
+        _signingCredentials = new SigningCredentials(
+            new RsaSecurityKey(rsa),
+            SecurityAlgorithms.RsaSha256
+        )
         {
             CryptoProviderFactory = new CryptoProviderFactory { CacheSignatureProviders = false },
         };
     }
 
-    private static string GenerateJwt()
+    private string GenerateJwt()
     {
         var now = DateTime.UtcNow;
         var expires = now.AddSeconds(60);
 
         var jwt = new JwtSecurityToken(
-            issuer: ClientId,
+            issuer: _clientId,
             claims:
             [
                 new Claim(
@@ -46,15 +54,15 @@ internal static partial class GitHubClient
                 ),
             ],
             expires: expires,
-            signingCredentials: GitHubSigningCredentials
+            signingCredentials: _signingCredentials
         );
 
         return new JwtSecurityTokenHandler().WriteToken(jwt);
     }
 
-    private static async Task<string> GetInstallationAccessToken(long installationId)
+    private async Task<string> GetInstallationAccessToken()
     {
-        var response = await Program.HttpClient.SendAsync(
+        var response = await _httpClient.SendAsync(
             new HttpRequestMessage
             {
                 Headers =
@@ -66,7 +74,7 @@ internal static partial class GitHubClient
                 },
                 Method = HttpMethod.Post,
                 RequestUri = new Uri(
-                    $"https://api.github.com/app/installations/{installationId}/access_tokens"
+                    $"https://api.github.com/app/installations/{_installationId}/access_tokens"
                 ),
             }
         );
