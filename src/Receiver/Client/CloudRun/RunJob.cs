@@ -29,6 +29,7 @@ internal static partial class CloudRunClient
                                     ],
                                 },
                             ],
+                            TaskCount = 1,
                         },
                     },
                     CamelCaseSourceGenerationContext.Default.RunJobWithOverrides
@@ -50,6 +51,7 @@ internal static partial class CloudRunClient
     internal sealed class Overrides
     {
         public required ContainerOverride[] ContainerOverrides { get; init; }
+        public required ushort TaskCount { get; init; }
     }
 
     internal sealed class ContainerOverride
