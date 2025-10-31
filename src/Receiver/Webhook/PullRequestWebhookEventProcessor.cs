@@ -64,18 +64,9 @@ internal sealed class PullRequestWebhookEventProcessor(
             return;
         }
 
-        var amaurotJson = new FileInfo(Path.GetTempFileName());
-        var fileStream = amaurotJson.Create();
-        await fileStream.WriteAsync(
-            await githubClient.GetRepositoryContent("amaurot.json", pullRequest.MergeCommitSha),
-            cancellationToken
-        );
-        await fileStream.DisposeAsync();
-        amaurotJson.Delete();
-
-        var directories = new AmaurotClient(amaurotJson).GetPullRequestPaths(
-            await githubClient.ListPullRequestFiles()
-        );
+        var directories = new AmaurotClient(
+            await githubClient.GetRepositoryContent("amaurot.json", pullRequest.MergeCommitSha)
+        ).GetPullRequestPaths(await githubClient.ListPullRequestFiles());
 
         await CloudRunClient.RunJob(
             pullRequestEvent.Repository.FullName,
