@@ -68,7 +68,7 @@ internal sealed class PullRequestWebhookEventProcessor(
             pullRequestEvent.Repository.FullName,
             pullRequestEvent.Number,
             new AmaurotClient(
-                await githubClient.GetRepositoryContent("amaurot.json", pullRequest.MergeCommitSha)
+                await githubClient.GetAmaurotJson(pullRequest.MergeCommitSha)
             ).Deployments,
             pullRequest.Head.Sha,
             pullRequest.MergeCommitSha,
