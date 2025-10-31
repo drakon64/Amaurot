@@ -4,17 +4,19 @@ using System.Text.Json.Serialization;
 
 namespace Amaurot.Receiver.Client.Amaurot;
 
-internal sealed partial class AmaurotClient(byte[] amaurotJson)
+internal sealed partial class AmaurotClient
 {
-    private readonly string[] _amaurotPaths = (
-        from deployment in JsonSerializer.Deserialize<IReadOnlyDictionary<string, Deployment>>(
+    internal readonly string[] Deployments;
+
+    internal AmaurotClient(byte[] amaurotJson)
+    {
+        var json = JsonSerializer.Deserialize<IReadOnlyDictionary<string, Deployment>>(
             Encoding.UTF8.GetString(amaurotJson),
             KebabCaseLowerSourceGenerationContext.Default.IReadOnlyDictionaryStringDeployment
-        )!
-        select deployment.Value.Path.TrimEnd('/')
-    )
-        .Distinct()
-        .ToArray();
+        )!;
+
+        Deployments = (from deployment in json.Keys select deployment).ToArray();
+    }
 
     internal sealed class Deployment
     {

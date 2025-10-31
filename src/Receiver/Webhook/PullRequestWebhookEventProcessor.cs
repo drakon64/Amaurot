@@ -64,13 +64,12 @@ internal sealed class PullRequestWebhookEventProcessor(
             return;
         }
 
-        var directories = new AmaurotClient(
-            await githubClient.GetRepositoryContent("amaurot.json", pullRequest.MergeCommitSha)
-        ).GetPullRequestPaths(await githubClient.ListPullRequestFiles());
-
         await CloudRunClient.RunJob(
             pullRequestEvent.Repository.FullName,
             pullRequestEvent.Number,
+            new AmaurotClient(
+                await githubClient.GetRepositoryContent("amaurot.json", pullRequest.MergeCommitSha)
+            ).Deployments,
             pullRequest.Head.Sha,
             pullRequest.MergeCommitSha,
             pullRequestEvent.Installation.Id

@@ -9,11 +9,27 @@ internal static partial class CloudRunClient
     internal static async Task RunJob(
         string repo,
         long number,
+        string[] deployments,
         string headCommit,
         string mergeCommit,
         long installationId
     )
     {
+        var containerOverrides = deployments
+            .Select(deployment => new ContainerOverride
+            {
+                Args =
+                [
+                    repo,
+                    number.ToString(),
+                    deployment,
+                    headCommit,
+                    mergeCommit,
+                    installationId.ToString(),
+                ],
+            })
+            .ToArray();
+
         var response = await Program.HttpClient.SendAsync(
             new HttpRequestMessage
             {
@@ -22,21 +38,8 @@ internal static partial class CloudRunClient
                     {
                         Overrides = new Overrides
                         {
-                            ContainerOverrides =
-                            [
-                                new ContainerOverride
-                                {
-                                    Args =
-                                    [
-                                        repo,
-                                        number.ToString(),
-                                        headCommit,
-                                        mergeCommit,
-                                        installationId.ToString(),
-                                    ],
-                                },
-                            ],
-                            TaskCount = 1,
+                            ContainerOverrides = containerOverrides,
+                            TaskCount = containerOverrides.Length,
                         },
                     },
                     CamelCaseSourceGenerationContext.Default.RunJobWithOverrides
@@ -58,7 +61,7 @@ internal static partial class CloudRunClient
     internal sealed class Overrides
     {
         public required ContainerOverride[] ContainerOverrides { get; init; }
-        public required ushort TaskCount { get; init; }
+        public required int TaskCount { get; init; }
     }
 
     internal sealed class ContainerOverride
