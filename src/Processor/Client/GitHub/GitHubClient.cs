@@ -2,49 +2,42 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Net.Http.Json;
 using System.Security.Claims;
 using System.Security.Cryptography;
-using System.Text.Json.Serialization;
+
+using Amaurot.Processor.SourceGenerationContext;
 
 using Microsoft.IdentityModel.Tokens;
 
 namespace Amaurot.Processor.Client.GitHub;
 
-internal sealed partial class GitHubClient
+internal sealed class GitHubClient(string repo, long number, long installationId)
 {
-    private readonly string _clientId =
+    private static readonly string ClientId =
         Environment.GetEnvironmentVariable("AMAUROT_GITHUB_CLIENT_ID")
         ?? throw new InvalidOperationException("AMAUROT_GITHUB_CLIENT_ID is null");
 
-    private readonly HttpClient _httpClient;
-    private readonly long _installationId;
-    private readonly SigningCredentials _signingCredentials;
+    private static readonly SigningCredentials GitHubSigningCredentials = GetSigningCredentials();
 
-    internal GitHubClient(HttpClient client, long installationId)
+    private static SigningCredentials GetSigningCredentials()
     {
-        _httpClient = client;
-        _installationId = installationId;
-
         var rsa = RSA.Create();
         rsa.ImportFromPem(
             Environment.GetEnvironmentVariable("AMAUROT_GITHUB_PRIVATE_KEY")
                 ?? throw new InvalidOperationException("AMAUROT_GITHUB_PRIVATE_KEY is null")
         );
 
-        _signingCredentials = new SigningCredentials(
-            new RsaSecurityKey(rsa),
-            SecurityAlgorithms.RsaSha256
-        )
+        return new SigningCredentials(new RsaSecurityKey(rsa), SecurityAlgorithms.RsaSha256)
         {
             CryptoProviderFactory = new CryptoProviderFactory { CacheSignatureProviders = false },
         };
     }
 
-    private string GenerateJwt()
+    private static string GenerateJwt()
     {
         var now = DateTime.UtcNow;
         var expires = now.AddSeconds(60);
 
         var jwt = new JwtSecurityToken(
-            issuer: _clientId,
+            issuer: ClientId,
             claims:
             [
                 new Claim(
@@ -54,7 +47,7 @@ internal sealed partial class GitHubClient
                 ),
             ],
             expires: expires,
-            signingCredentials: _signingCredentials
+            signingCredentials: GitHubSigningCredentials
         );
 
         return new JwtSecurityTokenHandler().WriteToken(jwt);
@@ -62,7 +55,7 @@ internal sealed partial class GitHubClient
 
     private async Task<string> GetInstallationAccessToken()
     {
-        var response = await _httpClient.SendAsync(
+        var response = await Program.HttpClient.SendAsync(
             new HttpRequestMessage
             {
                 Headers =
@@ -74,7 +67,7 @@ internal sealed partial class GitHubClient
                 },
                 Method = HttpMethod.Post,
                 RequestUri = new Uri(
-                    $"https://api.github.com/app/installations/{_installationId}/access_tokens"
+                    $"https://api.github.com/app/installations/{installationId}/access_tokens"
                 ),
             }
         );
@@ -93,8 +86,4 @@ internal sealed partial class GitHubClient
     {
         public required string Token { get; init; }
     }
-
-    [JsonSourceGenerationOptions(PropertyNamingPolicy = JsonKnownNamingPolicy.SnakeCaseLower)]
-    [JsonSerializable(typeof(InstallationAccessToken))]
-    private sealed partial class SnakeCaseLowerSourceGenerationContext : JsonSerializerContext;
 }
