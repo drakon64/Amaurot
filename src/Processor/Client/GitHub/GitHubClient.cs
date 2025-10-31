@@ -9,7 +9,13 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace Amaurot.Processor.Client.GitHub;
 
-internal sealed class GitHubClient(string repo, long number, long installationId)
+internal sealed class GitHubClient(
+    string repo,
+    long number,
+    string headCommit,
+    string mergeCommit,
+    long installationId
+)
 {
     private static readonly string ClientId =
         Environment.GetEnvironmentVariable("AMAUROT_GITHUB_CLIENT_ID")

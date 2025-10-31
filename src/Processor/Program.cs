@@ -8,6 +8,15 @@ internal static class Program
 
     private static void Main(string[] args)
     {
-        var client = new GitHubClient(args[0], long.Parse(args[1]), long.Parse(args[3]));
+        var repo = args[0];
+        var number = long.Parse(args[1]);
+        var deployment = args[2];
+        var headCommit = args[3];
+        var mergeCommit = args[4];
+        var installationId = long.Parse(args[5]);
+
+        var client = new GitHubClient(repo, number, headCommit, mergeCommit, installationId);
+        
+        var tempDirectory = Directory.CreateTempSubdirectory();
     }
 }
