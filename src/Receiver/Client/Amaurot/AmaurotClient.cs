@@ -8,15 +8,18 @@ internal sealed partial class AmaurotClient
 {
     internal readonly string[] Deployments;
 
-    internal AmaurotClient(byte[] amaurotJson)
-    {
-        var json = JsonSerializer.Deserialize<IReadOnlyDictionary<string, Deployment>>(
-            Encoding.UTF8.GetString(amaurotJson),
-            KebabCaseLowerSourceGenerationContext.Default.IReadOnlyDictionaryStringDeployment
-        )!;
-
-        Deployments = (from deployment in json.Keys select deployment).ToArray();
-    }
+    internal AmaurotClient(byte[] amaurotJson) =>
+        Deployments = (
+            from deployment in JsonSerializer
+                .Deserialize<IReadOnlyDictionary<string, Deployment>>(
+                    Encoding.UTF8.GetString(amaurotJson),
+                    KebabCaseLowerSourceGenerationContext
+                        .Default
+                        .IReadOnlyDictionaryStringDeployment
+                )!
+                .Keys
+            select deployment
+        ).ToArray();
 
     internal sealed class Deployment
     {
