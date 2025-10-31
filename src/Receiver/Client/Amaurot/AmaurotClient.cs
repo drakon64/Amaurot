@@ -11,15 +11,23 @@ internal sealed partial class AmaurotClient
     internal AmaurotClient(byte[] amaurotJson) =>
         Deployments = (
             from deployment in JsonSerializer
-                .Deserialize<IReadOnlyDictionary<string, object>>(
+                .Deserialize<IReadOnlyDictionary<string, Deployment>>(
                     Encoding.UTF8.GetString(amaurotJson),
-                    KebabCaseLowerSourceGenerationContext.Default.IReadOnlyDictionaryStringObject
+                    KebabCaseLowerSourceGenerationContext
+                        .Default
+                        .IReadOnlyDictionaryStringDeployment
                 )!
                 .Keys
             select deployment
         ).ToArray();
 
+    internal sealed class Deployment
+    {
+        public required string Path { get; init; }
+        public string[]? VarFiles { get; init; }
+    }
+
     [JsonSourceGenerationOptions(PropertyNamingPolicy = JsonKnownNamingPolicy.KebabCaseLower)]
-    [JsonSerializable(typeof(IReadOnlyDictionary<string, object>))]
+    [JsonSerializable(typeof(IReadOnlyDictionary<string, Deployment>))]
     private sealed partial class KebabCaseLowerSourceGenerationContext : JsonSerializerContext;
 }
