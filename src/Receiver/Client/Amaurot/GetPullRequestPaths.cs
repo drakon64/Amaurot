@@ -17,8 +17,6 @@ internal sealed partial class AmaurotClient
                     || file.Filename == ".terraform.lock.hcl"
                 )
             select file.Filename[..(file.Filename.LastIndexOf('/') - 1)]
-        )
-            .Distinct()
-            .ToArray();
+        ).ToArray();
     }
 }

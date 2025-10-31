@@ -16,7 +16,7 @@ internal partial class GitHubClient
             pullRequest = await Loop();
         }
 
-        return pullRequest.Mergeable == true ? pullRequest : throw new Exception();
+        return pullRequest;
 
         async Task<PullRequest> Loop()
         {

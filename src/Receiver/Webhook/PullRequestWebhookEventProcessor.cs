@@ -1,3 +1,4 @@
+using Amaurot.Receiver.Client.Amaurot;
 using Amaurot.Receiver.Client.CloudRun;
 using Amaurot.Receiver.Client.GitHub;
 
@@ -51,6 +52,30 @@ internal sealed class PullRequestWebhookEventProcessor(
         );
 
         var pullRequest = await githubClient.GetPullRequest();
+
+        if (pullRequest.Mergeable == false)
+        {
+            logger.LogError(
+                "Pull request {FullName} #{Number} is not mergeable",
+                pullRequestEvent.Repository!.FullName,
+                pullRequestEvent.Number
+            );
+
+            return;
+        }
+
+        var amaurotJson = new FileInfo(Path.GetTempFileName());
+        var fileStream = amaurotJson.Create();
+        await fileStream.WriteAsync(
+            await githubClient.GetRepositoryContent("amaurot.json", pullRequest.MergeCommitSha),
+            cancellationToken
+        );
+        await fileStream.DisposeAsync();
+        amaurotJson.Delete();
+
+        var directories = new AmaurotClient(amaurotJson).GetPullRequestPaths(
+            await githubClient.ListPullRequestFiles()
+        );
 
         await CloudRunClient.RunJob(
             pullRequestEvent.Repository.FullName,
