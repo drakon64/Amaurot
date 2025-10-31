@@ -6,7 +6,13 @@ internal static partial class CloudRunClient
         Environment.GetEnvironmentVariable("AMAUROT_PROCESSOR")
         ?? throw new InvalidOperationException("AMAUROT_PROCESSOR is null");
 
-    internal static async Task RunJob(string repo, long number, string commit, long installationId)
+    internal static async Task RunJob(
+        string repo,
+        long number,
+        string headCommit,
+        string mergeCommit,
+        long installationId
+    )
     {
         var response = await Program.HttpClient.SendAsync(
             new HttpRequestMessage
@@ -24,7 +30,8 @@ internal static partial class CloudRunClient
                                     [
                                         repo,
                                         number.ToString(),
-                                        commit,
+                                        headCommit,
+                                        mergeCommit,
                                         installationId.ToString(),
                                     ],
                                 },

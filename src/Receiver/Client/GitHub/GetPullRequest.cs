@@ -1,10 +1,12 @@
+using System.Diagnostics.CodeAnalysis;
+
 using Amaurot.Receiver.SourceGenerationContext;
 
 namespace Amaurot.Receiver.Client.GitHub;
 
 internal partial class GitHubClient
 {
-    internal async Task<string> GetMergeCommitSha()
+    internal async Task<PullRequest> GetPullRequest()
     {
         var pullRequest = await Loop();
 
@@ -14,7 +16,7 @@ internal partial class GitHubClient
             pullRequest = await Loop();
         }
 
-        return pullRequest.Mergeable == true ? pullRequest.MergeCommitSha! : throw new Exception();
+        return pullRequest.Mergeable == true ? pullRequest : throw new Exception();
 
         async Task<PullRequest> Loop()
         {
@@ -44,7 +46,15 @@ internal partial class GitHubClient
 
     internal sealed class PullRequest
     {
+        public required PullRequestHead Head { get; init; }
         public bool? Mergeable { get; init; }
+
+        [NotNull]
         public string? MergeCommitSha { get; init; }
+
+        internal class PullRequestHead
+        {
+            public required string Sha { get; init; }
+        }
     }
 }
