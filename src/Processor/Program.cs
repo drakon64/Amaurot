@@ -6,7 +6,7 @@ internal static class Program
 {
     internal static readonly HttpClient HttpClient = new();
 
-    private static void Main(string[] args)
+    private static async Task Main(string[] args)
     {
         var repo = args[0];
         var number = long.Parse(args[1]);
@@ -15,8 +15,7 @@ internal static class Program
         var mergeCommit = args[4];
         var installationId = long.Parse(args[5]);
 
-        var client = new GitHubClient(repo, number, headCommit, mergeCommit, installationId);
-        
-        var tempDirectory = Directory.CreateTempSubdirectory();
+        var githubClient = new GitHubClient(repo, number, headCommit, mergeCommit, installationId);
+        var directory = await githubClient.DownloadRepositoryArchive();
     }
 }

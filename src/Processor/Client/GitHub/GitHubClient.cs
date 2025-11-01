@@ -9,7 +9,7 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace Amaurot.Processor.Client.GitHub;
 
-internal sealed class GitHubClient(
+internal sealed partial class GitHubClient(
     string repo,
     long number,
     string headCommit,
