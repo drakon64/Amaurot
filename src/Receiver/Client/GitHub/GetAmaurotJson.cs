@@ -4,7 +4,7 @@ internal partial class GitHubClient
 {
     internal async Task<byte[]> GetAmaurotJson(string commit)
     {
-        var response = await Program.HttpClient.SendAsync(
+        using var response = await Program.HttpClient.SendAsync(
             new HttpRequestMessage
             {
                 Headers =

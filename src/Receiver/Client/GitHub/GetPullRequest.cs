@@ -20,7 +20,7 @@ internal partial class GitHubClient
 
         async Task<PullRequest> Loop()
         {
-            var response = await Program.HttpClient.SendAsync(
+            using var response = await Program.HttpClient.SendAsync(
                 new HttpRequestMessage
                 {
                     Headers =

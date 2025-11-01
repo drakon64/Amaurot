@@ -61,7 +61,7 @@ internal sealed class GitHubClient(
 
     private async Task<string> GetInstallationAccessToken()
     {
-        var response = await Program.HttpClient.SendAsync(
+        using var response = await Program.HttpClient.SendAsync(
             new HttpRequestMessage
             {
                 Headers =

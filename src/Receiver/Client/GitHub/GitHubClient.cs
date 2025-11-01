@@ -54,7 +54,7 @@ internal partial class GitHubClient(string repo, long number, long installationI
 
     private async Task<string> GetInstallationAccessToken()
     {
-        var response = await Program.HttpClient.SendAsync(
+        using var response = await Program.HttpClient.SendAsync(
             new HttpRequestMessage
             {
                 Headers =

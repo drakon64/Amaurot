@@ -30,7 +30,7 @@ internal static partial class CloudRunClient
             })
             .ToArray();
 
-        var response = await Program.HttpClient.SendAsync(
+        using var response = await Program.HttpClient.SendAsync(
             new HttpRequestMessage
             {
                 Content = JsonContent.Create(
