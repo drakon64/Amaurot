@@ -1,4 +1,4 @@
-name: Build
+name: Build and deploy
 
 on:
   push:
@@ -17,7 +17,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  build:
+  Build:
     runs-on: ubuntu-latest
 
     permissions:
@@ -75,6 +75,27 @@ jobs:
           tags: ghcr.io/drakon64/amaurot-receiver:latest
         env:
           SOURCE_DATE_EPOCH: 0
+
+  Deploy:
+    needs:
+      - Build
+
+    runs-on: ubuntu-latest
+
+    permissions:
+      id-token: write
+
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Install Lix
+        uses: samueldr/lix-gha-installer-action@v2025-02-26.prerelease
+
+      - name: Install Cachix
+        uses: cachix/cachix-action@v16
+        with:
+          name: drakon64
+          authToken: "${{ secrets.CACHIX_AUTH_TOKEN }}"
 
       - name: Build Nix shell
         run: nix-shell -A opentofu --run "exit"
