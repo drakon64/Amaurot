@@ -9,7 +9,7 @@ data "http" "github_meta" {
 
 module "cloud_armor" {
   source  = "GoogleCloudPlatform/cloud-armor/google"
-  version = "~> 6"
+  version = "~> 7"
 
   name       = "amaurot"
   project_id = data.google_project.project.project_id
