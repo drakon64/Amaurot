@@ -14,3 +14,13 @@ updates:
     directory: /src/Receiver
     schedule:
       interval: daily
+
+  - package-ecosystem: terraform
+    directory: /tofu
+    schedule:
+      interval: daily
+
+  - package-ecosystem: terraform
+    directory: /tofu/module
+    schedule:
+      interval: daily

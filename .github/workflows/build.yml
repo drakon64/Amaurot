@@ -76,19 +76,19 @@ jobs:
         env:
           SOURCE_DATE_EPOCH: 0
 
-#      - name: Build Nix shell
-#        run: nix-shell -A opentofu --run "exit"
+      - name: Build Nix shell
+        run: nix-shell -A opentofu --run "exit"
 
-#      - uses: google-github-actions/auth@v3
-#        with:
-#          project_id: ${{ secrets.GCP_PROJECT }}
-#          workload_identity_provider: ${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER }}
+      - uses: google-github-actions/auth@v3
+        with:
+          project_id: ${{ secrets.GCP_PROJECT }}
+          workload_identity_provider: ${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER }}
 
-#      - name: Deploy to Cloud Run
-#        run: |
-#          echo "$TERRAFORM_TFVARS" | base64 -d > terraform.tfvars
-#          nix-shell -A opentofu ../shell.nix --run "tofu init"
-#          nix-shell -A opentofu ../shell.nix --run "tofu apply -auto-approve -target module.amaurot.google_cloud_run_v2_service.processor -target module.amaurot.google_cloud_run_v2_service.receiver"
-#        working-directory: tofu
-#        env:
-#          TERRAFORM_TFVARS: ${{ secrets.TERRAFORM_TFVARS }}
+      - name: Deploy to Cloud Run
+        run: |
+          echo "$TERRAFORM_TFVARS" | base64 -d > terraform.tfvars
+          nix-shell -A opentofu ../shell.nix --run "tofu init"
+          nix-shell -A opentofu ../shell.nix --run "tofu apply -auto-approve -target module.amaurot.google_cloud_run_v2_job.processor -target module.amaurot.google_cloud_run_v2_service.receiver"
+        working-directory: tofu
+        env:
+          TERRAFORM_TFVARS: ${{ secrets.TERRAFORM_TFVARS }}
