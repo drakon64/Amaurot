@@ -64,18 +64,12 @@ buildDotnetModule (finalAttrs: {
       config = {
         Entrypoint = [ (lib.getExe finalAttrs.finalPackage) ];
 
-        Env =
-          let
-            path =
-              let
-                binPath = lib.makeBinPath ([ gitMinimal ] ++ lib.optional withSsh openssh);
-              in
-              if withGit then "PATH=${binPath}" else null;
-          in
-          [
-            "OPENTOFU=${lib.getExe opentofu}"
-            path
-          ];
+        Env = [
+          "OPENTOFU=${lib.getExe opentofu}"
+        ]
+        ++ lib.optional withGit (
+          "PATH=${lib.makeBinPath ([ gitMinimal ] ++ lib.optional withSsh openssh)}"
+        );
       };
 
       contents = with dockerTools; [ caCertificates ] ++ lib.optional (withGit && withSsh) fakeNss;
