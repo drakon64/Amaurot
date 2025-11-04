@@ -8,6 +8,7 @@
   </PropertyGroup>
   <PropertyGroup>
     <PublishReadyToRunComposite>true</PublishReadyToRunComposite>
+    <EnableTrimAnalyzer>true</EnableTrimAnalyzer>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Octokit.Webhooks.AspNetCore" Version="3.2.1" />
