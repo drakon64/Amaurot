@@ -17,6 +17,7 @@ internal sealed class PullRequestWebhookEventProcessor(
         PullRequestAction.Opened,
         PullRequestAction.Reopened,
         PullRequestAction.ReadyForReview,
+        PullRequestAction.Synchronize,
     ];
 
     protected override async ValueTask ProcessPullRequestWebhookAsync(
