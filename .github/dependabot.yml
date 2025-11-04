@@ -6,11 +6,6 @@ updates:
       interval: daily
 
   - package-ecosystem: nuget
-    directory: /src/Processor
-    schedule:
-      interval: daily
-
-  - package-ecosystem: nuget
-    directory: /src/Receiver
+    directory: /src
     schedule:
       interval: daily
