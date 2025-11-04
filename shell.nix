@@ -3,6 +3,7 @@
 }:
 pkgs.mkShellNoCC {
   packages = with pkgs; [
+    dotnetCorePackages.sdk_9_0
     graphviz
     lon
     nixfmt-rfc-style
@@ -11,11 +12,11 @@ pkgs.mkShellNoCC {
 
   passthru = {
     lon = pkgs.mkShellNoCC {
-      packages = with pkgs; [ lon ];
+      packages = [ pkgs.lon ];
     };
 
     opentofu = pkgs.mkShellNoCC {
-      packages = with pkgs; [ opentofu ];
+      packages = [ pkgs.opentofu ];
     };
   };
 }
