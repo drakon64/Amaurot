@@ -65,6 +65,7 @@ internal sealed class PullRequestWebhookEventProcessor(
         }
 
         await CloudRunClient.RunJob(
+            "plan",
             pullRequestEvent.Repository.FullName,
             pullRequestEvent.Number,
             new AmaurotClient(

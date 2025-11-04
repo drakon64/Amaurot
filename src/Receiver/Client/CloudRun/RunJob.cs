@@ -7,6 +7,7 @@ internal static partial class CloudRunClient
         ?? throw new InvalidOperationException("AMAUROT_PROCESSOR is null");
 
     internal static async Task RunJob(
+        string action,
         string repo,
         long number,
         string[] deployments,
@@ -20,6 +21,7 @@ internal static partial class CloudRunClient
             {
                 Args =
                 [
+                    action,
                     repo,
                     number.ToString(),
                     deployment,
