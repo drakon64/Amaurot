@@ -6,21 +6,15 @@ updates:
       interval: daily
 
   - package-ecosystem: nuget
-    directory: /src/Processor
-    schedule:
-      interval: daily
-
-  - package-ecosystem: nuget
-    directory: /src/Receiver
-    schedule:
-      interval: daily
-
-  - package-ecosystem: terraform
-    directory: /tofu
+    directories:
+      - /src/Processor
+      - /src/Receiver
     schedule:
       interval: daily
 
   - package-ecosystem: terraform
-    directory: /tofu/module
+    directories:
+      - /tofu
+      - /tofu/module
     schedule:
       interval: daily
