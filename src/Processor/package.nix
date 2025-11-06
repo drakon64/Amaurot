@@ -54,8 +54,8 @@ buildDotnetModule (finalAttrs: {
 
   passthru.docker =
     {
-      withGit ? true,
-      withSsh ? true,
+      withGit ? false,
+      withSsh ? false,
     }:
     dockerTools.buildLayeredImage {
       name = "amaurot-processor";
