@@ -1,6 +1,6 @@
 module "lb-http" {
   source  = "terraform-google-modules/lb-http/google//modules/serverless_negs"
-  version = "~> 13"
+  version = "~> 14"
 
   name    = "amaurot"
   project = data.google_project.project.project_id
