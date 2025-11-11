@@ -3,7 +3,7 @@
 }:
 pkgs.mkShellNoCC {
   packages = with pkgs; [
-    dotnetCorePackages.sdk_9_0
+    dotnetCorePackages.sdk_10_0
     graphviz
     lon
     nixfmt-rfc-style

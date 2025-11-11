@@ -37,7 +37,7 @@ buildDotnetModule (finalAttrs: {
   projectFile = "Amaurot.Processor.csproj";
   nugetDeps = ./deps.json;
 
-  dotnet-sdk = dotnetCorePackages.sdk_9_0;
+  dotnet-sdk = dotnetCorePackages.sdk_10_0;
   dotnet-runtime = null;
 
   executables = [ "Amaurot.Processor" ];
