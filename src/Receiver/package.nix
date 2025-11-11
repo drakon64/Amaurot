@@ -38,8 +38,6 @@ buildDotnetModule (finalAttrs: {
 
   executables = [ "Amaurot.Receiver" ];
 
-  selfContainedBuild = true;
-
   meta = {
     license = lib.licenses.eupl12;
     mainProgram = "Amaurot.Receiver";
