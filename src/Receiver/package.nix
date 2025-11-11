@@ -34,7 +34,7 @@ buildDotnetModule (finalAttrs: {
   nugetDeps = ./deps.json;
 
   dotnet-sdk = dotnetCorePackages.sdk_9_0;
-  dotnet-runtime = null;
+  dotnet-runtime = dotnetCorePackages.aspnetcore_9_0;
 
   executables = [ "Amaurot.Receiver" ];
 
