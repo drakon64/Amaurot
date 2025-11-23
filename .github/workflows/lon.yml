@@ -42,8 +42,8 @@ jobs:
 
       - name: Build and evaluate with updated lockfile
         run: |
-          echo "NEW_PROCESSOR_HASH=$(nix eval --expr '(import ./. {}).processor.docker' --raw --impure)" >> "$GITHUB_ENV"
-          echo "NEW_RECEIVER_HASH=$(nix eval --expr '(import ./. {}).receiver.docker' --raw --impure)" >> "$GITHUB_ENV"
+          echo "NEW_PROCESSOR_HASH=$(nix-build -A processor.docker)" >> "$GITHUB_ENV"
+          echo "NEW_RECEIVER_HASH=$(nix-build -A receiver.docker)" >> "$GITHUB_ENV"
           echo "NEW_SHELL_HASH=$(nix eval --expr 'import ./shell.nix {}' --raw --impure)" >> "$GITHUB_ENV"
 
       - name: Open pull request
