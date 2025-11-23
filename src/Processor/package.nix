@@ -8,6 +8,9 @@
   gitMinimal,
   openssh,
   opentofu,
+
+  withGit ? false,
+  withSsh ? false,
   ...
 }:
 let
@@ -23,7 +26,6 @@ buildDotnetModule (finalAttrs: {
     fileset = fs.difference (./.) (
       fs.unions [
         (lib.fileset.maybeMissing ./bin)
-        (lib.fileset.maybeMissing ./config)
         (lib.fileset.maybeMissing ./obj)
 
         (lib.fileset.maybeMissing ./deps.json)
@@ -46,32 +48,25 @@ buildDotnetModule (finalAttrs: {
 
   nativeBuildInputs = [ stdenv.cc ];
 
+  postFixup = ''
+    wrapProgram $out/bin/Amaurot.Processor --prefix PATH : ${
+      lib.makeBinPath (
+        [ opentofu ] ++ lib.optional withGit gitMinimal ++ lib.optional (withGit && withSsh) openssh
+      )
+    }
+  '';
+
   meta = {
     license = lib.licenses.eupl12;
     mainProgram = "Amaurot.Processor";
     maintainers = with lib.maintainers; [ drakon64 ];
   };
 
-  passthru.docker =
-    {
-      withGit ? false,
-      withSsh ? false,
-    }:
-    dockerTools.buildLayeredImage {
-      name = "amaurot-processor";
-      tag = "latest";
+  passthru.docker = dockerTools.buildLayeredImage {
+    name = "amaurot-processor";
+    tag = "latest";
 
-      config = {
-        Entrypoint = [ (lib.getExe finalAttrs.finalPackage) ];
-
-        Env = [
-          "OPENTOFU=${lib.getExe opentofu}"
-        ]
-        ++ lib.optional withGit (
-          "PATH=${lib.makeBinPath ([ gitMinimal ] ++ lib.optional withSsh openssh)}"
-        );
-      };
-
-      contents = with dockerTools; [ caCertificates ] ++ lib.optional (withGit && withSsh) fakeNss;
-    };
+    config.Entrypoint = [ (lib.getExe finalAttrs.finalPackage) ];
+    contents = with dockerTools; [ caCertificates ] ++ lib.optional (withGit && withSsh) fakeNss;
+  };
 })
