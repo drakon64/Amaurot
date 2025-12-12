@@ -52,5 +52,13 @@ jobs:
           nix-shell -A lon --run "lon bot github"
         env:
           LON_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          LON_LABELS: "lon,bot"
+          LON_LABELS: "dependencies,Nix"
+        id: lon
         if: ${{ env.NEW_PROCESSOR_HASH != env.CURRENT_PROCESSOR_HASH || env.NEW_RECEIVER_HASH != env.CURRENT_RECEIVER_HASH || env.NEW_SHELL_HASH != env.CURRENT_SHELL_HASH }}
+
+      - run: |
+          BODY=$(echo -e "\`\`\`\n$(nix store diff-closures $CURRENT_SHELL_HASH $NEW_SHELL_HASH)\n\`\`\`")
+          gh pr edit lon/nixpkgs -b "$BODY"
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        if: ${{ env.NEW_SHELL_HASH != env.CURRENT_SHELL_HASH }}
