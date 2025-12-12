@@ -48,8 +48,6 @@ buildDotnetModule (finalAttrs: {
     name = "amaurot-receiver";
     tag = "latest";
 
-    config = {
-      Entrypoint = [ (lib.getExe finalAttrs.finalPackage) ];
-    };
+    config.Entrypoint = [ (lib.getExe finalAttrs.finalPackage) ];
   };
 })
