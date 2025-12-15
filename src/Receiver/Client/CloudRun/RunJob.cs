@@ -1,3 +1,8 @@
+using System.Text;
+using System.Text.Json;
+
+using Amaurot.Receiver.SourceGenerationContext;
+
 namespace Amaurot.Receiver.Client.CloudRun;
 
 internal static partial class CloudRunClient
@@ -21,13 +26,23 @@ internal static partial class CloudRunClient
             {
                 Args =
                 [
-                    action,
-                    repo,
-                    number.ToString(),
-                    deployment,
-                    headCommit,
-                    mergeCommit,
-                    installationId.ToString(),
+                    Convert.ToBase64String(
+                        Encoding.Default.GetBytes(
+                            JsonSerializer.Serialize(
+                                new Arguments
+                                {
+                                    Action = action,
+                                    Repository = repo,
+                                    Number = number,
+                                    Deployment = deployment,
+                                    HeadCommit = headCommit,
+                                    MergeCommit = mergeCommit,
+                                    InstallationId = installationId,
+                                },
+                                SnakeCaseLowerSourceGenerationContext.Default.Arguments
+                            )
+                        )
+                    ),
                 ],
             })
             .ToArray();
@@ -53,6 +68,17 @@ internal static partial class CloudRunClient
 
         if (!response.IsSuccessStatusCode)
             throw new Exception();
+    }
+
+    internal sealed class Arguments
+    {
+        public required string Action { get; init; }
+        public required string Repository { get; init; }
+        public required long Number { get; init; }
+        public required string Deployment { get; init; }
+        public required string HeadCommit { get; init; }
+        public required string MergeCommit { get; init; }
+        public required long InstallationId { get; init; }
     }
 
     internal sealed class RunJobWithOverrides

@@ -9,4 +9,5 @@ namespace Amaurot.Receiver.SourceGenerationContext;
 [JsonSerializable(typeof(GitHubClient.InstallationAccessToken))]
 [JsonSerializable(typeof(GitHubClient.PullRequest))]
 [JsonSerializable(typeof(CloudRunClient.AccessTokenResponse))]
+[JsonSerializable(typeof(CloudRunClient.Arguments))]
 internal sealed partial class SnakeCaseLowerSourceGenerationContext : JsonSerializerContext;
