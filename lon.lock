@@ -7,9 +7,9 @@
       "owner": "NixOS",
       "repo": "nixpkgs",
       "branch": "nixpkgs-unstable",
-      "revision": "8970f698c39f490df47e4cbb7beae7869ddf1978",
-      "url": "https://github.com/NixOS/nixpkgs/archive/8970f698c39f490df47e4cbb7beae7869ddf1978.tar.gz",
-      "hash": "sha256-+2xdB27fVMEVKWmh7UtpBGgK1FOVdk5ttV3ZPhpdqVY="
+      "revision": "16c7794d0a28b5a37904d55bcca36003b9109aaa",
+      "url": "https://github.com/NixOS/nixpkgs/archive/16c7794d0a28b5a37904d55bcca36003b9109aaa.tar.gz",
+      "hash": "sha256-fFUnEYMla8b7UKjijLnMe+oVFOz6HjijGGNS1l7dYaQ="
     }
   }
 }
