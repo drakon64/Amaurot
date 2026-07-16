@@ -1,0 +1,10 @@
+{
+  "nixpkgs": {
+    "url": "https://github.com/NixOS/nixpkgs/archive/35d3407a3816f3b341d8cf1d60abaf2b7b8166ac.tar.gz",
+    "hash": "sha256-BoYPdqk6jlKXy\u002BDyUzyGV/CtRGfAhk2MmIgBhsemTGI="
+  },
+  "pomni": {
+    "url": "https://github.com/drakon64/pomni/archive/8fb2f1d88766f473d3a70d29f2e049c35c100632.tar.gz",
+    "hash": "sha256-AkT5NeUezRWitKPyaIKCzUcYVvgQ4VHc0VF/HlGMU0U="
+  }
+}

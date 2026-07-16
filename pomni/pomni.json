@@ -1,0 +1,15 @@
+{
+  "version": 1,
+  "pins": {
+    "nixpkgs": {
+      "forge": "github",
+      "repository": "NixOS/nixpkgs",
+      "branch": "nixpkgs-unstable"
+    },
+    "pomni": {
+      "forge": "github",
+      "repository": "drakon64/pomni",
+      "type": "release"
+    }
+  }
+}

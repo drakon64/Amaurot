@@ -1,4 +1,4 @@
-lon.lock linguist-generated=true
-lon.nix linguist-generated=true
+deps.json linguist-generated=true
 
-src/**/deps.json linguist-generated=true
+pomni/default.nix linguist-generated=true
+pomni/pomni.lock.json linguist-generated=true

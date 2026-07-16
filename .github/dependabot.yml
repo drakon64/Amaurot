@@ -1,20 +1,11 @@
 version: 2
 updates:
+  - package-ecosystem: nuget
+    directory: /src
+    schedule:
+      interval: daily
+
   - package-ecosystem: github-actions
     directory: /
-    schedule:
-      interval: daily
-
-  - package-ecosystem: nuget
-    directories:
-      - /src/Processor
-      - /src/Receiver
-    schedule:
-      interval: daily
-
-  - package-ecosystem: terraform
-    directories:
-      - /tofu
-      - /tofu/module
     schedule:
       interval: daily

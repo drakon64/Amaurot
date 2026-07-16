@@ -1,22 +1,13 @@
 {
-  pkgs ? import (import ./lon.nix).nixpkgs { },
+  pkgs ? import (import ./pomni).nixpkgs { },
+  pomni ? pkgs.callPackage (import (import ./pomni).pomni) { },
 }:
+
 pkgs.mkShellNoCC {
   packages = with pkgs; [
     dotnetCorePackages.sdk_10_0
-    graphviz
-    lon
-    nixfmt-rfc-style
-    opentofu
+
+    nixfmt
+    pomni
   ];
-
-  passthru = {
-    lon = pkgs.mkShellNoCC {
-      packages = [ pkgs.lon ];
-    };
-
-    opentofu = pkgs.mkShellNoCC {
-      packages = [ pkgs.opentofu ];
-    };
-  };
 }
