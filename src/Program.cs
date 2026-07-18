@@ -3,51 +3,64 @@ using System.Text;
 using System.Text.Json;
 using Amaurot.Models;
 
-namespace Amaurot;
+var amaurotJsonFile = File.OpenRead("amaurot.json");
 
-class Program
+var amaurotJson = await JsonSerializer.DeserializeAsync<AmaurotJson>(
+    amaurotJsonFile,
+    SourceGenerationContext.Default.AmaurotJson
+);
+
+await amaurotJsonFile.DisposeAsync();
+
+var plan = new StringBuilder();
+var failed = false;
+
+foreach (var deployment in amaurotJson!.Deployments)
 {
-    static async Task Main(string[] args)
+    var tofuProcessStartInfo = new ProcessStartInfo
     {
-        var amaurotJsonFile = File.OpenRead("amaurot.json");
+        FileName = "tofu",
+        ArgumentList = { "plan", "-detailed-exitcode", "-input=false", "-no-color" },
+        WorkingDirectory = deployment.Value.Path,
+        RedirectStandardError = true,
+        RedirectStandardOutput = true,
+    };
 
-        var amaurotJson = await JsonSerializer.DeserializeAsync<AmaurotJson>(
-            amaurotJsonFile,
-            SourceGenerationContext.Default.AmaurotJson
-        );
-
-        await amaurotJsonFile.DisposeAsync();
-
-        foreach (var deployment in amaurotJson!.Deployments)
+    if (deployment.Value.VarFiles != null)
+        foreach (var varFile in deployment.Value.VarFiles)
         {
-            var processStartInfo = new ProcessStartInfo
-            {
-                FileName = "tofu",
-                ArgumentList = { "plan" },
-                WorkingDirectory = deployment.Value.Path,
-                RedirectStandardOutput = true,
-                RedirectStandardError = true,
-            };
-
-            if (deployment.Value.VarFiles != null)
-                foreach (var varFile in deployment.Value.VarFiles)
-                {
-                    processStartInfo.ArgumentList.Add($"-var-file={varFile})");
-                }
-
-            var process = Process.Start(processStartInfo);
-
-            await process!.WaitForExitAsync();
-
-            var plan = new StringBuilder();
-
-            var stderr = await process.StandardError.ReadToEndAsync();
-            if (stderr.Length != 0)
-                plan.AppendLine(stderr);
-
-            plan.AppendLine(await process.StandardOutput.ReadToEndAsync());
-
-            deployment.Value.Plan = plan.ToString();
+            tofuProcessStartInfo.ArgumentList.Add($"-var-file={varFile})");
         }
-    }
+
+    var process = Process.Start(tofuProcessStartInfo);
+    await process!.WaitForExitAsync();
+
+    if (process.ExitCode == 1)
+        failed = true;
+
+    plan.AppendLine("${deployment.Key}:");
+    plan.AppendLine("```");
+    var stderr = await process.StandardError.ReadToEndAsync();
+    if (stderr.Length != 0)
+        plan.AppendLine(stderr);
+    plan.AppendLine(await process.StandardOutput.ReadToEndAsync());
+    plan.Append("```");
 }
+
+var ghProcessStartInfo = new ProcessStartInfo
+{
+    FileName = "gh",
+    ArgumentList =
+    {
+        "pr",
+        "comment",
+        Environment.GetEnvironmentVariable("GITHUB_HEAD_REF")!,
+        "--body",
+        plan.ToString(),
+    },
+};
+
+var gh = Process.Start(ghProcessStartInfo);
+await gh!.WaitForExitAsync();
+
+return failed ? 1 : 0;

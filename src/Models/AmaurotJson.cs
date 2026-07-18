@@ -10,9 +10,6 @@ internal class AmaurotJson
     {
         public required string Path { get; init; }
         public string[]? VarFiles { get; init; }
-
-        [JsonIgnore]
-        public string? Plan { get; set; }
     }
 }
 

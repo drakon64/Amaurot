@@ -4,6 +4,8 @@
   dotnetCorePackages,
   stdenv,
   darwin,
+  opentofu,
+  gh,
 }:
 
 buildDotnetModule (finalAttrs: {
@@ -26,6 +28,15 @@ buildDotnetModule (finalAttrs: {
   dotnet-runtime = null; # No runtime required for Native AOT
 
   executables = [ "Amaurot" ];
+
+  postFixup = ''
+    wrapProgram $out/bin/Amaurot --prefix PATH : ${
+      lib.makeBinPath [
+        opentofu
+        gh
+      ]
+    }
+  '';
 
   meta = {
     description = "OpenTofu pull request automation for GitHub Actions";
