@@ -16,5 +16,6 @@ internal class AmaurotJson
     }
 }
 
+[JsonSourceGenerationOptions(PropertyNamingPolicy = JsonKnownNamingPolicy.CamelCase)]
 [JsonSerializable(typeof(AmaurotJson))]
 internal partial class SourceGenerationContext : JsonSerializerContext;
