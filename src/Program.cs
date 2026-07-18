@@ -43,7 +43,7 @@ class Program
 
             var stderr = await process.StandardError.ReadToEndAsync();
             if (stderr.Length != 0)
-                plan.AppendLine(await process.StandardError.ReadToEndAsync());
+                plan.AppendLine(stderr);
 
             plan.AppendLine(await process.StandardOutput.ReadToEndAsync());
 
