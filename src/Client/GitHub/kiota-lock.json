@@ -1,0 +1,31 @@
+{
+  "descriptionHash": "4E1839201E3133239655EEFA0AC9BE4E80DDF3E410AB16321D49AF3DBB460C151AC1602D218DF85ADD5A9A7E519ED905456185596B6A1FF5B79EE6E891F3B805",
+  "descriptionLocation": "https://raw.githubusercontent.com/github/rest-api-description/refs/heads/main/descriptions/api.github.com/api.github.com.2026-03-10.yaml",
+  "lockFileVersion": "1.0.0",
+  "kiotaVersion": "1.34.1",
+  "clientClassName": "GitHubClient",
+  "typeAccessModifier": "Internal",
+  "clientNamespaceName": "Amaurot.Client.GitHub",
+  "language": "CSharp",
+  "usesBackingStore": false,
+  "excludeBackwardCompatible": true,
+  "includeAdditionalData": false,
+  "disableSSLValidation": false,
+  "serializers": [
+    "Microsoft.Kiota.Serialization.Json.JsonSerializationWriterFactory"
+  ],
+  "deserializers": [
+    "Microsoft.Kiota.Serialization.Json.JsonParseNodeFactory"
+  ],
+  "structuredMimeTypes": [
+    "application/json"
+  ],
+  "includePatterns": [
+    "/repos/{owner}/{repo}/issues/{issue_number}/comments#POST",
+    "/repos/{owner}/{repo}/issues/{issue_number}/comments#GET",
+    "/repos/{owner}/{repo}/issues/comments/{comment_id}#DELETE"
+  ],
+  "excludePatterns": [],
+  "disabledValidationRules": [],
+  "allowedExternalOrigins": []
+}

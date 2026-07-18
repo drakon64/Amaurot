@@ -4,8 +4,8 @@
   dotnetCorePackages,
   stdenv,
   darwin,
+
   opentofu,
-  gh,
 }:
 
 buildDotnetModule (finalAttrs: {
@@ -18,6 +18,7 @@ buildDotnetModule (finalAttrs: {
   __structuredAttrs = true;
 
   projectFile = "Amaurot.csproj";
+  nugetDeps = ./deps.json;
 
   # Required for Native AOT
   nativeBuildInputs = [ stdenv.cc ];
@@ -30,12 +31,7 @@ buildDotnetModule (finalAttrs: {
   executables = [ "Amaurot" ];
 
   postFixup = ''
-    wrapProgram $out/bin/Amaurot --prefix PATH : ${
-      lib.makeBinPath [
-        opentofu
-        gh
-      ]
-    }
+    wrapProgram $out/bin/Amaurot --prefix PATH : ${lib.makeBinPath [ opentofu ]}
   '';
 
   meta = {

@@ -1,7 +1,11 @@
 ﻿using System.Diagnostics;
 using System.Text;
 using System.Text.Json;
+using Amaurot.Authentication;
+using Amaurot.Client.GitHub;
+using Amaurot.Client.GitHub.Repos.Item.Item.Issues.Item.Comments;
 using Amaurot.Models;
+using Microsoft.Kiota.Http.HttpClientLibrary;
 
 var amaurotJsonFile = File.OpenRead("amaurot.json");
 
@@ -47,20 +51,19 @@ foreach (var deployment in amaurotJson!.Deployments)
     plan.Append("```");
 }
 
-var ghProcessStartInfo = new ProcessStartInfo
+var authProvider = new BearerTokenAuthenticationProvider
 {
-    FileName = "gh",
-    ArgumentList =
-    {
-        "pr",
-        "comment",
-        Environment.GetEnvironmentVariable("GITHUB_HEAD_REF")!,
-        "--body",
-        plan.ToString(),
-    },
+    ApiKey = Environment.GetEnvironmentVariable("GITHUB_TOKEN"),
 };
+var adapter = new HttpClientRequestAdapter(authProvider);
+var client = new GitHubClient(adapter);
 
-var gh = Process.Start(ghProcessStartInfo);
-await gh!.WaitForExitAsync();
+var repo = Environment.GetEnvironmentVariable("GITHUB_REPO")!.Split('/');
+var pr = int.Parse(Environment.GetEnvironmentVariable("GITHUB_REF")!.Split('/')[2]);
+
+await client
+    .Repos[repo[0]][repo[1]]
+    .Issues[pr]
+    .Comments.PostAsync(new CommentsPostRequestBody { Body = plan.ToString() });
 
 return failed ? 1 : 0;
