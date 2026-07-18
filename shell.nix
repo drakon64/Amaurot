@@ -10,4 +10,8 @@ pkgs.mkShellNoCC {
     nixfmt
     pomni
   ];
+
+  passthru.pomni = pkgs.mkShellNoCC {
+    packages = [ pomni ];
+  };
 }
