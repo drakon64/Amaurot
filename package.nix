@@ -7,8 +7,8 @@
 }:
 
 buildDotnetModule (finalAttrs: {
-  pname = "Amaurot";
-  version = "1.0.0";
+  pname = "amaurot";
+  version = "0.0.1";
 
   src = ./src;
 
@@ -29,7 +29,7 @@ buildDotnetModule (finalAttrs: {
   executables = [ "Amaurot" ];
 
   meta = {
-    description = "OpenTofu pull request automation for GitHub";
+    description = "OpenTofu pull request automation for GitHub Actions";
     homepage = "https://github.com/drakon64/Amaurot";
     license = lib.licenses.eupl12;
     mainProgram = "Amaurot";
