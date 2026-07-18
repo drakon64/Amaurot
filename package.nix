@@ -16,7 +16,6 @@ buildDotnetModule (finalAttrs: {
   __structuredAttrs = true;
 
   projectFile = "Amaurot.csproj";
-  nugetDeps = ./deps.json;
 
   # Required for Native AOT
   nativeBuildInputs = [ stdenv.cc ];
