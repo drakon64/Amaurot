@@ -51,10 +51,7 @@ foreach (var deployment in amaurotJson!.Deployments)
     plan.Append("```");
 }
 
-var authProvider = new BearerTokenAuthenticationProvider
-{
-    ApiKey = Environment.GetEnvironmentVariable("GITHUB_TOKEN"),
-};
+var authProvider = new BearerTokenAuthenticationProvider();
 var adapter = new HttpClientRequestAdapter(authProvider);
 var client = new GitHubClient(adapter);
 
