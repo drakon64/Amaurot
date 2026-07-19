@@ -32,9 +32,7 @@ foreach (var deployment in amaurotJson!.Deployments)
 
     if (deployment.Value.VarFiles != null)
         foreach (var varFile in deployment.Value.VarFiles)
-        {
             tofuProcessStartInfo.ArgumentList.Add($"-var-file={varFile})");
-        }
 
     var process = Process.Start(tofuProcessStartInfo);
     await process!.WaitForExitAsync();
