@@ -1,10 +1,10 @@
 {
   "nixpkgs": {
-    "url": "https://github.com/NixOS/nixpkgs/archive/20535e48e12c86043b577b8518234ff5dbb26957.tar.gz",
-    "hash": "sha256-CdItYNdYUlm7NxqMVyQKqT2IxTwvapiPuRLWOyHTrbY="
+    "url": "https://github.com/NixOS/nixpkgs/archive/a16c3fde2ffeab7f6326f50f460aaffde7ae066d.tar.gz",
+    "hash": "sha256-yocJ4I4Kd4as0UPMFs9P7laPvvA2x/Bj8EW46iW3VVM="
   },
   "pomni": {
-    "url": "https://github.com/drakon64/pomni/archive/8fb2f1d88766f473d3a70d29f2e049c35c100632.tar.gz",
-    "hash": "sha256-AkT5NeUezRWitKPyaIKCzUcYVvgQ4VHc0VF/HlGMU0U="
+    "url": "https://github.com/drakon64/pomni/archive/d43ea39f68de9ded3cf8467c41aca8aa6170a253.tar.gz",
+    "hash": "sha256-\u002BAnPJKV\u002BeLoSjlIZK\u002B6oJLN2kEYpxeFROI/IXmhuSE8="
   }
 }
