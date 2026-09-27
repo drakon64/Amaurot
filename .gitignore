@@ -1,4 +1,5 @@
 .direnv
 .idea
 
-result*
+src/**/bin/*
+src/**/obj/*

@@ -1,3 +1,3 @@
 <Solution>
-  <Project Path="src/Amaurot.csproj" />
+  <Project Path="src/Amaurot.Webhook/Amaurot.Webhook.csproj" />
 </Solution>

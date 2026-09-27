@@ -1,18 +1,12 @@
 {
-  pkgs ? import (import ./pomni).nixpkgs { },
-  pomni ? pkgs.callPackage (import (import ./pomni).pomni) { },
+  pkgs ? import (import ./lon.nix).nixpkgs { },
 }:
-
 pkgs.mkShellNoCC {
   packages = with pkgs; [
-    dotnetCorePackages.sdk_10_0
+    dotnetCorePackages.sdk_11_0
     opentofu
 
+    lon
     nixfmt
-    pomni
   ];
-
-  passthru.pomni = pkgs.mkShellNoCC {
-    packages = [ pomni ];
-  };
 }
